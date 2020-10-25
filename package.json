@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": "14.x"
+  },
   "bin": {
     "iCal": "./bin/index.js"
   },
@@ -22,6 +25,7 @@
   },
   "homepage": "https://github.com/Melodyn/iCal#readme",
   "dependencies": {
+    "fastify": "^3.7.0",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
