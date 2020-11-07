@@ -10,6 +10,6 @@ fastify()
     const { name } = req.query;
     res.code(200).send(app(name));
   })
-  .listen(8080, () => {
+  .listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
