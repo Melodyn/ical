@@ -11,7 +11,8 @@
     "iCal": "./bin/index.js"
   },
   "scripts": {
-    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors"
+    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors",
+    "start": "node ./src/server.js"
   },
   "repository": {
     "type": "git",
