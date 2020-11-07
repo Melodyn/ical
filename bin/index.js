@@ -7,9 +7,10 @@ const PORT = process.env.PORT || 5000;
 
 fastify()
   .get('/', (req, res) => {
+    console.log({ req });
     const { name = 'Heroku' } = req.query;
     res.code(200).send(app(name));
   })
-  .listen(PORT, () => {
+  .listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
