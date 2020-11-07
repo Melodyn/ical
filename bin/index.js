@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 5000;
 
 fastify()
   .get('/', (req, res) => {
-    console.log({ req });
     const { name = 'Heroku' } = req.query;
     res.code(200).send(app(name));
   })
