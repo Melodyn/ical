@@ -6,3 +6,6 @@ lint:
 
 test:
 	npm test
+
+run:
+	./bin/index.js

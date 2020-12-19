@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 
 fastify()
   .get('/', (req, res) => {
-    const { name = 'Heroku' } = req.query;
+    const { name = 'VK' } = req.query;
     res.code(200).send(app(name));
   })
   .listen(PORT, '0.0.0.0', () => {
