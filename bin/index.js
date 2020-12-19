@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 5000;
 
 express()
   .get('/', (req, res) => {
-    const { name = 'VK' } = req.query;
     res.send(app());
   })
   .listen(PORT, '0.0.0.0', () => {
