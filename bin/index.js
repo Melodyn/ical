@@ -10,7 +10,8 @@ const PORT = process.env.PORT || 5000;
 
 express()
   .get('/', (req, res) => {
-    res.send(app(req.query.vk_app_id));
+    console.log(req);
+    res.send(app(req.query.vk_group_id));
   })
   .listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
