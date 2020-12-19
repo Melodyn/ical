@@ -6,6 +6,13 @@ import app from '../index.js';
 
 const vkbridge = bridge.default;
 
+vkbridge.send('VKWebAppInit', {})
+  .then((data) => {
+    console.log('VKWebAppInit', data);
+    vkbridge.subscribe((e) => console.log('VKWebAppInit subscribe', e));
+  })
+  .catch(console.error);
+
 const PORT = process.env.PORT || 5000;
 
 express()
@@ -15,9 +22,4 @@ express()
   })
   .listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    vkbridge.send('VKWebAppInit', {})
-      .then(() => {
-        vkbridge.subscribe((e) => console.log('VKWebAppInit', e));
-      })
-      .catch(console.error);
   });
