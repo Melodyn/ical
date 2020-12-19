@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/Melodyn/iCal#readme",
   "dependencies": {
-    "fastify": "^3.7.0",
+    "express": "^4.17.1",
     "lodash": "^4.17.20"
   },
   "devDependencies": {

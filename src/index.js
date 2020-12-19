@@ -1,5 +1,1 @@
-export default (name) => {
-  if (!name) throw new Error('Name is required');
-  const helloMessage = 'Hello,';
-  return `${helloMessage} ${name}!`;
-};
+export default () => '<iframe src="https://calendar.google.com/calendar/embed?src=ob1gcsbo877671s4295f693nv0%40group.calendar.google.com&ctz=Europe%2FMoscow" style="border: 0" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>';
