@@ -17,3 +17,4 @@ plugins:
 rules:
   no-console: off
   import/extensions: off
+  no-underscore-dangle: [1, { allow: ['__dirname'] }]

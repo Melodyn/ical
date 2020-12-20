@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  },
   "engines": {
     "node": "14.x"
   },
@@ -27,8 +31,13 @@
   "homepage": "https://github.com/Melodyn/iCal#readme",
   "dependencies": {
     "@vkontakte/vk-bridge": "^2.3.0",
+    "axios": "^0.21.0",
     "express": "^4.17.1",
-    "lodash": "^4.17.20"
+    "ical": "^0.8.0",
+    "lodash": "^4.17.20",
+    "luxon": "^1.25.0",
+    "nock": "^13.0.5",
+    "node-ical": "^0.12.3"
   },
   "devDependencies": {
     "eslint": "^7.12.0",
