@@ -1,7 +1,9 @@
 import { promises as fs } from 'fs';
 import axios from 'axios';
 import ical from 'node-ical';
-import { DateTime } from 'luxon';
+import luxon from 'luxon';
+
+const { DateTime } = luxon;
 
 const timezoneRegex = new RegExp('^X-WR-TIMEZONE:(?<timezone>.+)$', 'm');
 
@@ -18,14 +20,15 @@ const processDates = (data, timezone) => {
   return rawEvents.map((event) => {
     const eventEntries = Object.entries(event).map(([key, rawValue]) => {
       const isDate = (rawValue instanceof Date);
-      const value = !isDate
-        ? rawValue
-        : DateTime
-          .fromISO(rawValue.toISOString())
-          .setZone(timezone)
-          .toISO();
 
-      return [key, value];
+      if (!isDate) return [key, rawValue];
+
+      const date = DateTime.fromISO(rawValue.toISOString()).setZone(timezone);
+      const formattedDate = (event.datetype === 'date' && (key === 'start' || key === 'end'))
+        ? date.toISODate()
+        : date.toISO();
+
+      return [key, formattedDate];
     });
 
     return Object.fromEntries(eventEntries);

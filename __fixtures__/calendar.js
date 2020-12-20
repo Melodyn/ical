@@ -2,9 +2,9 @@ export default [
   {
     type: 'VEVENT',
     params: [],
-    start: '2020-12-24T00:00:00.000+03:00',
+    start: '2020-12-24',
     datetype: 'date',
-    end: '2020-12-25T00:00:00.000+03:00',
+    end: '2020-12-25',
     dtstamp: '2020-12-19T20:13:09.000+03:00',
     uid: '092claa5bjrkj827gqr0lsl3eg@google.com',
     created: '2020-12-19T18:57:55.000+03:00',
@@ -19,9 +19,9 @@ export default [
   {
     type: 'VEVENT',
     params: [],
-    start: '2020-12-29T00:00:00.000+03:00',
+    start: '2020-12-29',
     datetype: 'date',
-    end: '2020-12-31T00:00:00.000+03:00',
+    end: '2020-12-31',
     dtstamp: '2020-12-19T20:13:09.000+03:00',
     uid: '1bbbb8a48sutbvnau7sidgapql@google.com',
     created: '2020-12-19T19:01:01.000+03:00',

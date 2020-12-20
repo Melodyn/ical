@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  ical:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    image: melodyn:ical
+    container_name: melodyn_ical
