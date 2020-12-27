@@ -5,10 +5,13 @@ lint:
 	npx eslint .
 
 test:
-	npm test
+	NODE_ENV=test npm test
+
+test_dev:
+	NODE_ENV=test npm test -- --watchAll
 
 run:
-	./bin/index.js
+	NODE_ENV=development ./bin/index.js
 
 # usage with docker
 container_setup: container_build container_dependency container_start

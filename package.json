@@ -15,7 +15,7 @@
     "iCal": "./bin/index.js"
   },
   "scripts": {
-    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors",
+    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles --forceExit",
     "start": "./bin/index.js"
   },
   "repository": {
@@ -32,12 +32,14 @@
   "dependencies": {
     "@vkontakte/vk-bridge": "^2.3.0",
     "axios": "^0.21.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ical": "^0.8.0",
     "lodash": "^4.17.20",
     "luxon": "^1.25.0",
     "nock": "^13.0.5",
-    "node-ical": "^0.12.3"
+    "node-ical": "^0.12.3",
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "eslint": "^7.12.0",
