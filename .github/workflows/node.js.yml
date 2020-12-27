@@ -30,3 +30,7 @@ jobs:
           heroku_app_name: melodyn-ical
           heroku_email: samelodyn@gmail.com
           branch: main
+        env:
+          HD_NODE_ENV: production
+          HD_HOST: 0.0.0.0
+          HD_LOG_LEVEL: info

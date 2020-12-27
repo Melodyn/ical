@@ -1,4 +1,4 @@
-import express from 'express';
+import fastify from 'fastify';
 import { configValidator } from '../utils/configValidator.js';
 
 const app = async (envName) => {
@@ -9,26 +9,23 @@ const app = async (envName) => {
 
   const config = await configValidator(envName);
 
-  const server = express();
+  const server = fastify({
+    logger: {
+      prettyPrint: config.IS_DEV_ENV,
+      level: config.LOG_LEVEL,
+    },
+  });
+
   server.get('/', (req, res) => {
     res.send(req.query.vk_group_id);
   });
 
-  const runningServer = server.listen(config.PORT, config.HOST, () => {
-    if (!config.IS_TEST_ENV) {
-      console.log(`Server running on http://${config.HOST}:${config.PORT}`);
-    }
-  });
+  await server.listen(config.PORT, config.HOST);
 
   const stop = async () => {
-    console.log('Stop app', config);
-    runningServer.close((err) => {
-      if (!config.IS_TEST_ENV) {
-        if (err) console.error(err);
-        console.log('Server stopped');
-      }
-    });
-    console.log('App stopped');
+    server.log.info('Stop app', config);
+    await server.close();
+    server.log.info('App stopped');
 
     if (!config.IS_TEST_ENV) {
       process.exit(0);

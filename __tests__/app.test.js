@@ -11,7 +11,7 @@ describe('Positive cases', () => {
   test('App is exists', async () => {
     expect(app).not.toBeFalsy();
     expect(app).toEqual(expect.objectContaining({
-      server: expect.any(Function),
+      server: expect.any(Object),
       stop: expect.any(Function),
     }));
   });

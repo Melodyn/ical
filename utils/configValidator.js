@@ -27,6 +27,7 @@ const configSchema = yup.object({
   IS_PROD_ENV: yup.boolean().when('NODE_ENV', checkEnv(envsMap.prod)),
   PORT: yup.number().required(),
   HOST: yup.string().required(),
+  LOG_LEVEL: yup.string().required(),
 }).required();
 
 export const configValidator = (envName) => {
