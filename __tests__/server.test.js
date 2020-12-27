@@ -18,7 +18,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(200);
-    expect(payload).toEqual('');
+    expect(payload).toEqual('vk_group_id is undefined');
   });
 
   test('Get main page with query', async () => {
@@ -31,6 +31,6 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(200);
-    expect(payload).toEqual('Hello');
+    expect(payload).toEqual('vk_group_id is Hello');
   });
 });
