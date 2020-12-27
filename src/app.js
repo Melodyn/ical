@@ -17,7 +17,7 @@ const app = async (envName) => {
   });
 
   server.get('/', (req, res) => {
-    res.send(req.query.vk_group_id);
+    res.send(`vk_group_id is ${req.query.vk_group_id}`);
   });
 
   await server.listen(config.PORT, config.HOST);
