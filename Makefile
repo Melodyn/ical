@@ -1,3 +1,4 @@
+setup: install-dependencies create-config run
 install-dependencies:
 	npm ci
 create-config:
@@ -18,10 +19,10 @@ test-dev:
 	NODE_ENV=test npm test -s -- --watchAll
 
 # usage with docker
-container_setup: container_build container_dependency container_start
-container_build:
+container-setup: container-build container-dependency container-start
+container-build:
 	docker-compose build
-container_dependency:
+container-dependency:
 	docker-compose run --rm ical make install-dependencies
-container_start:
+container-run: create-config
 	docker-compose run --rm ical /bin/bash
