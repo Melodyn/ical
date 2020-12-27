@@ -3,7 +3,7 @@
 import app from '../index.js';
 
 app(process.env.NODE_ENV)
-  .then((err) => {
+  .catch((err) => {
     console.error(err);
     process.exit(1);
   });

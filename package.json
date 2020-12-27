@@ -15,8 +15,7 @@
     "iCal": "./bin/index.js"
   },
   "scripts": {
-    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles --forceExit",
-    "start": "./bin/index.js"
+    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles --forceExit"
   },
   "repository": {
     "type": "git",
