@@ -6,3 +6,11 @@ services:
       - .:/usr/src/app
     image: melodyn:ical
     container_name: melodyn_ical
+  postgres:
+    image: library/postgres:12
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ical
+    ports:
+    - 5432:5432

@@ -1,10 +1,15 @@
-import yup from 'yup';
-import path from 'path';
-import _ from 'lodash';
-import dotenv from 'dotenv';
-import { ConfigValidationError } from './errors.js';
+// import yup from 'yup';
+// import path from 'path';
+// import _ from 'lodash';
+// import dotenv from 'dotenv';
+// import { ConfigValidationError } from './errors.js';
+const yup = require('yup');
+const path = require('path');
+const _ = require('lodash');
+const dotenv = require('dotenv');
+const { ConfigValidationError } = require('./errors.cjs');
 
-export const envsMap = {
+const envsMap = {
   prod: 'production',
   dev: 'development',
   test: 'test',
@@ -37,7 +42,7 @@ const configSchema = yup.object({
   DB_NAME: yup.string().required(),
 }).required();
 
-export const configValidator = (envName) => {
+const configValidator = (envName) => {
   const envExists = _.has(envConfigMap, envName);
   if (!envExists) throw new Error(`Unexpected env "${envName}"`);
   const envConfig = envConfigMap[envName];
@@ -48,3 +53,5 @@ export const configValidator = (envName) => {
       throw new ConfigValidationError(err);
     });
 };
+
+module.exports = { configValidator, envsMap };

@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import fastify from 'fastify';
-// import { createConnection } from 'typeorm';
-import { configValidator } from '../utils/configValidator.js';
-// import Club from '../entity/Club.cjs';
+import { createConnection } from 'typeorm';
+import { configValidator } from '../utils/configValidator.cjs';
+import ormconfig from '../ormconfig.cjs';
 
 const initServer = (config) => {
   const server = fastify({
@@ -19,17 +19,10 @@ const initServer = (config) => {
   return server;
 };
 
-// const initDatabase = (config) => createConnection({
-//   type: config.DB_TYPE,
-//   host: config.DB_HOST,
-//   port: config.DB_PORT,
-//   username: config.DB_USER,
-//   password: config.DB_PASS,
-//   database: config.DB_NAME,
-//   entities: [Club],
-//   synchronize: false,
-//   logging: ['query', 'error', 'migration'],
-// });
+const initDatabase = () => ormconfig.then((config) => {
+  console.log({ config });
+  return createConnection(config);
+});
 
 const app = async (envName) => {
   process.on('unhandledRejection', (err) => {
@@ -39,13 +32,15 @@ const app = async (envName) => {
 
   const config = await configValidator(envName);
   const server = initServer(config);
-  // const db = await initDatabase(config)
-  //   .catch(console.error);
+  const db = await initDatabase(config);
+  await db.runMigrations();
+  await db.synchronize();
 
   await server.listen(config.PORT, config.HOST);
 
   const stop = async () => {
     server.log.info('Stop app', config);
+    await db.close();
     await server.close();
     server.log.info('App stopped');
 

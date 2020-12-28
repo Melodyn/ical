@@ -1,11 +1,13 @@
 /* eslint-disable max-classes-per-file */
 
-export class ICalAppError extends Error {}
+class ICalAppError extends Error {}
 
-export class ConfigValidationError extends ICalAppError {
+class ConfigValidationError extends ICalAppError {
   constructor(validationError) {
     super();
     this.name = 'Config validation error';
     this.message = validationError.errors.join('\n');
   }
 }
+
+module.exports = { ICalAppError, ConfigValidationError };

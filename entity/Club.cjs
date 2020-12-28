@@ -16,9 +16,11 @@ module.exports = new EntitySchema({
     },
     calendarId: {
       type: 'varchar',
+      nullable: false,
     },
     extra: {
       type: 'jsonb',
+      default: '{}',
     },
     createdAt: {
       type: 'timestamp',

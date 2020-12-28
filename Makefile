@@ -27,9 +27,10 @@ container-dependency:
 container-run: create-config
 	docker-compose run --rm ical /bin/bash
 
+# database
 postgres:
-	docker run --rm -it --name postgres -p 5432:5432 \
-		-e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=ical \
-		-d postgres:12 || true
+	docker-compose up -d postgres
 postgres-stop:
-	docker stop postgres || true
+	docker-compose stop postgres
+migration-generate:
+	NODE_ENV=development npx typeorm -f ormconfig.cjs migration:generate -n ${name}
