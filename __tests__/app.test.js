@@ -1,4 +1,5 @@
 import createApp from '../index.js';
+import { ConfigValidationError } from '../utils/errors.js';
 
 describe('Positive cases', () => {
   let app;
@@ -28,7 +29,7 @@ describe('Negative cases', () => {
 
   test('Invalid config', async () => {
     const err = await createApp('invalid').catch((e) => e);
-    expect(err).toBeInstanceOf(Error);
-    expect(err.message.includes('Config validation error')).toBe(true);
+    expect(err).toBeInstanceOf(ConfigValidationError);
+    expect(err.message.includes('HOST is a required field')).toBe(true);
   });
 });

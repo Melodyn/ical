@@ -2,6 +2,7 @@ import yup from 'yup';
 import path from 'path';
 import _ from 'lodash';
 import dotenv from 'dotenv';
+import { ConfigValidationError } from './errors.js';
 
 export const envsMap = {
   prod: 'production',
@@ -28,6 +29,12 @@ const configSchema = yup.object({
   PORT: yup.number().required(),
   HOST: yup.string().required(),
   LOG_LEVEL: yup.string().required(),
+  DB_TYPE: yup.string().required(),
+  DB_HOST: yup.string().required(),
+  DB_PORT: yup.number().required(),
+  DB_USER: yup.string().required(),
+  DB_PASS: yup.string().required(),
+  DB_NAME: yup.string().required(),
 }).required();
 
 export const configValidator = (envName) => {
@@ -38,7 +45,6 @@ export const configValidator = (envName) => {
   return configSchema
     .validate(envConfig, { abortEarly: false })
     .catch((err) => {
-      const errorsString = ['Config validation error:', ...err.errors].join('\n');
-      throw new Error(errorsString);
+      throw new ConfigValidationError(err);
     });
 };
