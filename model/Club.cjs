@@ -1,7 +1,7 @@
 class Club {
-  constructor(id, vkGroupId, calendarId, extra, createdAt, updatedAt) {
+  constructor(id, clubId, calendarId, extra, createdAt, updatedAt) {
     this.id = id;
-    this.vkGroupId = vkGroupId;
+    this.clubId = clubId;
     this.calendarId = calendarId;
     this.extra = extra;
     this.createdAt = createdAt;

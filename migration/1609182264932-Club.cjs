@@ -11,3 +11,5 @@ class Club1609182264932 {
     await queryRunner.query('DROP TABLE "club"');
   }
 }
+
+module.exports = Club1609182264932;

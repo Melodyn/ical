@@ -17,7 +17,8 @@ const initServer = (config, db) => {
     await clubRepository.save({
       clubId: 123456,
       calendarId: 'hello@world',
-    });
+    })
+      .catch(console.error);
     res.send(`vk_group_id is ${req.query.vk_group_id}`);
   });
 
@@ -40,10 +41,9 @@ const app = async (envName) => {
 
   const config = await configValidator(envName);
   const db = await initDatabase(config);
-  await db.synchronize();
-  // await db.runMigrations();
   const server = initServer(config, db);
 
+  await db.runMigrations();
   await server.listen(config.PORT, config.HOST);
 
   const stop = async () => {
