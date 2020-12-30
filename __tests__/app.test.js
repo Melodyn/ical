@@ -1,5 +1,5 @@
 import createApp from '../index.js';
-import { ConfigValidationError } from '../utils/errors.js';
+import { ConfigValidationError } from '../utils/errors.cjs';
 
 describe('Positive cases', () => {
   let app;
