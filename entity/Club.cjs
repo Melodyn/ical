@@ -10,7 +10,7 @@ module.exports = new EntitySchema({
       type: 'int',
       generated: true,
     },
-    vkGroupId: {
+    clubId: {
       type: 'int',
       nullable: false,
     },
@@ -24,9 +24,17 @@ module.exports = new EntitySchema({
     },
     createdAt: {
       type: 'timestamp',
+      createDate: true,
     },
     updatedAt: {
       type: 'timestamp',
+      updateDate: true,
     },
   },
+  uniques: [
+    {
+      name: 'club_calendar',
+      columns: ['clubId', 'calendarId'],
+    },
+  ],
 });

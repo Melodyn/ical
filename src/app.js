@@ -4,7 +4,7 @@ import { createConnection } from 'typeorm';
 import { configValidator } from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
 
-const initServer = (config) => {
+const initServer = (config, db) => {
   const server = fastify({
     logger: {
       prettyPrint: config.IS_DEV_ENV,
@@ -12,17 +12,25 @@ const initServer = (config) => {
     },
   });
 
-  server.get('/', (req, res) => {
+  server.get('/', async (req, res) => {
+    const clubRepository = db.getRepository('Club');
+    await clubRepository.save({
+      clubId: 123456,
+      calendarId: 'hello@world',
+    });
     res.send(`vk_group_id is ${req.query.vk_group_id}`);
+  });
+
+  server.get('/hello', async (req, res) => {
+    const clubRepository = db.getRepository('Club');
+    const clubs = await clubRepository.find();
+    res.send(JSON.stringify(clubs));
   });
 
   return server;
 };
 
-const initDatabase = () => ormconfig.then((config) => {
-  console.log({ config });
-  return createConnection(config);
-});
+const initDatabase = () => ormconfig.then(createConnection);
 
 const app = async (envName) => {
   process.on('unhandledRejection', (err) => {
@@ -31,10 +39,10 @@ const app = async (envName) => {
   });
 
   const config = await configValidator(envName);
-  const server = initServer(config);
   const db = await initDatabase(config);
-  await db.runMigrations();
   await db.synchronize();
+  // await db.runMigrations();
+  const server = initServer(config, db);
 
   await server.listen(config.PORT, config.HOST);
 
