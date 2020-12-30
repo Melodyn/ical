@@ -15,7 +15,7 @@
     "iCal": "./bin/index.js"
   },
   "scripts": {
-    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles"
+    "test": "npx -n '--experimental-vm-modules --no-warnings' jest crud --colors --detectOpenHandles"
   },
   "repository": {
     "type": "git",
@@ -40,7 +40,6 @@
     "node-ical": "^0.12.3",
     "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
-    "sqlite3": "^5.0.0",
     "typeorm": "^0.2.29",
     "yup": "^0.32.8"
   },

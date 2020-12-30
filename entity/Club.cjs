@@ -4,6 +4,7 @@ const Club = require('../model/Club.cjs');
 module.exports = new EntitySchema({
   name: 'Club',
   target: Club,
+  tableName: 'clubs',
   columns: {
     id: {
       primary: true,

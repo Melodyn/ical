@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import fastify from 'fastify';
-// import { createConnection } from 'typeorm';
+import { createConnection } from 'typeorm';
 import { configValidator } from '../utils/configValidator.cjs';
-// import ormconfig from '../ormconfig.cjs';
+import ormconfig from '../ormconfig.cjs';
 
-const initServer = (config) => {
+const initServer = (config, db) => {
   const server = fastify({
     logger: {
       prettyPrint: config.IS_DEV_ENV,
@@ -13,25 +13,24 @@ const initServer = (config) => {
   });
 
   server.get('/', async (req, res) => {
-    // const clubRepository = db.getRepository('Club');
-    // await clubRepository.save({
-    //   clubId: 123456,
-    //   calendarId: 'hello@world',
-    // })
-    //   .catch(console.error);
     res.send(`vk_group_id is ${req.query.vk_group_id}`);
   });
 
   server.get('/hello', async (req, res) => {
-    // const clubRepository = db.getRepository('Club');
-    // const clubs = await clubRepository.find();
-    res.send(JSON.stringify([]));
+    const clubRepository = db.getRepository('Club');
+    await clubRepository.save({
+      clubId: -123456,
+      calendarId: 'hello@world',
+    })
+      .catch(console.error);
+    const clubs = await clubRepository.find();
+    res.send(JSON.stringify(clubs));
   });
 
   return server;
 };
 
-// const initDatabase = () => ormconfig.then(createConnection);
+const initDatabase = () => ormconfig.then(createConnection);
 
 const app = async (envName) => {
   process.on('unhandledRejection', (err) => {
@@ -40,15 +39,15 @@ const app = async (envName) => {
   });
 
   const config = await configValidator(envName);
-  // const db = await initDatabase(config);
-  const server = initServer(config);
+  const db = await initDatabase(config);
+  const server = initServer(config, db);
 
-  // await db.runMigrations();
+  await db.runMigrations();
   await server.listen(config.PORT, config.HOST);
 
   const stop = async () => {
     server.log.info('Stop app', config);
-    // await db.close();
+    await db.close();
     await server.close();
     server.log.info('App stopped');
 
@@ -61,6 +60,7 @@ const app = async (envName) => {
 
   return {
     server,
+    db,
     stop,
   };
 };
