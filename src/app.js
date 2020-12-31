@@ -3,8 +3,9 @@ import fastify from 'fastify';
 import { createConnection } from 'typeorm';
 import { configValidator } from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
+import routes from '../routes/calendar.js';
 
-const initServer = (config, db) => {
+const initServer = (config) => {
   const server = fastify({
     logger: {
       prettyPrint: config.IS_DEV_ENV,
@@ -12,25 +13,7 @@ const initServer = (config, db) => {
     },
   });
 
-  server.get('/', async (req, res) => {
-    res.send(`vk_group_id is ${req.query.vk_group_id}`);
-  });
-
-  server.get('/calendar', async (req, res) => {
-    const clubRepository = db.getRepository('Calendar');
-    const clubs = await clubRepository.find();
-    res.send(JSON.stringify(clubs));
-  });
-
-  server.post('/calendar', async (req, res) => {
-    const clubRepository = db.getRepository('Calendar');
-    await clubRepository.save({
-      clubId: req.query.vk_group_id,
-      calendarId: req.body.calendarId,
-    })
-      .catch(console.error);
-    res.send('ok');
-  });
+  routes.forEach((route) => server.route(route));
 
   return server;
 };
@@ -48,6 +31,8 @@ const app = async (envName) => {
   const server = initServer(config, db);
 
   await db.runMigrations();
+  server.decorate('db', db);
+
   await server.listen(config.PORT, config.HOST);
 
   const stop = async () => {
