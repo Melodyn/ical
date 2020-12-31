@@ -16,15 +16,20 @@ const initServer = (config, db) => {
     res.send(`vk_group_id is ${req.query.vk_group_id}`);
   });
 
-  server.get('/hello', async (req, res) => {
+  server.get('/calendar', async (req, res) => {
+    const clubRepository = db.getRepository('Club');
+    const clubs = await clubRepository.find();
+    res.send(JSON.stringify(clubs));
+  });
+
+  server.post('/calendar', async (req, res) => {
     const clubRepository = db.getRepository('Club');
     await clubRepository.save({
-      clubId: -123456,
+      clubId: 12345,
       calendarId: 'hello@world',
     })
       .catch(console.error);
-    const clubs = await clubRepository.find();
-    res.send(JSON.stringify(clubs));
+    res.send('ok');
   });
 
   return server;
