@@ -1,4 +1,4 @@
-class Club {
+class Calendar {
   constructor(id, clubId, calendarId, extra, createdAt, updatedAt) {
     this.id = id;
     this.clubId = clubId;
@@ -9,4 +9,4 @@ class Club {
   }
 }
 
-module.exports = Club;
+module.exports = Calendar;

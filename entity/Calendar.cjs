@@ -1,10 +1,10 @@
 const { EntitySchema } = require('typeorm');
-const Club = require('../model/Club.cjs');
+const Calendar = require('../model/Calendar.cjs');
 
 module.exports = new EntitySchema({
-  name: 'Club',
-  target: Club,
-  tableName: 'clubs',
+  name: 'Calendar',
+  target: Calendar,
+  tableName: 'calendars',
   columns: {
     id: {
       primary: true,

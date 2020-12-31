@@ -17,13 +17,13 @@ const initServer = (config, db) => {
   });
 
   server.get('/calendar', async (req, res) => {
-    const clubRepository = db.getRepository('Club');
+    const clubRepository = db.getRepository('Calendar');
     const clubs = await clubRepository.find();
     res.send(JSON.stringify(clubs));
   });
 
   server.post('/calendar', async (req, res) => {
-    const clubRepository = db.getRepository('Club');
+    const clubRepository = db.getRepository('Calendar');
     await clubRepository.save({
       clubId: req.query.vk_group_id,
       calendarId: req.body.calendarId,

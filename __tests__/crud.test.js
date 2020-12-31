@@ -1,4 +1,4 @@
-import clubs from '../__fixtures__/clubs.js';
+import calendars from '../__fixtures__/calendars.js';
 import createApp from '../index.js';
 
 let app;
@@ -7,7 +7,7 @@ let database;
 
 beforeAll(async () => {
   app = await createApp(process.env.NODE_ENV);
-  clubRepo = app.db.getRepository('Club');
+  clubRepo = app.db.getRepository('Calendar');
   database = app.db.entityMetadatas.map(
     ({ name, tableName }) => [tableName, app.db.getRepository(name)],
   );
@@ -16,8 +16,7 @@ beforeAll(async () => {
 afterAll(async () => {
   if (app) {
     const rollbackPromises = database.map(([tableName, repo]) => repo
-      .query(`TRUNCATE TABLE ${tableName};
-      ALTER SEQUENCE ${tableName}_id_seq RESTART WITH 1`));
+      .query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY;`));
 
     await Promise.all(rollbackPromises);
     await app.stop();
@@ -40,10 +39,10 @@ describe('Positive cases', () => {
       method: 'POST',
       path: '/calendar',
       query: {
-        vk_group_id: clubs.world.clubId,
+        vk_group_id: calendars.world.clubId,
       },
       payload: {
-        calendarId: clubs.world.calendarId,
+        calendarId: calendars.world.calendarId,
       },
     });
 
@@ -53,9 +52,9 @@ describe('Positive cases', () => {
     const club = await clubRepo.findOne({ calendarId: 'hello@world' });
     expect(club).toEqual(expect.objectContaining({
       id: expect.any(Number),
-      clubId: clubs.world.clubId,
-      calendarId: clubs.world.calendarId,
+      clubId: calendars.world.clubId,
+      calendarId: calendars.world.calendarId,
     }));
-    clubs.world.id = club.id;
+    calendars.world.id = club.id;
   });
 });
