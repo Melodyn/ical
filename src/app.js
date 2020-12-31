@@ -25,8 +25,8 @@ const initServer = (config, db) => {
   server.post('/calendar', async (req, res) => {
     const clubRepository = db.getRepository('Club');
     await clubRepository.save({
-      clubId: 12345,
-      calendarId: 'hello@world',
+      clubId: req.query.vk_group_id,
+      calendarId: req.body.calendarId,
     })
       .catch(console.error);
     res.send('ok');

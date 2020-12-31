@@ -9,6 +9,8 @@ run:
 	NODE_ENV=development nodemon ./bin/index.js
 run-heroku:
 	NODE_ENV=development heroku local web
+stop: postgres-stop postgres-test-stop
+	kill -15 `pidof node` || true
 
 # dev
 lint:

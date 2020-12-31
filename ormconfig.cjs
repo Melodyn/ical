@@ -12,7 +12,7 @@ const configByEnv = {
     entities: [path.join(__dirname, 'entity', '*.cjs')],
     migrations: [path.join(__dirname, 'migration', '*.cjs')],
     synchronize: false,
-    logging: ['query', 'error', 'migration'],
+    logging: false,
   }),
   [envsMap.dev]: (config) => ({
     type: config.DB_TYPE,
