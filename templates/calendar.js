@@ -3,7 +3,7 @@ const renderForm = (currentUrl, calendarLink = '') => [
   `<input type="submit" value="${calendarLink ? 'Изменить' : 'Сохранить'}">`,
   `<input id="calendarLink" name="calendarLink" type="url" width="50%" value="${calendarLink}">`,
   '</form>',
-  '<br/><br/>',
+  '<hr/>',
   `${calendarLink
     ? ''
     : '<p>Укажите общедоступную ссылку на календарь вида <span style="font-family: monospace">https://calendar.google.com/calendar/embed?src=ob1gcsbo877671s4295f693nv0%40group.calendar.google.com&ctz=Europe%2FMoscow</span> и сохраните, чтобы привязать календарь к сообществу.</p>'}`,
