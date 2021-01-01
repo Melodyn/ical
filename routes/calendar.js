@@ -36,7 +36,7 @@ const routes = [
         '<center>',
         '<h3>Приложению требуется установка</h3>',
         '<p>Добавьте приложение в сообщество по ссылке:<br/>',
-        `<a href="${appLink}">${appLink}</a>`,
+        `<a href="${appLink}" target="_blank">${appLink}</a>`,
         '</p>',
         '</center>',
       ];
