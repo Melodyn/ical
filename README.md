@@ -1,8 +1,8 @@
 # iCal
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)
-[![Production CI](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A%Production+CI%22)
-[![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A%Staging+CI%22)
+[![Production CI](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
+[![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
 |![логотип](./logo.png)|Node.js-приложение для vk.com. Разрабатывается в формате лайвкодинга
 |---|---|
