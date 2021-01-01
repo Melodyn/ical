@@ -2,12 +2,12 @@ import calendars from '../__fixtures__/calendars.js';
 import createApp from '../index.js';
 
 let app;
-let clubRepo;
+let calendarRepo;
 let database;
 
 beforeAll(async () => {
   app = await createApp(process.env.NODE_ENV);
-  clubRepo = app.db.getRepository('Calendar');
+  calendarRepo = app.db.getRepository('Calendar');
   database = app.db.entityMetadatas.map(
     ({ name, tableName }) => [tableName, app.db.getRepository(name)],
   );
@@ -34,7 +34,43 @@ describe('Positive cases', () => {
     expect(JSON.parse(payload)).toEqual([]);
   });
 
-  test('Create calendar', async () => {
+  test.each(Object.values(calendars))('Create calendar %o', async (calendar) => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'POST',
+      path: '/calendar',
+      query: {
+        vk_group_id: calendar.clubId,
+      },
+      payload: {
+        calendarId: calendar.calendarId,
+      },
+    });
+
+    expect(statusCode).toEqual(200);
+    expect(payload).not.toBeFalsy();
+
+    const club = await calendarRepo.findOne({ calendarId: calendar.calendarId });
+    expect(club).toEqual(expect.objectContaining({
+      id: expect.any(Number),
+      clubId: calendar.clubId,
+      calendarId: calendar.calendarId,
+    }));
+    calendar.id = club.id;
+  });
+
+  test('Get calendars', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'GET',
+      path: '/calendar',
+    });
+
+    expect(statusCode).toEqual(200);
+    expect(JSON.parse(payload)).not.toEqual([]);
+  });
+});
+
+describe('Negative cases', () => {
+  test('Create duplicate', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
@@ -46,15 +82,10 @@ describe('Positive cases', () => {
       },
     });
 
-    expect(statusCode).toEqual(200);
-    expect(payload).not.toBeFalsy();
+    expect(statusCode).not.toEqual(200);
+    expect(payload.includes('error')).not.toBeFalsy();
 
-    const club = await clubRepo.findOne({ calendarId: 'hello@world' });
-    expect(club).toEqual(expect.objectContaining({
-      id: expect.any(Number),
-      clubId: calendars.world.clubId,
-      calendarId: calendars.world.calendarId,
-    }));
-    calendars.world.id = club.id;
+    const clubs = await calendarRepo.find({ calendarId: calendars.world.calendarId });
+    expect(clubs).toHaveLength(1);
   });
 });

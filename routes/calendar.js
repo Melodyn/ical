@@ -16,8 +16,7 @@ const routes = [
       await clubRepository.save({
         clubId: req.query.vk_group_id,
         calendarId: req.body.calendarId,
-      })
-        .catch(console.error);
+      });
       res.send('ok');
     },
   },
