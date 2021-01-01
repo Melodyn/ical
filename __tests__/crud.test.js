@@ -48,7 +48,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(JSON.parse(payload)).toEqual([]);
+    expect(payload).toMatch(/отсутствует календарь/gim);
   });
 
   test.each(Object.values(calendars))('Create calendar %o', async (calendar) => {
@@ -56,7 +56,7 @@ describe('Positive cases', () => {
       ...users.admin,
       vk_group_id: calendar.clubId,
     };
-    const { statusCode, payload } = await app.server.inject({
+    const { statusCode, headers } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
       query: {
@@ -64,23 +64,27 @@ describe('Positive cases', () => {
         sign: buildSign(query, app.config.VK_PROTECTED_KEY),
       },
       payload: {
-        calendarId: calendar.calendarId,
+        calendarLink: calendar.calendarLink,
       },
     });
 
-    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).not.toBeFalsy();
+    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
+    expect(headers.location).toMatch(/\/calendar\?/gim);
 
-    const club = await calendarRepo.findOne({ calendarId: calendar.calendarId });
-    expect(club).toEqual(expect.objectContaining({
+    const clubCalendar = await calendarRepo.findOne({
+      clubId: calendar.clubId,
+      calendarId: calendar.calendarId,
+    });
+    expect(clubCalendar).toEqual(expect.objectContaining({
       id: expect.any(Number),
       clubId: calendar.clubId,
       calendarId: calendar.calendarId,
+      extra: { calendarLink: calendar.calendarLink },
     }));
-    calendar.id = club.id;
+    calendar.id = clubCalendar.id;
   });
 
-  test('Get calendars', async () => {
+  test('Get calendar', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
       path: '/calendar',
@@ -88,7 +92,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(JSON.parse(payload)).not.toEqual([]);
+    expect(payload).toMatch(/iframe/gim);
   });
 
   test('Redirect to main', async () => {
@@ -122,9 +126,9 @@ describe('Negative cases', () => {
     });
 
     expect(statusCode).not.toEqual(constants.HTTP_STATUS_OK);
-    expect(payload.includes('error')).not.toBeFalsy();
+    expect(payload).toMatch(/calendarLink/gim);
 
     const clubs = await calendarRepo.find({ calendarId: calendars.world.calendarId });
-    expect(clubs).toHaveLength(1);
+    expect(clubs).toHaveLength(2);
   });
 });

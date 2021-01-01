@@ -36,7 +36,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(JSON.parse(payload)).toEqual([]);
+    expect(payload).not.toBeFalsy();
   });
 
   test('Route for all roles, user role "admin"', async () => {
@@ -47,21 +47,21 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(JSON.parse(payload)).toEqual([]);
+    expect(payload).not.toBeFalsy();
   });
 
   test('Route for role "admin"', async () => {
-    const { statusCode, payload } = await app.server.inject({
+    const { statusCode, headers } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
       query: users.admin,
       payload: {
-        calendarId: calendars.world.calendarId,
+        calendarLink: calendars.world.calendarLink,
       },
     });
 
-    expect(statusCode).toEqual(200);
-    expect(payload).not.toBeFalsy();
+    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
+    expect(headers.location).toMatch(/\/calendar\?/gim);
   });
 });
 
@@ -97,7 +97,7 @@ describe('Negative cases', () => {
       path: '/calendar',
       query: users.member,
       payload: {
-        calendarId: calendars.world.calendarId,
+        calendarLink: calendars.world.calendarLink,
       },
     });
 
