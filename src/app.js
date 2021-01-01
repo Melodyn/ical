@@ -52,20 +52,19 @@ const setAuth = (config, server) => {
   });
 
   server.decorate('vkAdminAuth', (req, res, done) => {
-    let currentUser = req.user;
-
     if (!req.isAuthenticated) {
       const { isValid, user, error } = vkUserValidator(req);
       if (!isValid) {
         return done(error);
       }
 
-      currentUser = user;
+      req.isAuthenticated = true;
+      req.user = user;
     }
 
-    return currentUser.isAdmin
+    return req.user.isAdmin
       ? done()
-      : done(new AuthError(`Access denied for user with role "${currentUser.viewerGroupRole}"`, req.query));
+      : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
   });
 
   server.register(fastifyAuth);
