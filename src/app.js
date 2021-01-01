@@ -10,7 +10,7 @@ import { createConnection } from 'typeorm';
 import { configValidator } from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
 import routes from '../routes/calendar.js';
-import createVkUserValidator from '../utils/vkUserValidator.js';
+import { createValidator as createVkUserValidator } from '../utils/vkUserValidator.js';
 import errors from '../utils/errors.cjs';
 
 const { ICalAppError, AuthError } = errors;
@@ -121,6 +121,7 @@ const app = async (envName) => {
 
   return {
     server,
+    config,
     db,
     stop,
   };

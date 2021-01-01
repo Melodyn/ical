@@ -1,6 +1,7 @@
 import { constants } from 'http2';
 import users from '../__fixtures__/users.js';
 import calendars from '../__fixtures__/calendars.js';
+import { buildSign } from '../utils/vkUserValidator.js';
 import createApp from '../index.js';
 
 let app;
@@ -11,6 +12,9 @@ beforeAll(async () => {
   database = app.db.entityMetadatas.map(
     ({ name, tableName }) => [tableName, app.db.getRepository(name)],
   );
+  Object.values(users).forEach((user) => {
+    user.sign = buildSign(user, app.config.VK_PROTECTED_KEY);
+  });
 });
 
 afterAll(async () => {

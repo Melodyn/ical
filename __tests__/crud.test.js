@@ -1,6 +1,7 @@
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
+import { buildSign } from '../utils/vkUserValidator';
 
 let app;
 let calendarRepo;
@@ -12,6 +13,9 @@ beforeAll(async () => {
   database = app.db.entityMetadatas.map(
     ({ name, tableName }) => [tableName, app.db.getRepository(name)],
   );
+  Object.values(users).forEach((user) => {
+    user.sign = buildSign(user, app.config.VK_PROTECTED_KEY);
+  });
 });
 
 afterAll(async () => {
@@ -36,29 +40,33 @@ describe('Positive cases', () => {
     expect(JSON.parse(payload)).toEqual([]);
   });
 
-  test('Create calendar', async () => {
+  test.each(Object.values(calendars))('Create calendar %o', async (calendar) => {
+    const query = {
+      ...users.admin,
+      vk_group_id: calendar.clubId,
+    };
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
       query: {
-        ...users.admin,
-        vk_group_id: calendars.world.clubId,
+        ...query,
+        sign: buildSign(query, app.config.VK_PROTECTED_KEY),
       },
       payload: {
-        calendarId: calendars.world.calendarId,
+        calendarId: calendar.calendarId,
       },
     });
 
     expect(statusCode).toEqual(200);
     expect(payload).not.toBeFalsy();
 
-    const club = await calendarRepo.findOne({ calendarId: calendars.world.calendarId });
+    const club = await calendarRepo.findOne({ calendarId: calendar.calendarId });
     expect(club).toEqual(expect.objectContaining({
       id: expect.any(Number),
-      clubId: calendars.world.clubId,
-      calendarId: calendars.world.calendarId,
+      clubId: calendar.clubId,
+      calendarId: calendar.calendarId,
     }));
-    calendars.world.id = club.id;
+    calendar.id = club.id;
   });
 
   test('Get calendars', async () => {

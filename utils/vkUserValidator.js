@@ -23,30 +23,34 @@ const validationResult = ({ error = null, user = null, params = {} }) => ({
   error: createError(error, params),
 });
 
-const createValidator = (secret) => (request) => {
-  const { query = {} } = request;
-  const vkSign = query.sign;
-  if (!vkSign) return validationResult({ error: 'Required parameter "sign" is missing', params: request.query });
-
+export const buildSign = (query, secret) => {
   const vkQueryParams = Object.fromEntries(
     Object.entries(query)
       .filter(([key]) => key.startsWith('vk_'))
       .sort(),
   );
-  const vkQueryString = qs.stringify(vkQueryParams);
-  const queryParamsSign = crypto
+
+  return crypto
     .createHmac('sha256', secret)
-    .update(vkQueryString)
+    .update(qs.stringify(vkQueryParams))
     .digest()
     .toString('base64')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=$/, '');
+};
+
+export const createValidator = (secret) => (request) => {
+  const { query = {} } = request;
+  const vkSign = query.sign;
+  if (!vkSign) return validationResult({ error: 'Required parameter "sign" is missing', params: request.query });
+
+  const queryParamsSign = buildSign(query, secret);
 
   if (vkSign !== queryParamsSign) {
     return validationResult({
       error: 'Incorrect sign',
-      params: request.query,
+      params: query,
     });
   }
 
@@ -64,5 +68,3 @@ const createValidator = (secret) => (request) => {
 
   return validationResult({ user });
 };
-
-export default createValidator;
