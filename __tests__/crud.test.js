@@ -1,4 +1,5 @@
 import calendars from '../__fixtures__/calendars.js';
+import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
 
 let app;
@@ -28,40 +29,43 @@ describe('Positive cases', () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
       path: '/calendar',
+      query: users.member,
     });
 
     expect(statusCode).toEqual(200);
     expect(JSON.parse(payload)).toEqual([]);
   });
 
-  test.each(Object.values(calendars))('Create calendar %o', async (calendar) => {
+  test('Create calendar', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
       query: {
-        vk_group_id: calendar.clubId,
+        ...users.admin,
+        vk_group_id: calendars.world.clubId,
       },
       payload: {
-        calendarId: calendar.calendarId,
+        calendarId: calendars.world.calendarId,
       },
     });
 
     expect(statusCode).toEqual(200);
     expect(payload).not.toBeFalsy();
 
-    const club = await calendarRepo.findOne({ calendarId: calendar.calendarId });
+    const club = await calendarRepo.findOne({ calendarId: calendars.world.calendarId });
     expect(club).toEqual(expect.objectContaining({
       id: expect.any(Number),
-      clubId: calendar.clubId,
-      calendarId: calendar.calendarId,
+      clubId: calendars.world.clubId,
+      calendarId: calendars.world.calendarId,
     }));
-    calendar.id = club.id;
+    calendars.world.id = club.id;
   });
 
   test('Get calendars', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
       path: '/calendar',
+      query: users.member,
     });
 
     expect(statusCode).toEqual(200);
@@ -75,6 +79,7 @@ describe('Negative cases', () => {
       method: 'POST',
       path: '/calendar',
       query: {
+        ...users.admin,
         vk_group_id: calendars.world.clubId,
       },
       payload: {

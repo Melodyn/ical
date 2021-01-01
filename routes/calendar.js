@@ -2,6 +2,9 @@ const routes = [
   {
     method: 'GET',
     url: '/calendar',
+    preHandler(...params) {
+      return this.auth([this.vkUserAuth])(...params);
+    },
     async handler(req, res) {
       const clubRepository = this.db.getRepository('Calendar');
       const clubs = await clubRepository.find();
@@ -11,6 +14,9 @@ const routes = [
   {
     method: 'POST',
     url: '/calendar',
+    preHandler(...params) {
+      return this.auth([this.vkAdminAuth])(...params);
+    },
     async handler(req, res) {
       const clubRepository = this.db.getRepository('Calendar');
       await clubRepository.save({
