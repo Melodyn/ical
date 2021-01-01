@@ -1,7 +1,7 @@
 # iCal
 
-[![Node.js CI](../../workflows/Node.js%20CI/badge.svg)](../../actions?query=workflow%3A%22Node.js+CI%22)
 [![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)
+[![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A%Staging+CI%22)
 
 |![логотип](./logo.png)|Node.js-приложение для vk.com. Разрабатывается в формате лайвкодинга
 |---|---|
