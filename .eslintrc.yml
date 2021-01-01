@@ -19,3 +19,8 @@ rules:
   import/extensions: off
   class-methods-use-this: off
   no-underscore-dangle: [1, { allow: ['__dirname'] }]
+
+overrides:
+  - files: '*.test.js'
+    rules:
+      no-param-reassign: off
