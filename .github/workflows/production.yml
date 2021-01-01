@@ -61,3 +61,4 @@ jobs:
           HD_VK_APP_ID: ${{ secretes.VK_APP_ID }}
           HD_VK_PROTECTED_KEY: ${{ secretes.VK_PROTECTED_KEY }}
           HD_VK_SERVICES_KEY: ${{ secretes.VK_SERVICES_KEY }}
+          HD_ROLLBAR_TOKEN: ${{ secretes.ROLLBAR_TOKEN }}
