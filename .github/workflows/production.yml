@@ -38,7 +38,7 @@ jobs:
 
   deploy:
     needs: pre-deploy
-    environment: prodcution
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -52,13 +52,13 @@ jobs:
           HD_NODE_ENV: production
           HD_HOST: 0.0.0.0
           HD_LOG_LEVEL: info
-          HD_DB_TYPE: ${{ secretes.DB_TYPE }}
-          HD_DB_HOST: ${{ secretes.DB_HOST }}
-          HD_DB_PORT: ${{ secretes.DB_PORT }}
-          HD_DB_USER: ${{ secretes.DB_USER }}
-          HD_DB_PASS: ${{ secretes.DB_PASS }}
-          HD_DB_NAME: ${{ secretes.DB_NAME }}
-          HD_VK_APP_ID: ${{ secretes.VK_APP_ID }}
-          HD_VK_PROTECTED_KEY: ${{ secretes.VK_PROTECTED_KEY }}
-          HD_VK_SERVICES_KEY: ${{ secretes.VK_SERVICES_KEY }}
-          HD_ROLLBAR_TOKEN: ${{ secretes.ROLLBAR_TOKEN }}
+          HD_DB_TYPE: ${{ secrets.DB_TYPE }}
+          HD_DB_HOST: ${{ secrets.DB_HOST }}
+          HD_DB_PORT: ${{ secrets.DB_PORT }}
+          HD_DB_USER: ${{ secrets.DB_USER }}
+          HD_DB_PASS: ${{ secrets.DB_PASS }}
+          HD_DB_NAME: ${{ secrets.DB_NAME }}
+          HD_VK_APP_ID: ${{ secrets.VK_APP_ID }}
+          HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
+          HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
+          HD_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
