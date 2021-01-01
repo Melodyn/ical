@@ -13,6 +13,11 @@ const camelize = (text, separator = '_') => {
   return [firstWord, ...camelizedTail].join('');
 };
 
+const numberify = (value) => {
+  const parsed = parseFloat(value);
+  return Number.isNaN(parsed) ? value : parsed;
+};
+
 const createError = (message, params) => ((message === null)
   ? null
   : new AuthError(message, params));
@@ -57,7 +62,7 @@ export const createValidator = (secret) => (request) => {
   const userParams = Object.fromEntries(
     Object.entries(query)
       .filter(([key]) => key.startsWith('vk_'))
-      .map(([key, value]) => [removePrefix(key), value])
+      .map(([key, value]) => [removePrefix(key), numberify(value)])
       .map(([key, value]) => [camelize(key), value]),
   );
 

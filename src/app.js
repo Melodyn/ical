@@ -3,6 +3,7 @@ import { constants } from 'http2';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
+import fastifyForm from 'fastify-formbody';
 // libs
 import Rollbar from 'rollbar';
 import { createConnection } from 'typeorm';
@@ -23,6 +24,7 @@ const initServer = (config) => {
     },
   });
 
+  server.register(fastifyForm);
   routes.forEach((route) => server.route(route));
 
   return server;
