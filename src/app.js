@@ -40,6 +40,9 @@ const setAuth = (config, server) => {
       req.isAuthenticated = false;
       return done(error);
     }
+    if (!user.groupId) {
+      res.redirect('/');
+    }
 
     req.user = user;
     req.isAuthenticated = true;
@@ -103,6 +106,7 @@ const app = async (envName) => {
 
   await db.runMigrations();
   server.decorate('db', db);
+  server.decorate('config', config);
 
   await server.listen(config.PORT, config.HOST);
 

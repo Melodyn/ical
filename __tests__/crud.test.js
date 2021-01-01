@@ -1,3 +1,4 @@
+import { constants } from 'http2';
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
@@ -29,6 +30,16 @@ afterAll(async () => {
 });
 
 describe('Positive cases', () => {
+  test('Get empty main page', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'GET',
+      path: '/',
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(payload).toMatch(/Приложению требуется установка/gim);
+  });
+
   test('Get empty calendar', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
@@ -36,7 +47,7 @@ describe('Positive cases', () => {
       query: users.member,
     });
 
-    expect(statusCode).toEqual(200);
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
     expect(JSON.parse(payload)).toEqual([]);
   });
 
@@ -57,7 +68,7 @@ describe('Positive cases', () => {
       },
     });
 
-    expect(statusCode).toEqual(200);
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
     expect(payload).not.toBeFalsy();
 
     const club = await calendarRepo.findOne({ calendarId: calendar.calendarId });
@@ -76,8 +87,23 @@ describe('Positive cases', () => {
       query: users.member,
     });
 
-    expect(statusCode).toEqual(200);
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
     expect(JSON.parse(payload)).not.toEqual([]);
+  });
+
+  test('Redirect to main', async () => {
+    const { vk_group_id, ...userFields } = users.member;
+    const { statusCode, headers } = await app.server.inject({
+      method: 'GET',
+      path: '/calendar',
+      query: {
+        ...userFields,
+        sign: buildSign(userFields, app.config.VK_PROTECTED_KEY),
+      },
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
+    expect(headers.location).toEqual('/');
   });
 });
 
@@ -95,7 +121,7 @@ describe('Negative cases', () => {
       },
     });
 
-    expect(statusCode).not.toEqual(200);
+    expect(statusCode).not.toEqual(constants.HTTP_STATUS_OK);
     expect(payload.includes('error')).not.toBeFalsy();
 
     const clubs = await calendarRepo.find({ calendarId: calendars.world.calendarId });

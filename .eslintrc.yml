@@ -24,3 +24,4 @@ overrides:
   - files: '*.test.js'
     rules:
       no-param-reassign: off
+      camelcase: off

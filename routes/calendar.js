@@ -29,8 +29,18 @@ const routes = [
   {
     method: 'GET',
     url: '/',
-    handler: (req, res) => {
-      res.send(`vk_group_id is ${req.query.vk_group_id}`);
+    handler(req, res) {
+      const appId = this.config.VK_APP_ID;
+      const appLink = `https://vk.com/add_community_app.php?aid=${appId}`;
+      const html = [
+        '<center>',
+        '<h3>Приложению требуется установка</h3>',
+        '<p>Добавьте приложение в сообщество по ссылке:<br/>',
+        `<a href="${appLink}">${appLink}</a>`,
+        '</p>',
+        '</center>',
+      ];
+      res.type('text/html; charset=utf-8').send(html.join('\n'));
     },
   },
 ];
