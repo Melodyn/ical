@@ -129,6 +129,6 @@ describe('Negative cases', () => {
     expect(payload).toMatch(/calendarLink/gim);
 
     const clubs = await calendarRepo.find({ calendarId: calendars.world.calendarId });
-    expect(clubs).toHaveLength(2);
+    expect(clubs).toHaveLength(Object.keys(calendars).length);
   });
 });
