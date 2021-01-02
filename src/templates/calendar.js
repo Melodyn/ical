@@ -1,3 +1,5 @@
+import header from './header.js';
+
 const renderForm = (currentUrl, calendarLink = '') => [
   `<form action="${currentUrl}" method="post">`,
   `<input type="submit" value="${calendarLink ? 'Изменить' : 'Сохранить'}">`,
@@ -12,8 +14,8 @@ const renderForm = (currentUrl, calendarLink = '') => [
 const renderApp = (user, calendar, currentUrl) => {
   if (!calendar) {
     const html = user.isAdmin
-      ? renderForm(currentUrl)
-      : ['<p>В данном сообществе пока отсутствует календарь</p>'];
+      ? [header, ...renderForm(currentUrl)]
+      : [header, '<p>В данном сообществе пока отсутствует календарь</p>'];
 
     return html.join('\n');
   }
@@ -24,7 +26,7 @@ const renderApp = (user, calendar, currentUrl) => {
     ? renderForm(currentUrl, calendar.extra.calendarLink)
     : [];
 
-  const html = calendarForm.concat(calendarFrame);
+  const html = [header].concat(calendarForm, calendarFrame);
 
   return html.join('\n');
 };

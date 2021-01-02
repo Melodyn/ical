@@ -1,3 +1,5 @@
+import header from './header.js';
+
 const renderMain = (appId) => {
   const appLink = `https://vk.com/add_community_app.php?aid=${appId}`;
   const html = [
@@ -9,7 +11,7 @@ const renderMain = (appId) => {
     '</center>',
   ];
 
-  return html.join('\n');
+  return [header, ...html].join('\n');
 };
 
 export default renderMain;

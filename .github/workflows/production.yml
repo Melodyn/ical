@@ -62,3 +62,4 @@ jobs:
           HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
           HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
           HD_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
+          HD_STATIC_DIR: src

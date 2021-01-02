@@ -25,3 +25,6 @@ overrides:
     rules:
       no-param-reassign: off
       camelcase: off
+  - files: 'src/**/*.js'
+    rules:
+     no-undef: off

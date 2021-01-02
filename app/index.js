@@ -1,9 +1,12 @@
 import 'reflect-metadata';
 import { constants } from 'http2';
+import path from 'path';
+import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
 import fastifyForm from 'fastify-formbody';
+import fastifyStatic from 'fastify-static';
 // libs
 import Rollbar from 'rollbar';
 import { createConnection } from 'typeorm';
@@ -25,6 +28,9 @@ const initServer = (config) => {
   });
 
   server.register(fastifyForm);
+  server.register(fastifyStatic, {
+    root: path.resolve(config.STATIC_DIR),
+  });
   routes.forEach((route) => server.route(route));
 
   return server;

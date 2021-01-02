@@ -1,6 +1,6 @@
 import yup from 'yup';
-import renderApp from '../templates/calendar.js';
-import renderMain from '../templates/main.js';
+import renderApp from '../src/templates/calendar.js';
+import renderMain from '../src/templates/main.js';
 
 const routes = [
   {
