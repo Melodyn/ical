@@ -2,8 +2,8 @@ import header from './header.js';
 
 const renderForm = (currentUrl, calendarLink = '') => [
   `<form action="${currentUrl}" method="post">`,
-  `<input type="submit" value="${calendarLink ? 'Изменить' : 'Сохранить'}">`,
-  `<input id="calendarLink" name="calendarLink" type="url" width="50%" value="${calendarLink}">`,
+  `<input type="submit" style="max-width: 10%" value="${calendarLink ? 'Изменить' : 'Сохранить'}">`,
+  `<input id="calendarLink" name="calendarLink" type="url" style="width: 50%" value="${calendarLink}">`,
   '</form>',
   '<hr/>',
   `${calendarLink
@@ -26,7 +26,7 @@ const renderApp = (user, calendar, currentUrl) => {
     ? renderForm(currentUrl, calendar.extra.calendarLink)
     : [];
 
-  const html = [header].concat(calendarForm, calendarFrame);
+  const html = [header].concat(calendarForm, [calendarFrame]);
 
   return html.join('\n');
 };
