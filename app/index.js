@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { constants } from 'http2';
 import path from 'path';
-import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
