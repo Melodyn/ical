@@ -1,0 +1,10 @@
+extends index
+
+block content
+  - const appLink = `https://vk.com/add_community_app.php?aid=${values.appId}`;
+  .d-flex.flex-column.justify-content-center.align-items-center.h-100.text-center
+    h3 Приложению требуется установка
+    p
+      | Добавьте приложение в сообщество по ссылке:
+      br
+      a(href=appLink target='_blank') #{appLink}

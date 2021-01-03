@@ -35,6 +35,7 @@ jobs:
     - run: make install-dependencies
     - run: make test
     - run: make lint
+    - run: make static
 
   deploy:
     needs: pre-deploy

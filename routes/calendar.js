@@ -1,6 +1,4 @@
 import yup from 'yup';
-import renderApp from '../src/templates/calendar.js';
-import renderMain from '../src/templates/main.js';
 
 const routes = [
   {
@@ -12,9 +10,12 @@ const routes = [
     async handler(req, res) {
       const calendarRepository = this.db.getRepository('Calendar');
       const clubCalendar = await calendarRepository.findOne({ clubId: req.user.groupId });
-      const calendarHTML = renderApp(req.user, clubCalendar, req.url);
 
-      res.type('text/html; charset=utf-8').send(calendarHTML);
+      if (clubCalendar) {
+        res.render('calendar', { calendar: clubCalendar, formActionUrl: req.url });
+      } else {
+        res.render('noCalendar', { formActionUrl: req.url });
+      }
     },
   },
   {
@@ -57,7 +58,7 @@ const routes = [
     method: 'GET',
     url: '/',
     handler(req, res) {
-      res.type('text/html; charset=utf-8').send(renderMain(this.config.VK_APP_ID));
+      res.render('main', { appId: this.config.VK_APP_ID });
     },
   },
 ];

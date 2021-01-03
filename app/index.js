@@ -8,6 +8,8 @@ import fastifyForm from 'fastify-formbody';
 import fastifyStatic from 'fastify-static';
 // libs
 import Rollbar from 'rollbar';
+import pointOfView from 'point-of-view';
+import pug from 'pug';
 import { createConnection } from 'typeorm';
 // app
 import { configValidator } from '../utils/configValidator.cjs';
@@ -26,24 +28,21 @@ const initServer = (config) => {
     },
   });
 
-  server.register(fastifyForm);
-  server.register(fastifyStatic, {
-    root: path.resolve(config.STATIC_DIR),
-  });
   routes.forEach((route) => server.route(route));
 
   return server;
 };
 
 const setAuth = (config, server) => {
-  server.decorateRequest('user', '');
+  server.decorateRequest('user', null);
   server.decorateRequest('isAuthenticated', false);
+
   const vkUserValidator = createVkUserValidator(config.VK_PROTECTED_KEY);
 
   server.decorate('vkUserAuth', (req, res, done) => {
     const { isValid, user, error } = vkUserValidator(req);
     if (!isValid) {
-      req.user = '';
+      req.user = null;
       req.isAuthenticated = false;
       return done(error);
     }
@@ -73,6 +72,26 @@ const setAuth = (config, server) => {
   });
 
   server.register(fastifyAuth);
+};
+
+const setStatic = (config, server) => {
+  server.register(fastifyForm);
+  server.register(fastifyStatic, {
+    root: path.resolve(config.STATIC_DIR),
+  });
+  server.register(pointOfView, {
+    engine: {
+      pug,
+    },
+    includeViewExtension: true,
+    templates: path.resolve('src', 'templates'),
+  });
+  server.decorateReply('render', function render(template, values = {}) {
+    this.view(template, {
+      user: this.request.user,
+      values,
+    });
+  });
 };
 
 const initDatabase = () => ormconfig.then(createConnection);
@@ -109,6 +128,7 @@ const app = async (envName) => {
   const server = initServer(config, db);
   setRollbar(config, server);
   setAuth(config, server);
+  setStatic(config, server);
 
   await db.runMigrations();
   server.decorate('db', db);

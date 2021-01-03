@@ -1,0 +1,14 @@
+form.row.g-3.m-0(action=values.formActionUrl method='post')
+    .col-auto
+        input.btn.btn-primary(
+            type='submit'
+            value=(calendarLink ? 'Изменить' : 'Сохранить')
+        )
+    .col
+        input#calendarLink.form-control(
+            name='calendarLink'
+            type='url'
+            value=calendarLink
+            required
+        )
+hr
