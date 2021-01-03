@@ -84,7 +84,7 @@ const setStatic = (config, server) => {
       pug,
     },
     includeViewExtension: true,
-    templates: path.resolve('src', 'templates'),
+    templates: path.resolve(config.STATIC_DIR, 'templates'),
   });
   server.decorateReply('render', function render(template, values = {}) {
     this.view(template, {

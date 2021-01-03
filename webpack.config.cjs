@@ -1,9 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  mode: process.env.NODE_ENV,
+  mode: process.env.NODE_ENV || 'production',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'src'),
+    filename: 'bundle.js',
   },
   module: {
     rules: [
