@@ -17,11 +17,10 @@ const init = () => {
 
   if (window.location.href.includes('35931944')) {
     const logger = document.createElement('div');
-    const hr = document.createElement('hr');
-    logger.classList.add('h-100');
-    logger.style = 'overflow-y: scroll;';
+    logger.id = 'logger';
     document.body.prepend(logger);
     bridge.subscribe((e) => {
+      const hr = document.createElement('hr');
       const textNode = stringify(e);
       logger.prepend(hr);
       logger.prepend(textNode);
