@@ -5,29 +5,48 @@ const bridge = vkBridge.default;
 
 const stringify = (content) => {
   try {
-    return JSON.stringify(content)
+    return JSON.stringify(content, null, 2);
   } catch (e) {
     return content.toString();
   }
 }
 
-const init = () => {
-  // Sends event to client
-  bridge.send('VKWebAppInit');
+const createLogger = () => {
+  const logger = document.createElement('div');
+  logger.setAttribute('id', 'logger');
+  document.body.append(logger);
 
-  if (window.location.href.includes('35931944')) {
-    const logger = document.createElement('div');
-    logger.id = 'logger';
-    document.body.append(logger);
-    bridge.subscribe(({ detail: { type = null, data = null }} = { detail: {} }) => {
+  return {
+    log: (data) => {
       const hr = document.createElement('hr');
-      const textNode = stringify({ type, data });
+      const textNode = stringify(data);
       logger.prepend(hr);
       logger.prepend(textNode);
-    });
-  } else {
-    // Subscribes to event, sended by client
-    bridge.subscribe(() => {});
+    }
+  }
+};
+
+const init = () => {
+  const logger = gon.user.isAppAdmin
+    ? createLogger()
+    : { log: () => {} };
+
+  bridge.send('VKWebAppInit');
+  bridge.subscribe(({ detail: { type = null, data = null }} = { detail: {} }) => {
+    logger.log({ type, data })
+  });
+
+  if (gon.user.isAppAdmin) {
+    console.log('send', 'VKWebAppGetCommunityToken');
+    bridge
+      .send('VKWebAppGetCommunityToken', {
+        app_id: gon.user.appId,
+        group_id: gon.user.groupId,
+        scope: 'app_widget',
+      })
+      .then(logger.log)
+      .catch(logger.log);
+    console.log('sended', 'VKWebAppGetCommunityToken');
   }
 };
 

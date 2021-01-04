@@ -44,6 +44,10 @@ const configSchema = yup.object({
   DB_PASS: yup.string().required(),
   DB_NAME: yup.string().required(),
   ROLLBAR_TOKEN: yup.string().required(),
+  VK_APP_ID: yup.number().required(),
+  VK_APP_ADMIN_ID: yup.number().required(),
+  VK_PROTECTED_KEY: yup.string().required(),
+  VK_SERVICES_KEY: yup.string().required(),
 }).required();
 
 const configValidator = (envName) => {

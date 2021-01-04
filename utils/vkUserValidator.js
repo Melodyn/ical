@@ -45,7 +45,7 @@ export const buildSign = (query, secret) => {
     .replace(/=$/, '');
 };
 
-export const createValidator = (secret) => (request) => {
+export const createValidator = (secret, appAdminId) => (request) => {
   const { query = {} } = request;
   const vkSign = query.sign;
   if (!vkSign) return validationResult({ error: 'Required parameter "sign" is missing', params: request.query });
@@ -69,6 +69,7 @@ export const createValidator = (secret) => (request) => {
   const user = {
     ...userParams,
     isAdmin: (userParams.viewerGroupRole === 'admin'),
+    isAppAdmin: (userParams.userId === appAdminId),
   };
 
   return validationResult({ user });

@@ -37,7 +37,7 @@ const setAuth = (config, server) => {
   server.decorateRequest('user', null);
   server.decorateRequest('isAuthenticated', false);
 
-  const vkUserValidator = createVkUserValidator(config.VK_PROTECTED_KEY);
+  const vkUserValidator = createVkUserValidator(config.VK_PROTECTED_KEY, config.VK_APP_ADMIN_ID);
 
   server.decorate('vkUserAuth', (req, res, done) => {
     const { isValid, user, error } = vkUserValidator(req);
@@ -87,9 +87,11 @@ const setStatic = (config, server) => {
     templates: path.resolve(config.STATIC_DIR, 'templates'),
   });
   server.decorateReply('render', function render(template, values = {}) {
+    const { user } = this.request;
     this.view(template, {
-      user: this.request.user,
+      user,
       values,
+      gon: { user },
     });
   });
 };
