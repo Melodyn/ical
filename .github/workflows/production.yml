@@ -58,12 +58,9 @@ jobs:
           HD_DB_USER: ${{ secrets.DB_USER }}
           HD_DB_PASS: ${{ secrets.DB_PASS }}
           HD_DB_NAME: ${{ secrets.DB_NAME }}
-          HD_VK_APP_ID: ${{ secrets.VK_APP_ID }}
-          HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
-          HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
           HD_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
           HD_STATIC_DIR: src
-          VK_APP_ID: ${{ secrets.VK_APP_ID }}
-          VK_APP_ADMIN_ID: ${{ secrets.VK_APP_ADMIN_ID }}
-          VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
-          VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
+          HD_VK_APP_ID: ${{ secrets.VK_APP_ID }}
+          HD_VK_APP_ADMIN_ID: ${{ secrets.VK_APP_ADMIN_ID }}
+          HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
+          HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
