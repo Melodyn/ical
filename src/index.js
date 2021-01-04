@@ -27,6 +27,7 @@ const createLogger = () => {
 };
 
 const init = () => {
+  console.log({ gon });
   const logger = gon.user.isAppAdmin
     ? createLogger()
     : { log: () => {} };
