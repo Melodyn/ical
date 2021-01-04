@@ -27,7 +27,6 @@ const createLogger = () => {
 };
 
 const init = () => {
-  console.log({ gon });
   const logger = gon.user.isAppAdmin
     ? createLogger()
     : { log: () => {} };
@@ -37,18 +36,16 @@ const init = () => {
     logger.log({ type, data })
   });
 
-  if (gon.user.isAppAdmin) {
-    console.log('send', 'VKWebAppGetCommunityToken');
-    bridge
-      .send('VKWebAppGetCommunityToken', {
-        app_id: gon.user.appId,
-        group_id: gon.user.groupId,
-        scope: 'app_widget',
-      })
-      .then(logger.log)
-      .catch(logger.log);
-    console.log('sended', 'VKWebAppGetCommunityToken');
-  }
+  // if (gon.user.isAppAdmin) {
+  //   bridge
+  //     .send('VKWebAppGetCommunityToken', {
+  //       app_id: gon.user.appId,
+  //       group_id: gon.user.groupId,
+  //       scope: 'app_widget',
+  //     })
+  //     .then(logger.log)
+  //     .catch(logger.log);
+  // }
 };
 
 document.addEventListener('DOMContentLoaded', init);
