@@ -66,6 +66,8 @@ export const createValidator = (secret, appAdminId) => (request) => {
       .map(([key, value]) => [camelize(key), value]),
   );
 
+  console.log({ appAdminId, userId: userParams.userId });
+
   const user = {
     ...userParams,
     isAdmin: (userParams.viewerGroupRole === 'admin'),
