@@ -18,18 +18,16 @@ const init = () => {
   if (window.location.href.includes('35931944')) {
     const logger = document.createElement('div');
     logger.id = 'logger';
-    document.body.prepend(logger);
-    bridge.subscribe((e) => {
+    document.body.append(logger);
+    bridge.subscribe(({ detail: { type = null, data = null }} = { detail: {} }) => {
       const hr = document.createElement('hr');
-      const textNode = stringify(e);
+      const textNode = stringify({ type, data });
       logger.prepend(hr);
       logger.prepend(textNode);
     });
   } else {
     // Subscribes to event, sended by client
-    bridge.subscribe((e) => {
-      console.log('subscribe', e);
-    });
+    bridge.subscribe(() => {});
   }
 };
 
