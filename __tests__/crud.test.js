@@ -64,7 +64,8 @@ describe('Positive cases', () => {
         sign: buildSign(query, app.config.VK_PROTECTED_KEY),
       },
       payload: {
-        calendarLink: calendar.calendarLink,
+        calendarId: calendar.calendarId,
+        timezone: calendar.timezone,
       },
     });
 
@@ -79,7 +80,8 @@ describe('Positive cases', () => {
       id: expect.any(Number),
       clubId: calendar.clubId,
       calendarId: calendar.calendarId,
-      extra: { calendarLink: calendar.calendarLink },
+      timezone: calendar.timezone,
+      extra: {},
     }));
     calendar.id = clubCalendar.id;
   });
@@ -113,7 +115,7 @@ describe('Positive cases', () => {
 
 describe('Negative cases', () => {
   test('Create duplicate', async () => {
-    const { statusCode, payload } = await app.server.inject({
+    const { statusCode, headers } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
       query: {
@@ -122,13 +124,14 @@ describe('Negative cases', () => {
       },
       payload: {
         calendarId: calendars.world.calendarId,
+        timezone: calendars.world.timezone,
       },
     });
 
-    expect(statusCode).not.toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).toMatch(/calendarLink/gim);
+    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
+    expect(headers.location).toMatch(/\/calendar\?/gim);
 
-    const clubs = await calendarRepo.find({ calendarId: calendars.world.calendarId });
-    expect(clubs).toHaveLength(Object.keys(calendars).length);
+    const dbCalendars = await calendarRepo.find();
+    expect(dbCalendars).toHaveLength(Object.keys(calendars).length);
   });
 });

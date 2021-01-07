@@ -12,7 +12,7 @@ mixin calendarIframe(calendarLink)
 
 
 block content
-  - const calendarLink = values.calendar.extra.calendarLink;
+  - const { calendarId, timezone: calendarTimezone, extra: { calendarLink } } = values.calendar;
   if (user.isAdmin)
     include adminForm
     +calendarIframe(calendarLink)

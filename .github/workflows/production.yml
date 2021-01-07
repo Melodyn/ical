@@ -64,3 +64,4 @@ jobs:
           HD_VK_APP_ADMIN_ID: ${{ secrets.VK_APP_ADMIN_ID }}
           HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
           HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
+          HD_DEFAULT_TIMEZONE: Europe/Moscow

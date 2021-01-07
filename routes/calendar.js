@@ -1,4 +1,5 @@
 import yup from 'yup';
+import { buildCalendarLinks } from '../utils/helpers.js';
 
 const routes = [
   {
@@ -11,10 +12,15 @@ const routes = [
       const calendarRepository = this.db.getRepository('Calendar');
       const clubCalendar = await calendarRepository.findOne({ clubId: req.user.groupId });
 
+      const formActionUrl = req.url;
+      const { timezones } = this;
+
       if (clubCalendar) {
-        res.render('calendar', { calendar: clubCalendar, formActionUrl: req.url });
+        const { embed } = buildCalendarLinks(clubCalendar.calendarId, clubCalendar.timezone);
+        clubCalendar.extra.calendarLink = embed;
+        res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
       } else {
-        res.render('noCalendar', { formActionUrl: req.url });
+        res.render('noCalendar', { formActionUrl, timezones });
       }
     },
   },
@@ -25,24 +31,24 @@ const routes = [
       return this.auth([this.vkAdminAuth])(...params);
     },
     async handler(req, res) {
-      const { calendarLink } = await yup
+      const allowedZones = this.timezones.all.map(({ name }) => name);
+      const { calendarId, timezone } = await yup
         .object({
-          calendarLink: yup
-            .string()
-            .url()
-            .matches(/^https:\/\/calendar\.google\.com\/calendar\/embed\?src=.+[@|%40][group.calendar.google.com|gmail.com].*$/)
+          calendarId: yup.string()
+            .matches(/^.+[@|%40][group.calendar.google.com|gmail.com].*$/)
             .required(),
+          timezone: yup.string().oneOf(allowedZones).required(),
         })
         .required()
         .validate(req.body);
 
       const clubId = req.user.groupId;
-      const calendarId = (new URL(calendarLink)).searchParams.get('src');
       const clubRepository = this.db.getRepository('Calendar');
       const calendarBody = {
         clubId,
         calendarId,
-        extra: { calendarLink },
+        timezone,
+        extra: {},
       };
 
       await clubRepository

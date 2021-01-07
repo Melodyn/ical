@@ -56,7 +56,8 @@ describe('Positive cases', () => {
       path: '/calendar',
       query: users.admin,
       payload: {
-        calendarLink: calendars.world.calendarLink,
+        calendarId: calendars.world.calendarId,
+        timezone: calendars.world.timezone,
       },
     });
 
@@ -97,7 +98,8 @@ describe('Negative cases', () => {
       path: '/calendar',
       query: users.member,
       payload: {
-        calendarLink: calendars.world.calendarLink,
+        calendarId: calendars.world.calendarId,
+        timezone: calendars.world.timezone,
       },
     });
 

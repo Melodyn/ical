@@ -2,15 +2,17 @@ extends index
 
 mixin adminText
   p.
-    Укажите общедоступную ссылку на календарь вида
-    #[span.font-monospace.bg-warning https://calendar.google.com/calendar/embed?src=ob1gcsbo877671s4295f693nv0%40group.calendar.google.com&ctz=Europe%2FMoscow]
-     и сохраните, чтобы привязать календарь к сообществу
+    Укажите идентификатор общедоступного календаря, вида
+    #[span.font-monospace.bg-warning ob1gcsbo877671s4295f693nv0@group.calendar.google.com],
+    и сохраните, чтобы привязать календарь к сообществу.
+    По умолчанию используется московское время, это можно изменить в поле "Таймзона".
 
 mixin userText
   p В данном сообществе пока отсутствует календарь
 
 
 block content
+  - const calendarTimezone = values.timezones.default.name;
   if (user.isAdmin)
     include adminForm
     +adminText

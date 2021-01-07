@@ -1,14 +1,25 @@
-form.row.g-3.m-0(action=values.formActionUrl method='post')
-    .col-auto
-        input.btn.btn-primary(
-            type='submit'
-            value=(calendarLink ? 'Изменить' : 'Сохранить')
-        )
-    .col
-        input#calendarLink.form-control(
-            name='calendarLink'
-            type='url'
-            value=calendarLink
+form(action=values.formActionUrl method='post')
+    .mb-3
+        label.form-label(for='calendarId') Идентификатор календаря
+        input#calendarId.form-control(
+            name='calendarId'
+            type='email'
+            value=calendarId
             required
         )
+    .mb-3
+        label.form-label(for='timezone') Таймзона
+        select#timezone.form-control(
+            name='timezone'
+            required
+        )
+            each timezone in values.timezones.all
+              option(
+                  value=timezone.name
+                  selected=(timezone.name === calendarTimezone)
+              ) #{timezone.offset} #{timezone.name}
+    input.btn.btn-primary(
+        type='submit'
+        value=(calendarId ? 'Изменить' : 'Сохранить')
+    )
 hr

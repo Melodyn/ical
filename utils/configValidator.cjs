@@ -1,12 +1,8 @@
-// import yup from 'yup';
-// import path from 'path';
-// import _ from 'lodash';
-// import dotenv from 'dotenv';
-// import { ConfigValidationError } from './errors.js';
 const yup = require('yup');
 const path = require('path');
 const _ = require('lodash');
 const dotenv = require('dotenv');
+const tz = require('countries-and-timezones');
 const { ConfigValidationError } = require('./errors.cjs');
 
 const envsMap = {
@@ -48,6 +44,7 @@ const configSchema = yup.object({
   VK_APP_ADMIN_ID: yup.number().required(),
   VK_PROTECTED_KEY: yup.string().required(),
   VK_SERVICES_KEY: yup.string().required(),
+  DEFAULT_TIMEZONE: yup.string().oneOf(Object.keys(tz.getAllTimezones())).required(),
 }).required();
 
 const configValidator = (envName) => {

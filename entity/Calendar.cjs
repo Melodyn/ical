@@ -1,9 +1,7 @@
 const { EntitySchema } = require('typeorm');
-const Calendar = require('../model/Calendar.cjs');
 
 module.exports = new EntitySchema({
   name: 'Calendar',
-  target: Calendar,
   tableName: 'calendars',
   columns: {
     id: {
@@ -19,16 +17,30 @@ module.exports = new EntitySchema({
       type: 'varchar',
       nullable: false,
     },
+    timezone: {
+      type: 'varchar',
+      nullable: false,
+    },
+    widgetToken: {
+      type: 'varchar',
+      nullable: true,
+      default: null,
+    },
+    widgetSyncedAt: {
+      type: 'timestamp without time zone',
+      nullable: true,
+      default: null,
+    },
     extra: {
       type: 'jsonb',
       default: '{}',
     },
     createdAt: {
-      type: 'timestamp',
+      type: 'timestamp without time zone',
       createDate: true,
     },
     updatedAt: {
-      type: 'timestamp',
+      type: 'timestamp without time zone',
       updateDate: true,
     },
   },

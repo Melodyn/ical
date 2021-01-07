@@ -11,6 +11,8 @@ import Rollbar from 'rollbar';
 import pointOfView from 'point-of-view';
 import pug from 'pug';
 import { createConnection } from 'typeorm';
+import tz from 'countries-and-timezones';
+import _ from 'lodash';
 // app
 import { configValidator } from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
@@ -119,6 +121,18 @@ const setRollbar = (config, server) => {
   });
 };
 
+const prepareTimezones = (config) => {
+  const formatTimezone = ({ name, utcOffsetStr }) => ({ name, offset: utcOffsetStr });
+  const allTimezones = Object.values(tz.getAllTimezones());
+  const timezones = allTimezones.map(formatTimezone);
+  const defaultTimezone = allTimezones.find(({ name }) => name === config.DEFAULT_TIMEZONE);
+
+  return {
+    default: formatTimezone(defaultTimezone),
+    all: _.sortBy(timezones, ['offset', 'name']),
+  };
+};
+
 const app = async (envName) => {
   process.on('unhandledRejection', (err) => {
     console.error(err);
@@ -127,6 +141,7 @@ const app = async (envName) => {
 
   const config = await configValidator(envName);
   const db = await initDatabase(config);
+  const timezones = prepareTimezones(config);
   const server = initServer(config, db);
   setRollbar(config, server);
   setAuth(config, server);
@@ -135,6 +150,7 @@ const app = async (envName) => {
   await db.runMigrations();
   server.decorate('db', db);
   server.decorate('config', config);
+  server.decorate('timezones', timezones);
 
   await server.listen(config.PORT, config.HOST);
 
