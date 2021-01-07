@@ -1,6 +1,7 @@
 extends index
 
 mixin calendarIframe(calendarLink)
+  a.btn.btn-link.float-end(href=calendarLink target='_blank') Открыть в браузере
   iframe#calendarIframe(
     src=calendarLink
     style='border: 0'
@@ -14,7 +15,8 @@ mixin calendarIframe(calendarLink)
 block content
   - const { calendarId, timezone: calendarTimezone, extra: { calendarLink } } = values.calendar;
   if (user.isAdmin)
-    include adminForm
     +calendarIframe(calendarLink)
+    hr
+    include adminForm
   else
     +calendarIframe(calendarLink)

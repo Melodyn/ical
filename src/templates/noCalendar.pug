@@ -8,13 +8,18 @@ mixin adminText
     По умолчанию используется московское время, это можно изменить в поле "Таймзона".
 
 mixin userText
-  p В данном сообществе пока отсутствует календарь
+  .d-flex.flex-column.justify-content-center.align-items-center.h-100.text-center
+    p
+      | В данном сообществе пока отсутствует календарь.
+      br
+      | Но вы можете #[a(href='/') установить] в своё.
 
 
 block content
   - const calendarTimezone = values.timezones.default.name;
   if (user.isAdmin)
     include adminForm
+    hr
     +adminText
   else
     +userText
