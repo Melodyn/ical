@@ -9,7 +9,7 @@ const stringify = (content) => {
   } catch (e) {
     return content.toString();
   }
-}
+};
 
 const createLogger = () => {
   const logger = document.createElement('div');
@@ -18,12 +18,11 @@ const createLogger = () => {
 
   return {
     log: (data) => {
-      const hr = document.createElement('hr');
       const textNode = stringify(data);
-      logger.prepend(hr);
+      logger.prepend('\n\n-----\n\n');
       logger.prepend(textNode);
     }
-  }
+  };
 };
 
 const init = () => {
