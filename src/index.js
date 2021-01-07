@@ -12,7 +12,7 @@ const stringify = (content) => {
 };
 
 const createLogger = () => {
-  const logger = document.createElement('div');
+  const logger = document.createElement('textarea');
   logger.setAttribute('id', 'logger');
   document.body.append(logger);
 
