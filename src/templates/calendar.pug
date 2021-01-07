@@ -1,7 +1,7 @@
 extends index
 
 mixin calendarIframe(calendarLink)
-  a.btn.btn-link(href=calendarLink target='_blank') Открыть в браузере
+  a.btn.btn-link.m-1.mb-2(href=calendarLink target='_blank') Открыть в браузере
   iframe#calendarIframe(
     src=calendarLink
     style='border: 0'
@@ -10,13 +10,13 @@ mixin calendarIframe(calendarLink)
     frameborder='0'
     scrolling='yes'
   )
+  hr
 
 
 block content
   - const { calendarId, timezone: calendarTimezone, extra: { calendarLink } } = values.calendar;
   if (user.isAdmin)
     +calendarIframe(calendarLink)
-    hr
     include adminForm
   else
     +calendarIframe(calendarLink)
