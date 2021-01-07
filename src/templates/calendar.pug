@@ -1,7 +1,7 @@
 extends index
 
 mixin calendarIframe(calendarLink)
-  a.btn.btn-link.float-end(href=calendarLink target='_blank') Открыть в браузере
+  a.btn.btn-link(href=calendarLink target='_blank') Открыть в браузере
   iframe#calendarIframe(
     src=calendarLink
     style='border: 0'
