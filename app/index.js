@@ -93,7 +93,7 @@ const setStatic = (config, server) => {
     this.view(template, {
       user,
       values,
-      gon: { user },
+      gon: { user, calendar: values.calendar || {} },
     });
   });
 };

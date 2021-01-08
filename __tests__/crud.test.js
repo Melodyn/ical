@@ -80,13 +80,40 @@ describe('Positive cases', () => {
       id: expect.any(Number),
       clubId: calendar.clubId,
       calendarId: calendar.calendarId,
+      widgetToken: null,
       timezone: calendar.timezone,
       extra: {},
     }));
     calendar.id = clubCalendar.id;
   });
 
-  test('Get calendar', async () => {
+  test('Update: set widgetToken', async () => {
+    const { statusCode } = await app.server.inject({
+      method: 'POST',
+      path: '/calendar',
+      query: users.admin,
+      payload: {
+        calendarId: calendars.world.calendarId,
+        timezone: calendars.world.timezone,
+        widgetToken: calendars.world.widgetToken,
+      },
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
+    const clubCalendar = await calendarRepo.findOne({
+      clubId: calendars.world.clubId,
+      calendarId: calendars.world.calendarId,
+    });
+    expect(clubCalendar).toEqual(expect.objectContaining({
+      id: calendars.world.id,
+      clubId: calendars.world.clubId,
+      calendarId: calendars.world.calendarId,
+      widgetToken: calendars.world.widgetToken,
+      timezone: calendars.world.timezone,
+    }));
+  });
+
+  test('Get calendar as member', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
       path: '/calendar',

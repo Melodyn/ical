@@ -1,4 +1,5 @@
 import './index.css';
+// import vkBridge from '@vkontakte/vk-bridge-mock';
 import vkBridge from '@vkontakte/vk-bridge';
 
 const bridge = vkBridge.default;
@@ -25,26 +26,42 @@ const createLogger = () => {
   };
 };
 
-const init = () => {
+const requestWidgetToken = (bridge, logger) => {
+  const adminForm = document.forms.adminForm;
+  const widgetTokenField = adminForm.elements.widgetToken;
+
+  bridge
+    .send('VKWebAppGetCommunityToken', {
+      app_id: gon.user.appId,
+      group_id: gon.user.groupId,
+      scope: 'app_widget',
+    })
+    .then(({ access_token }) => {
+      logger.log({ source: 'VKWebAppGetCommunityToken', access_token });
+
+      alert('Ok');
+      // widgetTokenField.value = access_token;
+      //
+      // return adminForm.requestSubmit();
+    })
+    .catch((err) => logger.log({ source: 'VKWebAppGetCommunityToken', err }));
+};
+
+const init = async () => {
   const logger = gon.user.isAppAdmin
     ? createLogger()
     : { log: () => {} };
 
   bridge.send('VKWebAppInit');
-  bridge.subscribe(({ detail: { type = null, data = null }} = { detail: {} }) => {
-    logger.log({ type, data })
-  });
 
-  // if (gon.user.isAppAdmin) {
-  //   bridge
-  //     .send('VKWebAppGetCommunityToken', {
-  //       app_id: gon.user.appId,
-  //       group_id: gon.user.groupId,
-  //       scope: 'app_widget',
-  //     })
-  //     .then(logger.log)
-  //     .catch(logger.log);
-  // }
+  if (!gon.user.isAdmin) return;
+
+  const setWidgetButton = document.querySelector('#setWidget');
+  if (setWidgetButton) {
+    setWidgetButton.addEventListener('click', () => {
+      requestWidgetToken(bridge, logger);
+    });
+  }
 };
 
 document.addEventListener('DOMContentLoaded', init);

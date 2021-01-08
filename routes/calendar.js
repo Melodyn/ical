@@ -32,12 +32,17 @@ const routes = [
     },
     async handler(req, res) {
       const allowedZones = this.timezones.all.map(({ name }) => name);
-      const { calendarId, timezone } = await yup
+      const {
+        calendarId,
+        timezone,
+        widgetToken,
+      } = await yup
         .object({
           calendarId: yup.string()
-            .matches(/^.+[@|%40][group.calendar.google.com|gmail.com].*$/)
+            .matches(/^.+@(group.calendar.google.com|gmail.com)$/)
             .required(),
           timezone: yup.string().oneOf(allowedZones).required(),
+          widgetToken: yup.string().default('').optional(),
         })
         .required()
         .validate(req.body);
@@ -48,7 +53,7 @@ const routes = [
         clubId,
         calendarId,
         timezone,
-        extra: {},
+        widgetToken: (widgetToken === '') ? null : widgetToken,
       };
 
       await clubRepository
