@@ -30,21 +30,20 @@ const requestWidgetToken = (bridge, logger) => {
   const adminForm = document.forms.adminForm;
   const widgetTokenField = adminForm.elements.widgetToken;
 
-  bridge
-    .send('VKWebAppGetCommunityToken', {
-      app_id: gon.user.appId,
-      group_id: gon.user.groupId,
-      scope: 'app_widget',
-    })
-    .then(({ access_token }) => {
-      logger.log({ source: 'VKWebAppGetCommunityToken', access_token });
-
-      alert('Ok');
-      // widgetTokenField.value = access_token;
-      //
-      // return adminForm.requestSubmit();
-    })
-    .catch((err) => logger.log({ source: 'VKWebAppGetCommunityToken', err }));
+  alert('Ok');
+  // bridge
+  //   .send('VKWebAppGetCommunityToken', {
+  //     app_id: gon.user.appId,
+  //     group_id: gon.user.groupId,
+  //     scope: 'app_widget',
+  //   })
+  //   .then(({ access_token }) => {
+  //     logger.log({ source: 'VKWebAppGetCommunityToken', access_token });
+  //     widgetTokenField.value = access_token;
+  //
+  //     return adminForm.requestSubmit();
+  //   })
+  //   .catch((err) => logger.log({ source: 'VKWebAppGetCommunityToken', err }));
 };
 
 const init = async () => {
