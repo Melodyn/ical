@@ -4,13 +4,17 @@ import { fileURLToPath } from 'url';
 import nock from 'nock';
 import icalParser from '../utils/icalParser.js';
 import parsedICS from '../__fixtures__/calendar.js';
+import calendars from '../__fixtures__/calendars.js';
+import { buildCalendarLinks } from '../utils/helpers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const calendarLinks = buildCalendarLinks(calendars.world.calendarId);
 const rawFixturePath = path.join(__dirname, '..', '__fixtures__', 'calendar.ics');
-const rawFixtureBaseURL = 'https://calendar.google.com';
-const rawFixtureURLPath = '/calendar/ical/ob1gcsbo877671s4295f693nv0%40group.calendar.google.com/public/basic.ics';
-const rawFixtureURL = rawFixtureBaseURL + rawFixtureURLPath;
+const calendarURL = new URL(calendarLinks.ical);
+const rawFixtureBaseURL = calendarURL.origin;
+const rawFixtureURLPath = calendarURL.pathname;
+const rawFixtureURL = calendarLinks.ical;
 
 const fixtures = {
   rawICS: '',

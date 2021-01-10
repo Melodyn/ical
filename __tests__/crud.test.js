@@ -87,15 +87,14 @@ describe('Positive cases', () => {
     calendar.id = clubCalendar.id;
   });
 
-  test('Update: set widgetToken', async () => {
+  test('Update calendar', async () => {
     const { statusCode } = await app.server.inject({
       method: 'POST',
       path: '/calendar',
       query: users.admin,
       payload: {
         calendarId: calendars.world.calendarId,
-        timezone: calendars.world.timezone,
-        widgetToken: calendars.world.widgetToken,
+        timezone: calendars.kitty.timezone,
       },
     });
 
@@ -108,8 +107,7 @@ describe('Positive cases', () => {
       id: calendars.world.id,
       clubId: calendars.world.clubId,
       calendarId: calendars.world.calendarId,
-      widgetToken: calendars.world.widgetToken,
-      timezone: calendars.world.timezone,
+      timezone: calendars.kitty.timezone,
     }));
   });
 
