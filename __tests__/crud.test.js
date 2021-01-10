@@ -37,7 +37,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).toMatch(/Приложению требуется установка/gim);
+    expect(payload).toMatch(/Необходимо выбрать сообщество/gim);
   });
 
   test('Get empty calendar', async () => {
