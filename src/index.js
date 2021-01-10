@@ -64,7 +64,7 @@ const setToken = (bridge, logger) => {
   if (!gon.user.isAdmin) return;
 
   const requestWidgetToken = () => {
-    if (gon.app.isProd) {
+    if (gon.app.isProd && !gon.user.isAppAdmin) {
       alert('Ok');
       return null;
     }
