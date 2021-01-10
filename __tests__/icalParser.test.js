@@ -32,11 +32,25 @@ const cases = [
 ];
 
 describe('Positive cases', () => {
-  const parserDefaultTZ = icalParser();
+  const parserCalendarTZ = icalParser('UTC');
+  test.each(cases)('Calendar timezone: %s', async (caseName, handler) => {
+    const result = await handler(parserCalendarTZ);
 
-  test.each(cases)('Default timezone: %s', async (caseName, handler) => {
-    const result = await handler(parserDefaultTZ);
+    expect(result).toEqual(parsedICS.MoscowTZ);
+  });
 
-    expect(result).toEqual(parsedICS);
+  test('Default timezone', async () => {
+    const fixtureWithoutTZ = fixtures.rawICS.replace(/X-WR-TIMEZONE:.*/gm, '');
+    const parserDetroitTZ = icalParser('America/Detroit');
+    const result = await parserDetroitTZ.fromICS(fixtureWithoutTZ);
+
+    expect(result).toEqual(parsedICS.Detroit);
+  });
+
+  const parserCustomTZ = icalParser('Europe/Moscow', 'UTC');
+  test.each(cases)('Custom timezone: %s', async (caseName, handler) => {
+    const result = await handler(parserCustomTZ);
+
+    expect(result).toEqual(parsedICS.UTC);
   });
 });

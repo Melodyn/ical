@@ -35,17 +35,23 @@ const processDates = (data, timezone) => {
   });
 };
 
-const fromICS = (rawData, defaultTimezone) => ical.async.parseICS(rawData)
-  .then((parsedData) => processDates(parsedData, getCalendarTimezone(rawData, defaultTimezone)));
+const fromICS = (rawData, defaultTimezone, customTimezone) => ical.async.parseICS(rawData)
+  .then((parsedData) => {
+    const timezone = customTimezone === null
+      ? getCalendarTimezone(rawData, defaultTimezone)
+      : customTimezone;
 
-const fromFile = (filepath, defaultTimezone) => fs.readFile(filepath, 'utf-8')
-  .then((rawData) => fromICS(rawData, defaultTimezone));
+    return processDates(parsedData, timezone);
+  });
 
-const fromURL = (url, params, defaultTimezone) => axios.get(url, params)
-  .then(({ data }) => fromICS(data, defaultTimezone));
+const fromFile = (filepath, defaultTimezone, customTimezone) => fs.readFile(filepath, 'utf-8')
+  .then((rawData) => fromICS(rawData, defaultTimezone, customTimezone));
 
-export default (defaultTimezone = 'Europe/Moscow') => ({
-  fromFile: (filepath) => fromFile(filepath, defaultTimezone),
-  fromURL: (url, params = {}) => fromURL(url, params, defaultTimezone),
-  fromICS: (rawData) => fromICS(rawData, defaultTimezone),
+const fromURL = (url, params, defaultTimezone, customTimezone) => axios.get(url, params)
+  .then(({ data }) => fromICS(data, defaultTimezone, customTimezone));
+
+export default (defaultTimezone = 'Europe/Moscow', customTimezone = null) => ({
+  fromFile: (filepath) => fromFile(filepath, defaultTimezone, customTimezone),
+  fromURL: (url, params = {}) => fromURL(url, params, defaultTimezone, customTimezone),
+  fromICS: (rawData) => fromICS(rawData, defaultTimezone, customTimezone),
 });
