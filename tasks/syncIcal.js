@@ -36,7 +36,7 @@ const syncIcal = async (period) => {
       .catch((err) => updateCalendarData(calendar, null, err));
   });
 
-  await Promise.all(parserPromises)
+  return Promise.all(parserPromises)
     .then((calendars) => calendars.map((calendar) => calendarRepo.update(calendar.id, calendar)))
     .then((queries) => Promise.all(queries));
 };

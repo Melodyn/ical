@@ -2,6 +2,7 @@ const yup = require('yup');
 const path = require('path');
 const _ = require('lodash');
 const dotenv = require('dotenv');
+const ms = require('ms');
 const tz = require('countries-and-timezones');
 const { ConfigValidationError } = require('./errors.cjs');
 
@@ -45,6 +46,8 @@ const configSchema = yup.object({
   VK_PROTECTED_KEY: yup.string().required(),
   VK_SERVICES_KEY: yup.string().required(),
   DEFAULT_TIMEZONE: yup.string().oneOf(Object.keys(tz.getAllTimezones())).required(),
+  CRON_ICAL_TIME: yup.string().required(),
+  SYNC_ICAL_TIME: yup.mixed().transform((value) => ms(value)),
 }).required();
 
 const configValidator = (envName) => {
