@@ -16,7 +16,8 @@
   },
   "scripts": {
     "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles",
-    "build-static": "webpack --config webpack.config.cjs"
+    "build-static": "webpack --config webpack.config.cjs",
+    "build-watch": "webpack --config webpack.config.cjs --watch"
   },
   "repository": {
     "type": "git",

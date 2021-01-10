@@ -93,7 +93,17 @@ const setStatic = (config, server) => {
     this.view(template, {
       user,
       values,
-      gon: { user, calendar: values.calendar || {} },
+      gon: {
+        user: {
+          isAppAdmin: true,
+          isAdmin: true,
+          ...user,
+        },
+        app: {
+          isProd: config.IS_PROD_ENV,
+          page: template,
+        },
+      },
     });
   });
 };

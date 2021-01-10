@@ -1,10 +1,24 @@
 extends index
 
 block content
-  - const appLink = `https://vk.com/add_community_app.php?aid=${values.appId}`;
   .d-flex.flex-column.justify-content-center.align-items-center.h-100.text-center
-    h3 Приложению требуется установка
+    img.mb-2(src='logo32.png')
+    h3
+      | Google календарь и виджет в сообщество
     p
-      | Добавьте приложение в сообщество по ссылке:
+      | Приложение работает с публичным Google календарём,
+      | который устанавливает администратор сообщества.
       br
-      a(href=appLink target='_blank') #{appLink}
+      | Мероприятия из календаря автоматически выводятся
+      | на главной странице сообщества, если подключен виджет.
+    div.d-block
+      p Необходимо выбрать сообщество для использования приложения:
+      button#setApp.btn.btn-outline-primary.mb-2 Выбрать сообщество
+      p.text-secondary.fw-bolder &nbsp;
+    div.d-none
+      p Приложение готово к использованию!
+      a#openClub.btn.btn-success.mb-2(
+        href=`//vk.com/app${values.appId}`,
+        target='_blank'
+      ) Перейти к настройке приложения
+      p.text-secondary.fw-bolder эту вкладку можно будет закрыть
