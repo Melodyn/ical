@@ -40,7 +40,7 @@ describe('Positive cases', () => {
   test.each(cases)('Calendar timezone: %s', async (caseName, handler) => {
     const result = await handler(parserCalendarTZ);
 
-    expect(result).toEqual(parsedICS.MoscowTZ);
+    expect(result).toEqual(parsedICS.Moscow);
   });
 
   test('Default timezone', async () => {

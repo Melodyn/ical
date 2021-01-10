@@ -1,5 +1,5 @@
 export default {
-  MoscowTZ: [
+  Moscow: [
     {
       type: 'VEVENT',
       params: [],
@@ -56,9 +56,9 @@ export default {
     {
       type: 'VEVENT',
       params: [],
-      start: '2020-12-23',
+      start: '2020-12-24',
       datetype: 'date',
-      end: '2020-12-24',
+      end: '2020-12-25',
       dtstamp: '2020-12-19T17:13:09.000Z',
       uid: '092claa5bjrkj827gqr0lsl3eg@google.com',
       created: '2020-12-19T15:57:55.000Z',
@@ -73,9 +73,9 @@ export default {
     {
       type: 'VEVENT',
       params: [],
-      start: '2020-12-28',
+      start: '2020-12-29',
       datetype: 'date',
-      end: '2020-12-30',
+      end: '2020-12-31',
       dtstamp: '2020-12-19T17:13:09.000Z',
       uid: '1bbbb8a48sutbvnau7sidgapql@google.com',
       created: '2020-12-19T16:01:01.000Z',
@@ -109,9 +109,9 @@ export default {
     {
       type: 'VEVENT',
       params: [],
-      start: '2020-12-24',
+      start: '2020-12-23',
       datetype: 'date',
-      end: '2020-12-25',
+      end: '2020-12-24',
       dtstamp: '2020-12-19T12:13:09.000-05:00',
       uid: '092claa5bjrkj827gqr0lsl3eg@google.com',
       created: '2020-12-19T10:57:55.000-05:00',
@@ -126,9 +126,9 @@ export default {
     {
       type: 'VEVENT',
       params: [],
-      start: '2020-12-29',
+      start: '2020-12-28',
       datetype: 'date',
-      end: '2020-12-31',
+      end: '2020-12-30',
       dtstamp: '2020-12-19T12:13:09.000-05:00',
       uid: '1bbbb8a48sutbvnau7sidgapql@google.com',
       created: '2020-12-19T11:01:01.000-05:00',
