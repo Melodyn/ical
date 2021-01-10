@@ -1,4 +1,4 @@
-export const buildCalendarLinks = (calendarId, timezone) => {
+export const buildCalendarLinks = (calendarId, timezone = '') => {
   const baseURL = 'https://calendar.google.com/calendar';
   const icalPath = `/ical/${calendarId}/public/basic.ics`;
   const embedPath = '/embed';

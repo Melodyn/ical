@@ -1,12 +1,25 @@
 import { constants } from 'http2';
+import fs from 'fs';
+import nock from 'nock';
+import typeorm from 'typeorm';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
-import { buildSign } from '../utils/vkUserValidator';
+import { buildSign } from '../utils/vkUserValidator.js';
+import syncIcal from '../tasks/syncIcal.js';
 
 let app;
 let calendarRepo;
 let database;
+
+const { Not, IsNull } = typeorm;
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rawFixturePath = path.join(__dirname, '..', '__fixtures__', 'calendar.ics');
+
+nock.disableNetConnect();
 
 beforeAll(async () => {
   app = await createApp(process.env.NODE_ENV);
@@ -18,6 +31,9 @@ beforeAll(async () => {
     user.sign = buildSign(user, app.config.VK_PROTECTED_KEY);
   });
 
+  const rawICS = fs.readFileSync(rawFixturePath, 'utf-8');
+  nock(/calendar.google.com/).persist().get(/.*/).reply(200, rawICS);
+
   // Create calendars
   const createCalendarsPromises = Object
     .values(calendars)
@@ -27,18 +43,19 @@ beforeAll(async () => {
         vk_group_id: calendar.clubId,
       };
 
-      return app.server.inject({
-        method: 'POST',
-        path: '/calendar',
-        query: {
-          ...query,
-          sign: buildSign(query, app.config.VK_PROTECTED_KEY),
-        },
-        payload: {
-          calendarId: calendar.calendarId,
-          timezone: calendar.timezone,
-        },
-      })
+      return app.server
+        .inject({
+          method: 'POST',
+          path: '/calendar',
+          query: {
+            ...query,
+            sign: buildSign(query, app.config.VK_PROTECTED_KEY),
+          },
+          payload: {
+            calendarId: calendar.calendarId,
+            timezone: calendar.timezone,
+          },
+        })
         .then(() => calendarRepo.findOne({
           clubId: calendar.clubId,
           calendarId: calendar.calendarId,
@@ -83,5 +100,23 @@ describe('Positive cases', () => {
       widgetSyncedAt: null,
       extra: {},
     }));
+  });
+
+  test('Sync ical', async () => {
+    await syncIcal({ milliseconds: 1 });
+
+    const calendarsWithWidget = await calendarRepo.find({
+      widgetToken: Not(IsNull()),
+    });
+
+    calendarsWithWidget.forEach((clubCalendar) => {
+      expect(clubCalendar).toEqual(expect.objectContaining({
+        widgetSyncedAt: expect.any(Date),
+        extra: expect.objectContaining({
+          ical: expect.any(Array),
+          icalError: null,
+        }),
+      }));
+    });
   });
 });

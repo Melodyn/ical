@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import nock from 'nock';
-import icalParser from '../utils/icalParser.js';
+import * as icalParser from '../utils/icalParser.js';
 import parsedICS from '../__fixtures__/calendar.js';
 import calendars from '../__fixtures__/calendars.js';
 import { buildCalendarLinks } from '../utils/helpers.js';
@@ -36,25 +36,9 @@ const cases = [
 ];
 
 describe('Positive cases', () => {
-  const parserCalendarTZ = icalParser('UTC');
-  test.each(cases)('Calendar timezone: %s', async (caseName, handler) => {
-    const result = await handler(parserCalendarTZ);
+  test.each(cases)('Check calendar: %s', async (caseName, handler) => {
+    const result = await handler(icalParser);
 
-    expect(result).toEqual(parsedICS.Moscow);
-  });
-
-  test('Default timezone', async () => {
-    const fixtureWithoutTZ = fixtures.rawICS.replace(/X-WR-TIMEZONE:.*/gm, '');
-    const parserDetroitTZ = icalParser('America/Detroit');
-    const result = await parserDetroitTZ.fromICS(fixtureWithoutTZ);
-
-    expect(result).toEqual(parsedICS.Detroit);
-  });
-
-  const parserCustomTZ = icalParser('Europe/Moscow', 'UTC');
-  test.each(cases)('Custom timezone: %s', async (caseName, handler) => {
-    const result = await handler(parserCustomTZ);
-
-    expect(result).toEqual(parsedICS.UTC);
+    expect(result).toEqual(parsedICS);
   });
 });
