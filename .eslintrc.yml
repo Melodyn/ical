@@ -15,6 +15,7 @@ plugins:
   - jest
 
 rules:
+  camelcase: off
   no-console: off
   import/extensions: off
   class-methods-use-this: off
@@ -24,9 +25,7 @@ overrides:
   - files: '*.test.js'
     rules:
       no-param-reassign: off
-      camelcase: off
   - files: 'src/*.js'
     rules:
      no-undef: off
-     camelcase: off
      no-alert: off
