@@ -24,7 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5433:5432
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v2
@@ -33,7 +33,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: make install-dependencies
-    - run: make test
+    - name: Run tests
+      run: make test
+      env:
+        POSTGRES_HOST: postgres
     - run: make lint
 
   deploy:
@@ -63,6 +66,8 @@ jobs:
           HD_VK_APP_ADMIN_ID: ${{ secrets.VK_APP_ADMIN_ID }}
           HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
           HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
+          HD_VK_WIDGET_TYPE: list
+          HD_VK_API_VERSION: 5.126
           HD_DEFAULT_TIMEZONE: Europe/Moscow
           HD_CRON_ICAL_TIME: 0 */5 * * * *
           HD_SYNC_ICAL_TIME: 3 minutes

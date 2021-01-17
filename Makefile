@@ -6,7 +6,7 @@ create-config:
 
 # local run
 run:
-	NODE_ENV=development nodemon ./bin/index.js
+	NODE_ENV=development npx nodemon ./bin/index.js
 run-heroku:
 	NODE_ENV=development heroku local web
 stop: postgres-stop postgres-test-stop
@@ -33,13 +33,13 @@ container-run: create-config
 
 # database
 postgres:
-	docker-compose up -d postgres
+	docker-compose up -d postgres-dev
 postgres-stop:
-	docker-compose stop postgres
+	docker-compose stop postgres-dev
 migration-generate:
 	NODE_ENV=development npx typeorm -f ormconfig.cjs migration:generate -n ${name}
 postgres-test-stop:
-	docker-compose stop postgres-test
-	docker-compose rm -f postgres-test
+	docker-compose stop postgres
+	docker-compose rm -f postgres
 postgres-test: postgres-test-stop
-	docker-compose up -d postgres-test
+	docker-compose up -d postgres
