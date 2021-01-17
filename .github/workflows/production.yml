@@ -66,5 +66,5 @@ jobs:
           HD_VK_WIDGET_TYPE: list
           HD_VK_API_VERSION: 5.126
           HD_DEFAULT_TIMEZONE: Europe/Moscow
-          HD_CRON_ICAL_TIME: 0 */5 * * * *
-          HD_SYNC_ICAL_TIME: 3 minutes
+          HD_CRON_ICAL_TIME: 0 */10 * * * *
+          HD_SYNC_ICAL_TIME: 10 minutes
