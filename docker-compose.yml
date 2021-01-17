@@ -15,12 +15,12 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ical
     ports:
-      - 5433:5432
-  postgres:
+      - 5432:5432
+  postgres-test:
     image: library/postgres:12
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ical_test
     ports:
-      - 5432:5432
+      - 5433:5432

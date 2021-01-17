@@ -39,7 +39,7 @@ postgres-stop:
 migration-generate:
 	NODE_ENV=development npx typeorm -f ormconfig.cjs migration:generate -n ${name}
 postgres-test-stop:
-	docker-compose stop postgres
-	docker-compose rm -f postgres
+	docker-compose stop postgres-test
+	docker-compose rm -f postgres-test
 postgres-test: postgres-test-stop
-	docker-compose up -d postgres
+	docker-compose up -d postgres-test
