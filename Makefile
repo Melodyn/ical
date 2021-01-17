@@ -29,7 +29,7 @@ container-build:
 container-dependency:
 	docker-compose run --rm ical make install-dependencies
 container-run: create-config
-	docker-compose run --rm ical /bin/bash
+	docker-compose run --rm -p 8080:8080 ical /bin/bash
 
 # database
 postgres:

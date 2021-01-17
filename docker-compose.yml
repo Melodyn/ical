@@ -4,8 +4,8 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
-    image: melodyn:ical
-    container_name: melodyn_ical
+    image: app:ical
+    container_name: app_ical
     ports:
       - 8080:8080
   postgres-dev:
