@@ -9,7 +9,7 @@ const {
 } = typeorm;
 
 const updateCalendarData = (calendar, ical, icalError = null) => ({
-  ...calendar,
+  id: calendar.id,
   widgetSyncedAt: (icalError === null) ? calendar.updatedAt : null,
   extra: {
     ...calendar.extra,
