@@ -9,6 +9,7 @@ import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
 import { buildSign } from '../utils/vkUserValidator.js';
 import syncIcal from '../tasks/syncIcal.js';
+import syncWidget from '../tasks/syncWidget.js';
 
 let app;
 let calendarRepo;
@@ -118,5 +119,31 @@ describe('Positive cases', () => {
         }),
       }));
     });
+  });
+
+  test('Sync widget', async () => {
+    let requestURL;
+    nock(/api.vk.com/).persist().get(/.*/).reply(200, (uri) => {
+      requestURL = new URL(uri, 'https://api.vk.com');
+      return { data: { response: 1 } };
+    });
+
+    await expect(syncWidget(app.config)).resolves.not.toThrow();
+    const searchParams = Object.fromEntries(requestURL.searchParams);
+
+    expect(searchParams).toEqual(expect.objectContaining({
+      access_token: expect.any(String),
+      type: expect.any(String),
+      code: expect.any(String),
+    }));
+
+    const widgetJSON = searchParams.code.replace(/(return|;)/g, '').trim();
+    const widget = JSON.parse(widgetJSON);
+
+    expect(widget).toEqual(expect.objectContaining({
+      title: expect.any(String),
+      more: expect.any(String),
+      rows: expect.any(Array),
+    }));
   });
 });
