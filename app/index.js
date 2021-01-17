@@ -151,11 +151,11 @@ const initCron = (config) => (config.IS_PROD_ENV
     config.CRON_ICAL_TIME,
     async () => {
       await syncIcal({ milliseconds: config.SYNC_ICAL_TIME })
-        .then((result) => console.log('syncIcal then', (new Date()).toISOString(), result))
+        .then(({ data }) => console.log('syncIcal then', (new Date()).toISOString(), data))
         .catch((err) => console.error('syncIcal catch', (new Date()).toISOString(), err));
 
       await syncWidget({ milliseconds: config.SYNC_ICAL_TIME })
-        .then((result) => console.log('syncWidget then', (new Date()).toISOString(), result))
+        .then(({ data }) => console.log('syncWidget then', (new Date()).toISOString(), data))
         .catch((err) => console.error('syncWidget catch', (new Date()).toISOString(), err));
     },
     null,

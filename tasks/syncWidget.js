@@ -50,6 +50,7 @@ const createWidget = (calendar) => {
     .map(({
       summary,
       datetype,
+      description,
       startMS,
       endMS,
     }) => {
@@ -59,6 +60,7 @@ const createWidget = (calendar) => {
 
       return {
         title: _.truncate(summary, { length: 100 }),
+        descr: _.truncate(description, { length: 100 }),
         time: `${eventStartDate} ${eventEndDate}`.trim(),
       };
     });
@@ -80,22 +82,17 @@ const createWidget = (calendar) => {
   };
 };
 
-const sendWidget = ({ widgetToken, widget }) => axios.get('https://api.vk.com/method/appWidgets.update', {
-  params: {
-    type: 'list',
-    code: `return ${JSON.stringify(widget)};`,
-    v: 5.126,
-    access_token: widgetToken,
+const sendWidget = ({ widgetToken, widget }) => axios.get(
+  'https://api.vk.com/method/appWidgets.update',
+  {
+    params: {
+      type: 'list',
+      code: `return ${JSON.stringify(widget)};`,
+      v: 5.126,
+      access_token: widgetToken,
+    },
   },
-})
-  .then((res) => {
-    console.log('sendWidget', res);
-    return 'ok';
-  })
-  .catch((err) => {
-    console.error(err);
-    return 'ok';
-  });
+);
 
 const syncWidget = async (period) => {
   const calendarRepo = getConnection().getRepository('Calendar');
