@@ -10,19 +10,19 @@ import fastifyStatic from 'fastify-static';
 import Rollbar from 'rollbar';
 import pointOfView from 'point-of-view';
 import pug from 'pug';
-import { createConnection } from 'typeorm';
+import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
-import { CronJob } from 'cron';
 // app
-import { configValidator } from '../utils/configValidator.cjs';
-import ormconfig from '../ormconfig.cjs';
 import routes from '../routes/calendar.js';
 import { createValidator as createVkUserValidator } from '../utils/vkUserValidator.js';
+import setTasks from '../tasks/index.js';
+import utils from '../utils/configValidator.cjs';
+import ormconfig from '../ormconfig.cjs';
 import errors from '../utils/errors.cjs';
-import syncIcal from '../tasks/syncIcal.js';
-import syncWidget from '../tasks/syncWidget.js';
 
+const { createConnection } = typeorm;
+const { configValidator } = utils;
 const { ICalAppError, AuthError } = errors;
 
 const initServer = (config) => {
@@ -146,29 +146,6 @@ const prepareTimezones = (config) => {
   };
 };
 
-const initCron = (config) => (config.IS_PROD_ENV
-  ? new CronJob(
-    config.CRON_ICAL_TIME,
-    async () => {
-      await syncIcal({ milliseconds: config.SYNC_ICAL_TIME })
-        .then((res) => console.log('syncIcal then', (new Date()).toISOString(), res))
-        .catch((err) => console.error('syncIcal catch', (new Date()).toISOString(), err));
-
-      await syncWidget({ milliseconds: config.SYNC_ICAL_TIME })
-        .then((res) => console.log('syncWidget then', (new Date()).toISOString(), res))
-        .catch((err) => console.error('syncWidget catch', (new Date()).toISOString(), err));
-    },
-    null,
-    true,
-    null,
-    null,
-    true,
-  )
-  : {
-    start: () => {},
-    stop: () => {},
-  });
-
 const app = async (envName) => {
   process.on('unhandledRejection', (err) => {
     console.error(err);
@@ -179,7 +156,7 @@ const app = async (envName) => {
   const db = await initDatabase(config);
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
-  const cronJob = initCron(config);
+  const cronJobs = setTasks(config);
   setRollbar(config, server);
   setAuth(config, server);
   setStatic(config, server);
@@ -190,15 +167,15 @@ const app = async (envName) => {
   server.decorate('timezones', timezones);
 
   await server.listen(config.PORT, config.HOST);
-  cronJob.start();
+  cronJobs.forEach((job) => job.start());
 
   const stop = async () => {
     server.log.info('Stop app', config);
-    server.log.info('\tStop cron');
-    cronJob.stop();
-    server.log.info('\tDisconnect db');
+    server.log.info('  Stop cron');
+    cronJobs.forEach((job) => job.stop());
+    server.log.info('  Disconnect db');
     await db.close();
-    server.log.info('\tStop server');
+    server.log.info('  Stop server');
     await server.close();
     server.log.info('App stopped');
 
