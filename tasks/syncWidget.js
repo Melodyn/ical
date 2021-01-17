@@ -82,17 +82,19 @@ const createWidget = (calendar) => {
   };
 };
 
-const sendWidget = ({ widgetToken, widget }) => axios.get(
-  'https://api.vk.com/method/appWidgets.update',
-  {
-    params: {
-      type: 'list',
-      code: `return ${JSON.stringify(widget)};`,
-      v: 5.126,
-      access_token: widgetToken,
+const sendWidget = ({ widgetToken, widget }) => axios
+  .get(
+    'https://api.vk.com/method/appWidgets.update',
+    {
+      params: {
+        type: 'list',
+        code: `return ${JSON.stringify(widget)};`,
+        v: 5.126,
+        access_token: widgetToken,
+      },
     },
-  },
-);
+  )
+  .then(({ data }) => data);
 
 const syncWidget = async (period) => {
   const calendarRepo = getConnection().getRepository('Calendar');
@@ -115,7 +117,7 @@ const syncWidget = async (period) => {
       const events = ical
         .filter(({ type }) => (type === 'VEVENT'))
         .map(prepareEvents)
-        .filter(({ type, startMS }) => ((type === 'once') && startMS >= nowMS));
+        .filter(({ type, endMS }) => ((type === 'once') && endMS >= nowMS));
 
       return {
         id,
