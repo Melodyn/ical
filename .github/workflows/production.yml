@@ -33,7 +33,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: make install-dependencies
-    - run: make test-ci
+    - run: make test
     - run: make lint
 
   deploy:

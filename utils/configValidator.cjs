@@ -35,9 +35,9 @@ const configSchema = yup.object({
   HOST: yup.string().required(),
   LOG_LEVEL: yup.string().required(),
   DB_TYPE: yup.string().required(),
-  DB_HOST: process.env.CI
-    ? yup.string().transform(() => '0.0.0.0')
-    : yup.string().required(),
+  DB_HOST: yup.string()
+    .transform((current) => (process.env.CI ? '0.0.0.0' : current))
+    .required(),
   DB_PORT: yup.number().required(),
   DB_USER: yup.string().required(),
   DB_PASS: yup.string().required(),
