@@ -1,61 +1,103 @@
-/* eslint-disable */
-
 import luxon from 'luxon';
 import typeorm from 'typeorm';
 import axios from 'axios';
 import _ from 'lodash';
 
-const { DateTime } = luxon;
+const { DateTime, Duration } = luxon;
 const {
   Not, IsNull, LessThan, getConnection,
 } = typeorm;
 
-// const widget = {
-//   title: 'Заголовок 1',
-//   head: [{ text: 'Столбец 1' }],
-//   body: [
-//     [{ text: 'Некоторое значение в столбце, длиной ровно 100 символов, чтобы проверить сколько текста отображается' }],
-//   ],
-// };
-// const json = JSON.stringify(widget);
+const toMS = (date) => (new Date(date)).getTime();
+const getDateNowMS = () => Date.now();
 
-const createWidget = ({ clubId, timezone, ical }) => {
-  const dateNowMS = Date.now();
-  const body = _.take(ical, 10)
-    .map(({ summary, startMS }) => {
-      const formatDate = (startMS < dateNowMS) ? 'dd.MM' : "dd.MM 'в' HH:mm";
-      const eventStartDate = DateTime.fromMillis(startMS).setZone(timezone).toFormat(formatDate);
-      const rowText = `${eventStartDate} ${summary}`;
+const getDateFormat = (datetype) => {
+  const createFormat = (start, end = '') => ({ start, end });
 
-      return { text: _.truncate(rowText, { length: 100 }) };
-    });
-  const currentDateTime = DateTime.local().setZone(timezone).toFormat("dd.MM 'в' HH:mm");
-  const title = `обновлено ${currentDateTime}`;
-  const head = [{ text: 'Мероприятия' }];
-  const more = 'Перейти в календарь';
-  const more_url = `//vk.com/app7703913_-${clubId}`;
+  return (datetype === 'date')
+    ? createFormat("'с' dd.MM", "'до' dd.MM")
+    : createFormat("'с' HH:mm dd.MM", "'до' HH:mm dd.MM");
+};
+
+const prepareEvents = (event) => {
+  const type = _.has(event, 'rrule') ? 'periodic' : 'once';
+  const startMS = toMS(event.start);
+  const endMS = toMS(event.end);
+
+  const firstStartDT = DateTime.fromMillis(startMS);
+  const firstEndDT = DateTime.fromMillis(endMS);
+  const durationMS = firstEndDT.diff(firstStartDT).milliseconds;
+
+  const intervalMS = (type === 'periodic')
+    ? Duration.fromObject({ days: event.interval }).as('milliseconds')
+    : 0;
 
   return {
-    title,
-    head,
-    body,
-    more,
-    more_url,
+    type,
+    startMS,
+    endMS,
+    durationMS,
+    intervalMS,
+    summary: event.summary,
+    datetype: event.datetype,
   };
 };
 
-// axios.get('https://api.vk.com/method/appWidgets.update', {
-//   params: {
-//     type: 'table',
-//     code: `return ${json};`,
-//     v: 5.126,
-//     access_token: token,
-//   },
-// })
-//   .then(console.log)
-//   .catch(console.error);
+const createWidget = (calendar) => {
+  const { clubId, timezone, events } = calendar;
 
-const syncWidget = async (period, maximumEvents = 10) => {
+  const rows = _.take(events, 6)
+    .map(({
+      summary,
+      datetype,
+      startMS,
+      endMS,
+    }) => {
+      const { start: startFormat, end: endFormat } = getDateFormat(datetype);
+      const eventStartDate = DateTime.fromMillis(startMS).setZone(timezone).toFormat(startFormat);
+      const eventEndDate = DateTime.fromMillis(endMS).setZone(timezone).toFormat(endFormat);
+
+      return {
+        title: _.truncate(summary, { length: 100 }),
+        time: `${eventStartDate} ${eventEndDate}`.trim(),
+      };
+    });
+  const currentDateTime = DateTime.local().setZone(timezone).toFormat("dd.MM 'в' HH:mm");
+  const title = `обновлено ${currentDateTime}`;
+  const more = 'Перейти в календарь';
+  const more_url = `//vk.com/app7703913_-${clubId}`;
+
+  const widget = {
+    title,
+    rows,
+    more,
+    more_url,
+  };
+
+  return {
+    ...calendar,
+    widget,
+  };
+};
+
+const sendWidget = ({ widgetToken, widget }) => axios.get('https://api.vk.com/method/appWidgets.update', {
+  params: {
+    type: 'list',
+    code: `return ${JSON.stringify(widget)};`,
+    v: 5.126,
+    access_token: widgetToken,
+  },
+})
+  .then((res) => {
+    console.log('sendWidget', res);
+    return 'ok';
+  })
+  .catch((err) => {
+    console.error(err);
+    return 'ok';
+  });
+
+const syncWidget = async (period) => {
   const calendarRepo = getConnection().getRepository('Calendar');
   const updateDate = DateTime.local().minus(period).toSQL();
 
@@ -64,8 +106,7 @@ const syncWidget = async (period, maximumEvents = 10) => {
     widgetSyncedAt: LessThan(updateDate),
   });
 
-  const dateNowMS = Date.now();
-  const toMS = (date) => (new Date(date)).getTime();
+  const nowMS = getDateNowMS();
   const plainActualCalendars = calendarsForWidget
     .map(({
       id,
@@ -73,17 +114,119 @@ const syncWidget = async (period, maximumEvents = 10) => {
       clubId,
       timezone,
       extra: { ical },
-    }) => ({
-      id,
-      widgetToken,
-      clubId,
-      timezone,
-      ical: _.sortBy(
-        ical.filter(({ end }) => toMS(end) >= dateNowMS),
-        [({ start }) => toMS(start)],
-      ),
-    }))
-    .filter(({ ical }) => ical.length > 0);
+    }) => {
+      const events = ical
+        .filter(({ type }) => (type === 'VEVENT'))
+        .map(prepareEvents)
+        .filter(({ type, startMS }) => ((type === 'once') && startMS >= nowMS));
+
+      return {
+        id,
+        widgetToken,
+        clubId,
+        timezone,
+        events,
+      };
+    });
 
   const calendarsWithWidget = plainActualCalendars.map(createWidget);
+
+  const requests = calendarsWithWidget.map(sendWidget);
+
+  return Promise.all(requests);
 };
+
+export default syncWidget;
+
+// const handleEvents = (event) => {
+//   console.log(event);
+//   if (!event.rrule) {
+//     return { event };
+//   }
+//
+//   const {
+//     start: firstStart, end: firstEnd,
+//     summary, datetype,
+//     rrule: {
+//       options: {
+//         until,
+//         dtstart,
+//         interval,
+//       },
+//     },
+//   } = event;
+//
+//   const nowDT = DateTime.local().setZone(timezone);
+//   const startMS = toMS(dtstart);
+//   const firstStartDT = DateTime.fromMillis(toMS(firstStart)).setZone(timezone);
+//   const firstEndDT = DateTime.fromMillis(toMS(firstEnd)).setZone(timezone);
+//   const duration = firstEndDT.diff(firstStartDT).milliseconds;
+//
+//   if (startMS >= dateNowMS) {
+//     return {
+//       event: JSON.stringify(event),
+//       summary,
+//       datetype,
+//       duration,
+//       interval,
+//       startMS: firstStartDT.toISO,
+//       endMS: firstEndDT.toISO,
+//       type: 'startMS >= dateNowMS',
+//     };
+//   }
+//
+//   const msLeftFromStart = nowDT.diff(firstStartDT).milliseconds;
+//   const intervalMS = Duration.fromObject({ days: interval }).as('milliseconds');
+//   const msOffsetForStart = msLeftFromStart % intervalMS;
+//   const startDT = nowDT.minus({ milliseconds: msOffsetForStart });
+//   const endDT = startDT.plus({ milliseconds: duration });
+//   const isDaily = interval < 2;
+//
+//   if (isDaily) {
+//     return {
+//       event: JSON.stringify(event),
+//       summary,
+//       datetype,
+//       duration,
+//       msLeftFromStart,
+//       msOffsetForStart,
+//       interval,
+//       intervalMS,
+//       startMS: startDT.toISO(),
+//       endMS: endDT.toISO(),
+//       type: 'isDaily',
+//     };
+//   }
+//
+//   const nextStartDT = startDT.plus({ milliseconds: intervalMS });
+//   const nextEndDT = endDT.plus({ milliseconds: intervalMS });
+//
+//   return [
+//     {
+//       event: JSON.stringify(event),
+//       summary,
+//       datetype,
+//       duration,
+//       msLeftFromStart,
+//       msOffsetForStart,
+//       interval,
+//       intervalMS,
+//       startMS: startDT.toISO(),
+//       endMS: endDT.toISO(),
+//       type: 'minStartDT',
+//     },
+//     {
+//       event: JSON.stringify(event),
+//       summary,
+//       datetype,
+//       duration,
+//       msLeftFromStart,
+//       msOffsetForStart,
+//       interval,
+//       intervalMS,
+//       startMS: nextStartDT.toISO(),
+//       endMS: nextEndDT.toISO(),
+//       type: 'nextStartDT',
+//     },
+//   ];
+// });

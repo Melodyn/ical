@@ -21,6 +21,7 @@ import routes from '../routes/calendar.js';
 import { createValidator as createVkUserValidator } from '../utils/vkUserValidator.js';
 import errors from '../utils/errors.cjs';
 import syncIcal from '../tasks/syncIcal.js';
+import syncWidget from '../tasks/syncWidget.js';
 
 const { ICalAppError, AuthError } = errors;
 
@@ -148,9 +149,20 @@ const prepareTimezones = (config) => {
 const initCron = (config) => (config.IS_PROD_ENV
   ? new CronJob(
     config.CRON_ICAL_TIME,
-    () => syncIcal({ milliseconds: config.SYNC_ICAL_TIME })
-      .then((result) => console.log('syncIcal then', (new Date()).toISOString(), result))
-      .catch((err) => console.error('syncIcal catch', (new Date()).toISOString(), err)),
+    async () => {
+      await syncIcal({ milliseconds: config.SYNC_ICAL_TIME })
+        .then((result) => console.log('syncIcal then', (new Date()).toISOString(), result))
+        .catch((err) => console.error('syncIcal catch', (new Date()).toISOString(), err));
+
+      await syncWidget({ milliseconds: config.SYNC_ICAL_TIME })
+        .then((result) => console.log('syncWidget then', (new Date()).toISOString(), result))
+        .catch((err) => console.error('syncWidget catch', (new Date()).toISOString(), err));
+    },
+    null,
+    true,
+    null,
+    null,
+    true,
   )
   : {
     start: () => {},

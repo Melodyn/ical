@@ -64,5 +64,5 @@ jobs:
           HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
           HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
           HD_DEFAULT_TIMEZONE: Europe/Moscow
-          HD_CRON_ICAL_TIME: 0 */20 * * * *
-          HD_SYNC_ICAL_TIME: 40 minutes
+          HD_CRON_ICAL_TIME: 0 */5 * * * *
+          HD_SYNC_ICAL_TIME: 3 minutes
