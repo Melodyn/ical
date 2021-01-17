@@ -27,9 +27,4 @@ const prepareTask = (config, task, name) => {
 export default (config) => Object.entries(tasks).map(([name, task]) => new CronJob(
   config.CRON_ICAL_TIME,
   () => prepareTask(config, task, name),
-  // null,
-  // true,
-  // null,
-  // null,
-  // true,
 ));

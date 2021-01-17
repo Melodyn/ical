@@ -33,10 +33,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: make install-dependencies
-    - name: Run tests
-      run: make test
-      env:
-        POSTGRES_HOST: postgres
+    - run: make test
     - run: make lint
 
   deploy:
