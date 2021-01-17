@@ -40,6 +40,7 @@ const prepareEvents = (event) => {
     intervalMS,
     summary: event.summary,
     datetype: event.datetype,
+    description: event.description,
   };
 };
 
@@ -82,19 +83,23 @@ const createWidget = (calendar) => {
   };
 };
 
-const sendWidget = ({ widgetToken, widget }) => axios
-  .get(
-    'https://api.vk.com/method/appWidgets.update',
-    {
-      params: {
-        type: 'list',
-        code: `return ${JSON.stringify(widget)};`,
-        v: 5.126,
-        access_token: widgetToken,
+const sendWidget = ({ widgetToken, widget }) => {
+  const json = JSON.stringify(widget);
+  console.log(json);
+  axios
+    .get(
+      'https://api.vk.com/method/appWidgets.update',
+      {
+        params: {
+          type: 'list',
+          code: `return ${json};`,
+          v: 5.126,
+          access_token: widgetToken,
+        },
       },
-    },
-  )
-  .then(({ data }) => data);
+    )
+    .then(({ data }) => data);
+};
 
 const syncWidget = async (period) => {
   const calendarRepo = getConnection().getRepository('Calendar');
@@ -124,7 +129,7 @@ const syncWidget = async (period) => {
         widgetToken,
         clubId,
         timezone,
-        events,
+        events: _.sortBy(events, 'startMS'),
       };
     });
 
