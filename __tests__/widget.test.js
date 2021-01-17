@@ -103,7 +103,7 @@ describe('Positive cases', () => {
   });
 
   test('Sync ical', async () => {
-    await syncIcal({ milliseconds: 1 });
+    await syncIcal(app.config);
 
     const calendarsWithWidget = await calendarRepo.find({
       widgetToken: Not(IsNull()),

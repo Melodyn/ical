@@ -1,7 +1,9 @@
 import cron from 'cron';
 import syncIcal from './syncIcal.js';
 import syncWidget from './syncWidget.js';
+import configValidator from '../utils/configValidator.cjs';
 
+const { envsMap } = configValidator;
 const { CronJob } = cron;
 
 const tasks = {
@@ -24,7 +26,16 @@ const prepareTask = (config, task, name) => {
   return task(config);
 };
 
-export default (config) => Object.entries(tasks).map(([name, task]) => new CronJob(
-  config.CRON_ICAL_TIME,
-  () => prepareTask(config, task, name),
-));
+const cronServiceFactory = (config) => {
+  switch (config.NODE_ENV) {
+    case envsMap.test:
+      return [{ start: () => {}, stop: () => {} }];
+    default:
+      return Object.entries(tasks).map(([name, task]) => new CronJob(
+        config.CRON_ICAL_TIME,
+        () => prepareTask(config, task, name),
+      ));
+  }
+};
+
+export default (config) => cronServiceFactory(config);
