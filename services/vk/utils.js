@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import luxon from 'luxon';
+import rrule from 'rrule';
 
-const { DateTime, Duration } = luxon;
+const { RRule } = rrule;
+const { DateTime } = luxon;
 
 export const eventTypes = {
   periodic: 'periodic',
@@ -23,111 +25,43 @@ export const prepareEvents = (event) => {
   const firstEndDT = DateTime.fromMillis(endMS);
   const durationMS = firstEndDT.diff(firstStartDT).milliseconds;
 
-  const intervalMS = (eventTypes.periodic)
-    ? Duration.fromObject({ days: event.interval }).as('milliseconds')
-    : 0;
+  if (type === eventTypes.once) {
+    return {
+      type,
+      startMS,
+      endMS,
+      durationMS,
+      summary: event.summary,
+      datetype: event.datetype,
+      description: event.description,
+    };
+  }
+
+  const filledRrules = Object.fromEntries(
+    Object
+      .entries(event.rrule.options)
+      .filter(([, value]) => {
+        if (_.isArray(value) && _.isEmpty(value)) return false;
+        return !_.isNull(value);
+      })
+      .map(([key, value]) => [
+        key,
+        (key === 'dtstart' || key === 'until') ? new Date(value) : value,
+      ]),
+  );
+
+  const rule = new RRule(filledRrules);
+  const nearestStartMS = rule.after(new Date(), true).getTime();
+  const nearestStartDT = DateTime.fromMillis(nearestStartMS);
+  const nearestEndDT = nearestStartDT.plus({ milliseconds: durationMS });
 
   return {
     type,
-    startMS,
-    endMS,
+    startMS: nearestStartDT.toMillis(),
+    endMS: nearestEndDT.toMillis(),
     durationMS,
-    intervalMS,
     summary: event.summary,
     datetype: event.datetype,
     description: event.description,
   };
 };
-
-// const handleEvents = (event) => {
-//   console.log(event);
-//   if (!event.rrule) {
-//     return { event };
-//   }
-//
-//   const {
-//     start: firstStart, end: firstEnd,
-//     summary, datetype,
-//     rrule: {
-//       options: {
-//         until,
-//         dtstart,
-//         interval,
-//       },
-//     },
-//   } = event;
-//
-//   const nowDT = DateTime.local().setZone(timezone);
-//   const startMS = toMS(dtstart);
-//   const firstStartDT = DateTime.fromMillis(toMS(firstStart)).setZone(timezone);
-//   const firstEndDT = DateTime.fromMillis(toMS(firstEnd)).setZone(timezone);
-//   const duration = firstEndDT.diff(firstStartDT).milliseconds;
-//
-//   if (startMS >= dateNowMS) {
-//     return {
-//       event: JSON.stringify(event),
-//       summary,
-//       datetype,
-//       duration,
-//       interval,
-//       startMS: firstStartDT.toISO,
-//       endMS: firstEndDT.toISO,
-//       type: 'startMS >= dateNowMS',
-//     };
-//   }
-//
-//   const msLeftFromStart = nowDT.diff(firstStartDT).milliseconds;
-//   const intervalMS = Duration.fromObject({ days: interval }).as('milliseconds');
-//   const msOffsetForStart = msLeftFromStart % intervalMS;
-//   const startDT = nowDT.minus({ milliseconds: msOffsetForStart });
-//   const endDT = startDT.plus({ milliseconds: duration });
-//   const isDaily = interval < 2;
-//
-//   if (isDaily) {
-//     return {
-//       event: JSON.stringify(event),
-//       summary,
-//       datetype,
-//       duration,
-//       msLeftFromStart,
-//       msOffsetForStart,
-//       interval,
-//       intervalMS,
-//       startMS: startDT.toISO(),
-//       endMS: endDT.toISO(),
-//       type: 'isDaily',
-//     };
-//   }
-//
-//   const nextStartDT = startDT.plus({ milliseconds: intervalMS });
-//   const nextEndDT = endDT.plus({ milliseconds: intervalMS });
-//
-//   return [
-//     {
-//       event: JSON.stringify(event),
-//       summary,
-//       datetype,
-//       duration,
-//       msLeftFromStart,
-//       msOffsetForStart,
-//       interval,
-//       intervalMS,
-//       startMS: startDT.toISO(),
-//       endMS: endDT.toISO(),
-//       type: 'minStartDT',
-//     },
-//     {
-//       event: JSON.stringify(event),
-//       summary,
-//       datetype,
-//       duration,
-//       msLeftFromStart,
-//       msOffsetForStart,
-//       interval,
-//       intervalMS,
-//       startMS: nextStartDT.toISO(),
-//       endMS: nextEndDT.toISO(),
-//       type: 'nextStartDT',
-//     },
-//   ];
-// });

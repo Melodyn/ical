@@ -32,7 +32,7 @@ const syncWidget = async ({
       const events = ical
         .filter(({ type }) => (type === 'VEVENT'))
         .map(prepareEvents)
-        .filter(({ type, endMS }) => ((type === 'once') && endMS >= nowMS));
+        .filter(({ endMS }) => endMS >= nowMS);
 
       return {
         id,
