@@ -33,7 +33,7 @@ describe('Positive cases', () => {
   test('Get empty main page', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
-      path: '/',
+      path: '/install',
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
@@ -134,7 +134,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
-    expect(headers.location).toEqual('/');
+    expect(headers.location).toEqual('/install');
   });
 });
 
