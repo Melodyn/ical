@@ -52,7 +52,7 @@ const setAuth = (config, server) => {
       return done(error);
     }
     if (!user.groupId) {
-      res.redirect('/');
+      res.redirect('/install');
     }
 
     req.user = user;
