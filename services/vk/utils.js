@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import _ from 'lodash';
 import luxon from 'luxon';
 import rrule from 'rrule';
