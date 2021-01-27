@@ -17,6 +17,7 @@ export const getDateFormat = (datetype) => ((datetype === 'date')
   : createFormat("'с' HH:mm dd.MM", "'до' HH:mm dd.MM"));
 
 export const prepareEvents = (event) => {
+try {
   const type = _.has(event, 'rrule') ? eventTypes.periodic : eventTypes.once;
   const startMS = toMS(event.start);
   const endMS = toMS(event.end);
@@ -64,4 +65,9 @@ export const prepareEvents = (event) => {
     datetype: event.datetype,
     description: event.description,
   };
+} catch (e) {
+  console.log(event);
+  console.error(e);
+  return { endMS: Date.now() - 1000 };
+}
 };
