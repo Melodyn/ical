@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import _ from 'lodash';
 import luxon from 'luxon';
 import rrule from 'rrule';
@@ -19,57 +17,65 @@ export const getDateFormat = (datetype) => ((datetype === 'date')
   : createFormat("'с' HH:mm dd.MM", "'до' HH:mm dd.MM"));
 
 export const prepareEvents = (event) => {
-try {
-  const type = _.has(event, 'rrule') ? eventTypes.periodic : eventTypes.once;
-  const startMS = toMS(event.start);
-  const endMS = toMS(event.end);
+  try {
+    const type = _.has(event, 'rrule') ? eventTypes.periodic : eventTypes.once;
+    const startMS = toMS(event.start);
+    const endMS = toMS(event.end);
+    const nowMS = getDateNowMS();
 
-  const firstStartDT = DateTime.fromMillis(startMS);
-  const firstEndDT = DateTime.fromMillis(endMS);
-  const durationMS = firstEndDT.diff(firstStartDT).milliseconds;
+    const firstStartDT = DateTime.fromMillis(startMS);
+    const firstEndDT = DateTime.fromMillis(endMS);
+    const durationMS = firstEndDT.diff(firstStartDT).milliseconds;
 
-  if (type === eventTypes.once) {
+    if (type === eventTypes.once) {
+      return {
+        type,
+        startMS,
+        endMS,
+        isFinished: nowMS >= endMS,
+        durationMS,
+        summary: event.summary,
+        datetype: event.datetype,
+        description: event.description,
+      };
+    }
+
+    const filledRrules = Object.fromEntries(
+      Object
+        .entries(event.rrule.options)
+        .filter(([, value]) => {
+          if (_.isArray(value) && _.isEmpty(value)) return false;
+          return !_.isNull(value);
+        })
+        .map(([key, value]) => [
+          key,
+          (key === 'dtstart' || key === 'until') ? new Date(value) : value,
+        ]),
+    );
+
+    const rule = new RRule(filledRrules);
+    const nearestStart = rule.after(new Date(nowMS), true);
+    const isFinished = (nearestStart === null);
+    if (isFinished) return { isFinished };
+
+    const nearestStartMS = nearestStart.getTime();
+    const nearestStartDT = DateTime.fromMillis(nearestStartMS);
+    const nearestEndDT = nearestStartDT.plus({ milliseconds: durationMS });
+    const nearestEndMS = nearestEndDT.toMillis();
+
     return {
       type,
-      startMS,
-      endMS,
+      startMS: nearestStartDT.toMillis(),
+      endMS: nearestEndMS,
+      isFinished: nowMS >= nearestEndMS,
       durationMS,
       summary: event.summary,
       datetype: event.datetype,
       description: event.description,
     };
+  } catch (e) {
+    console.log('error event', JSON.stringify(event));
+    console.error(e);
+    return { isFinished: true };
   }
-
-  const filledRrules = Object.fromEntries(
-    Object
-      .entries(event.rrule.options)
-      .filter(([, value]) => {
-        if (_.isArray(value) && _.isEmpty(value)) return false;
-        return !_.isNull(value);
-      })
-      .map(([key, value]) => [
-        key,
-        (key === 'dtstart' || key === 'until') ? new Date(value) : value,
-      ]),
-  );
-
-  const rule = new RRule(filledRrules);
-  const nearestStartMS = rule.after(new Date(), true).getTime();
-  const nearestStartDT = DateTime.fromMillis(nearestStartMS);
-  const nearestEndDT = nearestStartDT.plus({ milliseconds: durationMS });
-
-  return {
-    type,
-    startMS: nearestStartDT.toMillis(),
-    endMS: nearestEndDT.toMillis(),
-    durationMS,
-    summary: event.summary,
-    datetype: event.datetype,
-    description: event.description,
-  };
-} catch (e) {
-  console.log(event);
-  console.error(e);
-  return { endMS: Date.now() - 1000 };
-}
 };

@@ -1,7 +1,7 @@
 import luxon from 'luxon';
 import typeorm from 'typeorm';
 import _ from 'lodash';
-import { prepareEvents, getDateNowMS } from '../utils.js';
+import { prepareEvents } from '../utils.js';
 
 const { DateTime } = luxon;
 const {
@@ -20,7 +20,6 @@ const syncWidget = async ({
     widgetSyncedAt: LessThan(updateDate),
   });
 
-  const nowMS = getDateNowMS();
   const plainActualCalendars = calendarsForWidget
     .map(({
       id,
@@ -32,7 +31,9 @@ const syncWidget = async ({
       const events = ical
         .filter(({ type }) => (type === 'VEVENT'))
         .map(prepareEvents)
-        .filter(({ endMS }) => endMS >= nowMS);
+        .filter(({ isFinished }) => !isFinished);
+
+      console.log(events);
 
       return {
         id,
