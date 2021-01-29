@@ -1,3 +1,5 @@
+/* eslint-disable jest/no-commented-out-tests */
+
 import { constants } from 'http2';
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
@@ -122,6 +124,7 @@ describe('Positive cases', () => {
     expect(payload).toMatch(/iframe/gim);
   });
 
+  // заглушено из-за отсутствия редиректов в мобильном приложении
   // test('Redirect to main', async () => {
   //   const { vk_group_id, ...userFields } = users.member;
   //   const { statusCode, headers } = await app.server.inject({
