@@ -33,8 +33,6 @@ const syncWidget = async ({
         .map(prepareEvents)
         .filter(({ isFinished }) => !isFinished);
 
-      console.log(events);
-
       return {
         id,
         widgetToken,
