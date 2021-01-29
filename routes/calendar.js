@@ -9,6 +9,10 @@ const routes = [
       return this.auth([this.vkUserAuth])(...params);
     },
     async handler(req, res) {
+      if (!req.isAuthenticated) {
+        res.render('main', { appId: this.config.VK_APP_ID });
+      }
+
       const calendarRepository = this.db.getRepository('Calendar');
       const clubCalendar = await calendarRepository.findOne({ clubId: req.user.groupId });
 
