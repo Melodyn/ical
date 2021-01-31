@@ -7,7 +7,6 @@ on:
 jobs:
   pre-deploy:
     runs-on: ubuntu-latest
-    environment: Staging
     strategy:
       matrix:
         node-version: [14.x]
@@ -40,7 +39,6 @@ jobs:
 
   deploy:
     needs: pre-deploy
-    environment: Staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -55,11 +53,11 @@ jobs:
           HD_HOST: 0.0.0.0
           HD_LOG_LEVEL: info
           HD_DB_TYPE: ${{ secrets.DB_TYPE }}
-          HD_DB_HOST: ${{ secrets.DB_HOST }}
+          HD_DB_HOST: ${{ secrets.S_DB_HOST }}
           HD_DB_PORT: ${{ secrets.DB_PORT }}
-          HD_DB_USER: ${{ secrets.DB_USER }}
-          HD_DB_PASS: ${{ secrets.DB_PASS }}
-          HD_DB_NAME: ${{ secrets.DB_NAME }}
+          HD_DB_USER: ${{ secrets.S_DB_USER }}
+          HD_DB_PASS: ${{ secrets.S_DB_PASS }}
+          HD_DB_NAME: ${{ secrets.S_DB_NAME }}
           HD_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
           HD_STATIC_DIR: src
           HD_VK_APP_ID: ${{ secrets.VK_APP_ID }}
