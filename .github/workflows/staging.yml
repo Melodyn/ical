@@ -38,10 +38,11 @@ jobs:
 
   deploy:
     needs: pre-deploy
-    environment: melodyn-ical-staging
+    environment: Staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: echo "DB_TYPE=${{ secrets.DB_TYPE }}"
       - uses: akhileshns/heroku-deploy@v3.6.8
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
