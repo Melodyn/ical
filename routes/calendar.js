@@ -74,6 +74,13 @@ const routes = [
   },
   {
     method: 'GET',
+    url: '/help',
+    handler(req, res) {
+      res.render('help');
+    },
+  },
+  {
+    method: 'GET',
     url: '/',
     handler(req, res) {
       res.render('main', { appId: this.config.VK_APP_ID });

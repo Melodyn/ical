@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { constants } from 'http2';
 import path from 'path';
+import qs from 'querystring';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
@@ -92,7 +93,7 @@ const setStatic = (config, server) => {
     templates: path.resolve(config.STATIC_DIR, 'templates'),
   });
   server.decorateReply('render', function render(template, values = {}) {
-    const { user } = this.request;
+    const { user, query } = this.request;
     this.view(template, {
       user,
       values,
@@ -103,6 +104,7 @@ const setStatic = (config, server) => {
         app: {
           isProd: config.IS_PROD_ENV,
           page: template,
+          query: qs.stringify(query),
         },
       },
     });

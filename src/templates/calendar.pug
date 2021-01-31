@@ -1,7 +1,7 @@
 extends index
 
 mixin calendarIframe(calendarLink)
-  a.btn.btn-link.m-1.mb-2(href=calendarLink target='_blank') Открыть в браузере
+  h4 Календарь сообщества
   iframe#calendarIframe(
     src=calendarLink
     style='border: 0'
@@ -10,12 +10,15 @@ mixin calendarIframe(calendarLink)
     frameborder='0'
     scrolling='yes'
   )
+  .clearfix
+    a.btn.btn-link.mt-2.float-end(href=calendarLink target='_blank') Открыть в браузере
   hr
 
 mixin widgetBlock(clubId, clubHasWidget)
   - const clubSettingsPageURL = `vk.com/club${clubId}?act=apps`;
   - const clubTokenPageURL = `vk.com/club${clubId}?act=tokens`;
   div
+    h4 Настройки виджета
     if (clubHasWidget === true)
       p
         | Для работы с виджетом выпущен токен, который можно найти тут:

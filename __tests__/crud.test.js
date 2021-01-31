@@ -30,7 +30,27 @@ afterAll(async () => {
 });
 
 describe('Positive cases', () => {
-  test('Get empty main page', async () => {
+  test('Get main page', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'GET',
+      path: '/',
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(payload).toMatch(/Google календарь и виджет в сообщество/gim);
+  });
+
+  test('Get help page', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'GET',
+      path: '/help',
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(payload).toMatch(/О приложении/gim);
+  });
+
+  test('Get install page', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'GET',
       path: '/install',
