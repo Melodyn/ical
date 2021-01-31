@@ -53,7 +53,9 @@ const setAuth = (config, server) => {
       return done(error);
     }
     if (!user.groupId) {
-      res.redirect('/install');
+      req.user = user;
+      req.isAuthenticated = false;
+      return done();
     }
 
     req.user = user;

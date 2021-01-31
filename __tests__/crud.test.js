@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests */
 import { constants } from 'http2';
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
@@ -142,9 +143,24 @@ describe('Positive cases', () => {
     expect(payload).toMatch(/iframe/gim);
   });
 
-  test('Redirect to main', async () => {
+  // заглушено из-за отсутствия редиректов в мобильном приложении
+  // test('Redirect to main', async () => {
+  //   const { vk_group_id, ...userFields } = users.member;
+  //   const { statusCode, headers } = await app.server.inject({
+  //     method: 'GET',
+  //     path: '/calendar',
+  //     query: {
+  //       ...userFields,
+  //       sign: buildSign(userFields, app.config.VK_PROTECTED_KEY),
+  //     },
+  //   });
+  //
+  //   expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
+  //   expect(headers.location).toEqual('/install');
+  // });
+  test('Render main', async () => {
     const { vk_group_id, ...userFields } = users.member;
-    const { statusCode, headers } = await app.server.inject({
+    const { statusCode, payload } = await app.server.inject({
       method: 'GET',
       path: '/calendar',
       query: {
@@ -153,8 +169,8 @@ describe('Positive cases', () => {
       },
     });
 
-    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
-    expect(headers.location).toEqual('/install');
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(payload).toMatch(/Необходимо выбрать сообщество/gim);
   });
 });
 
