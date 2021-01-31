@@ -12,7 +12,7 @@ const tasks = {
 };
 
 const prepareTask = (config, task, name) => {
-  if (config.IS_PROD_ENV || config.IS_DEV_ENV) {
+  if (config.IS_PROD_ENV || config.IS_STAGE_ENV || config.IS_DEV_ENV) {
     return task(config)
       .then((res) => {
         console.log(`${name} then`, (new Date()).toISOString(), res);
