@@ -102,7 +102,7 @@ const setStatic = (config, server) => {
           ...user,
         },
         app: {
-          isProd: config.IS_PROD_ENV,
+          isProd: config.IS_PROD_ENV || config.IS_STAGE_ENV,
           page: template,
           query: qs.stringify(query),
         },
