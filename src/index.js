@@ -1,3 +1,4 @@
+import 'core-js';
 import './index.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
 import vkBridgeProd from '@vkontakte/vk-bridge';
