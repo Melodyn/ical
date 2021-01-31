@@ -59,22 +59,24 @@ export const prepareEvents = (event) => {
     const isFinished = (nearestStart === null);
     if (isFinished) return { isFinished };
 
-    const previousStartMS = previousStart.getTime();
-    const previousStartDT = DateTime.fromMillis(previousStartMS);
-    const previousEndDT = previousStartDT.plus({ milliseconds: durationMS });
-    const previousEndMS = previousEndDT.toMillis();
+    if (previousStart !== null) {
+      const previousStartMS = previousStart.getTime();
+      const previousStartDT = DateTime.fromMillis(previousStartMS);
+      const previousEndDT = previousStartDT.plus({ milliseconds: durationMS });
+      const previousEndMS = previousEndDT.toMillis();
 
-    if (previousEndMS >= nowMS) {
-      return {
-        type,
-        startMS: previousStartMS,
-        endMS: previousEndMS,
-        isFinished: nowMS >= previousEndMS,
-        durationMS,
-        summary: event.summary,
-        datetype: event.datetype,
-        description: event.description,
-      };
+      if (previousEndMS >= nowMS) {
+        return {
+          type,
+          startMS: previousStartMS,
+          endMS: previousEndMS,
+          isFinished: nowMS >= previousEndMS,
+          durationMS,
+          summary: event.summary,
+          datetype: event.datetype,
+          description: event.description,
+        };
+      }
     }
 
     const nearestStartMS = nearestStart.getTime();
