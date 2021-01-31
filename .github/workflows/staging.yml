@@ -24,14 +24,47 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5433:5432
+          - 5432:5432
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: make install-dependencies
-    - run: make test
-    - run: make lint
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: make install-dependencies
+      - run: make test
+      - run: make lint
+
+  deploy:
+    needs: pre-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.6.8
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: melodyn-ical-staging
+          heroku_email: samelodyn@gmail.com
+          branch: staging
+        env:
+          HD_NODE_ENV: staging
+          HD_HOST: 0.0.0.0
+          HD_LOG_LEVEL: info
+          HD_DB_TYPE: ${{ secrets.DB_TYPE }}
+          HD_DB_HOST: ${{ secrets.DB_HOST }}
+          HD_DB_PORT: ${{ secrets.DB_PORT }}
+          HD_DB_USER: ${{ secrets.DB_USER }}
+          HD_DB_PASS: ${{ secrets.DB_PASS }}
+          HD_DB_NAME: ${{ secrets.DB_NAME }}
+          HD_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
+          HD_STATIC_DIR: src
+          HD_VK_APP_ID: ${{ secrets.VK_APP_ID }}
+          HD_VK_APP_ADMIN_ID: ${{ secrets.VK_APP_ADMIN_ID }}
+          HD_VK_PROTECTED_KEY: ${{ secrets.VK_PROTECTED_KEY }}
+          HD_VK_SERVICES_KEY: ${{ secrets.VK_SERVICES_KEY }}
+          HD_VK_WIDGET_TYPE: list
+          HD_VK_API_VERSION: 5.126
+          HD_DEFAULT_TIMEZONE: Europe/Moscow
+          HD_CRON_ICAL_TIME: 0 */10 * * * *
+          HD_SYNC_ICAL_TIME: 10 minutes
