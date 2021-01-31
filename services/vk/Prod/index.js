@@ -16,8 +16,13 @@ const syncWidget = async ({
   const updateDate = DateTime.local().minus(period).toSQL();
 
   const calendarsForWidget = await calendarRepo.find({
-    widgetToken: Not(IsNull()),
-    widgetSyncedAt: LessThan(updateDate),
+    where: {
+      widgetToken: Not(IsNull()),
+      widgetSyncedAt: LessThan(updateDate),
+    },
+    order: {
+      widgetSyncedAt: 'DESC',
+    },
   });
 
   const plainActualCalendars = calendarsForWidget

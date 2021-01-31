@@ -55,8 +55,27 @@ export const prepareEvents = (event) => {
 
     const rule = new RRule(filledRrules);
     const nearestStart = rule.after(new Date(nowMS), true);
+    const previousStart = rule.before(new Date(nowMS), true);
     const isFinished = (nearestStart === null);
     if (isFinished) return { isFinished };
+
+    const previousStartMS = previousStart.getTime();
+    const previousStartDT = DateTime.fromMillis(previousStartMS);
+    const previousEndDT = previousStartDT.plus({ milliseconds: durationMS });
+    const previousEndMS = previousEndDT.toMillis();
+
+    if (previousEndMS >= nowMS) {
+      return {
+        type,
+        startMS: previousStartMS,
+        endMS: previousEndMS,
+        isFinished: nowMS >= previousEndMS,
+        durationMS,
+        summary: event.summary,
+        datetype: event.datetype,
+        description: event.description,
+      };
+    }
 
     const nearestStartMS = nearestStart.getTime();
     const nearestStartDT = DateTime.fromMillis(nearestStartMS);
@@ -65,7 +84,7 @@ export const prepareEvents = (event) => {
 
     return {
       type,
-      startMS: nearestStartDT.toMillis(),
+      startMS: nearestStartMS,
       endMS: nearestEndMS,
       isFinished: nowMS >= nearestEndMS,
       durationMS,
