@@ -32,7 +32,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: echo "DB_TYPE=${{ secrets.DB_TYPE }}"
       - run: make install-dependencies
       - run: make test
       - run: make lint

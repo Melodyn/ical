@@ -41,6 +41,18 @@ const configByEnv = {
     synchronize: false,
     logging: ['migration'],
   }),
+  [envsMap.stage]: (config) => ({
+    type: config.DB_TYPE,
+    host: config.DB_HOST,
+    port: config.DB_PORT,
+    username: config.DB_USER,
+    password: config.DB_PASS,
+    database: config.DB_NAME,
+    entities: ['entity/*.cjs'],
+    migrations: ['migration/*.cjs'],
+    synchronize: false,
+    logging: ['migration'],
+  }),
   [envsMap.invalid]: (config) => ({
     type: config.DB_TYPE,
     host: config.DB_HOST,
