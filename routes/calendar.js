@@ -69,6 +69,13 @@ const routes = [
     method: 'GET',
     url: '/install',
     handler(req, res) {
+      res.render('install', { appId: this.config.VK_APP_ID });
+    },
+  },
+  {
+    method: 'GET',
+    url: '/',
+    handler(req, res) {
       res.render('main', { appId: this.config.VK_APP_ID });
     },
   },

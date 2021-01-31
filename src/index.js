@@ -101,7 +101,7 @@ const setToken = (bridge, logger) => {
 };
 
 const handlerByPages = {
-  main: [setApp],
+  install: [setApp],
   calendar: [setToken],
 };
 
