@@ -38,6 +38,7 @@ jobs:
 
   deploy:
     needs: pre-deploy
+    environment: melodyn-ical-staging
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
