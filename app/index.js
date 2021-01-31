@@ -98,8 +98,6 @@ const setStatic = (config, server) => {
       values,
       gon: {
         user: {
-          isAppAdmin: true,
-          isAdmin: true,
           ...user,
         },
         app: {
