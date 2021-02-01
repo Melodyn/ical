@@ -105,6 +105,8 @@ const setStatic = (config, server) => {
         },
         app: {
           isProd: config.IS_PROD_ENV || config.IS_STAGE_ENV,
+          env: config.NODE_ENV,
+          rollbarToken: config.ROLLBAR_CLIENT_TOKEN,
           page: template,
           query: qs.stringify(query),
         },

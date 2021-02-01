@@ -2,41 +2,32 @@ import 'core-js';
 import './index.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
 import vkBridgeProd from '@vkontakte/vk-bridge';
+import Rollbar from 'rollbar';
 
 const bridgeProd = vkBridgeProd.default;
 const bridgeDev = vkBridgeDev.default;
 
-const stringify = (content) => {
-  try {
-    return JSON.stringify(content, null, 2);
-  } catch (e) {
-    return content.toString();
+class AppError extends Error {
+  constructor(originalError, params) {
+    super();
+    this.name = originalError.name;
+    this.stack = originalError.stack;
+    this.params = params;
+    this.message = `${originalError.message}, params: ${JSON.stringify(params, null, 2)}`;
   }
-};
-
-const createLogger = () => {
-  const logger = document.createElement('textarea');
-  logger.setAttribute('id', 'logger');
-  document.body.append(logger);
-
-  return {
-    log: (data) => {
-      const textNode = stringify(data);
-      logger.prepend('\n\n-----\n\n');
-      logger.prepend(textNode);
-    },
-  };
-};
+}
 
 const setApp = (bridge, logger) => {
   const requestSetup = () => bridge
     .send('VKWebAppAddToCommunity')
-    .then((result) => {
-      logger.log({ source: 'VKWebAppAddToCommunity', result });
-      return result.group_id;
-    })
+    .then(({ group_id }) => group_id)
     .catch((err) => {
-      logger.log({ source: 'VKWebAppAddToCommunity', err });
+      logger.error(new AppError(err, {
+        source: 'VKWebAppAddToCommunity',
+        page: gon.app.page,
+        query: gon.app.query,
+      }));
+
       return null;
     });
 
@@ -64,27 +55,22 @@ const setApp = (bridge, logger) => {
 const setToken = (bridge, logger) => {
   if (!gon.user.isAdmin) return;
 
-  const requestWidgetToken = () => {
-    if (gon.app.isProd && !gon.user.isAppAdmin) {
-      alert('Ok');
-      return null;
-    }
+  const requestWidgetToken = () => bridge
+    .send('VKWebAppGetCommunityToken', {
+      app_id: gon.user.appId,
+      group_id: gon.user.groupId,
+      scope: 'app_widget',
+    })
+    .then(({ access_token }) => access_token)
+    .catch((err) => {
+      logger.error(new AppError(err, {
+        source: 'VKWebAppGetCommunityToken',
+        page: gon.app.page,
+        query: gon.app.query,
+      }));
 
-    return bridge
-      .send('VKWebAppGetCommunityToken', {
-        app_id: gon.user.appId,
-        group_id: gon.user.groupId,
-        scope: 'app_widget',
-      })
-      .then(({ access_token }) => {
-        logger.log({ source: 'VKWebAppGetCommunityToken', access_token });
-        return access_token;
-      })
-      .catch((err) => {
-        logger.log({ source: 'VKWebAppGetCommunityToken', err });
-        return null;
-      });
-  };
+      return null;
+    });
 
   const { adminForm } = document.forms;
   const widgetTokenField = adminForm.elements.widgetToken;
@@ -107,15 +93,8 @@ const handlerByPages = {
 
 const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
-const init = (bridge) => {
-  const logger = gon.user.isAppAdmin
-    ? createLogger()
-    : { log: () => {} };
-
+const init = (bridge, logger) => {
   bridge.send('VKWebAppInit');
-  bridge.subscribe(({ detail: { type = null, data = null } } = { detail: {} }) => {
-    logger.log({ source: 'subscribe', type, data });
-  });
 
   const currentPage = gon.app.page;
   if (!has(handlerByPages, currentPage)) return;
@@ -126,5 +105,15 @@ const init = (bridge) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const bridge = gon.app.isProd ? bridgeProd : bridgeDev;
-  init(bridge);
+  const rollbar = new Rollbar({
+    enabled: gon.app.isProd,
+    accessToken: gon.app.rollbarToken,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+    payload: {
+      environment: `${gon.app.env}-front`,
+    },
+  });
+
+  init(bridge, rollbar);
 });

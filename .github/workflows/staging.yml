@@ -58,6 +58,7 @@ jobs:
           HD_DB_PASS: ${{ secrets.S_DB_PASS }}
           HD_DB_NAME: ${{ secrets.S_DB_NAME }}
           HD_ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
+          HD_ROLLBAR_CLIENT_TOKEN: ${{ secrets.ROLLBAR_CLIENT_TOKEN }}
           HD_STATIC_DIR: src
           HD_VK_APP_ID: ${{ secrets.VK_APP_ID }}
           HD_VK_APP_ADMIN_ID: ${{ secrets.VK_APP_ADMIN_ID }}

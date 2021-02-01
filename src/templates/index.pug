@@ -17,10 +17,10 @@ html(lang='ru')
         block content
         script(src='dist/bundle.js')
 
-    .container-fluid.clearfix.bg-light
+    .d-flex.flex-wrap.justify-content-center.bg-light
         a.btn.btn-link.m-1(href=`/calendar?${gon.app.query}`) На главную
         a.btn.btn-link.m-1(href=`/help?${gon.app.query}`) Справка
-        a.btn.btn-link.m-1.mb-2.float-end(
+        a.btn.btn-link.ms-auto.m-1(
             href='https://github.com/Melodyn/iCal/discussions/1'
             target='_blank'
         )
