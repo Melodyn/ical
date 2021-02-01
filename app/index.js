@@ -115,7 +115,7 @@ const setStatic = (config, server) => {
 
 const initDatabase = () => ormconfig.then(createConnection);
 
-const setRollbar = (config, server) => {
+const initReporter = (config, server) => {
   const rollbar = new Rollbar({
     accessToken: config.ROLLBAR_TOKEN,
     enabled: config.IS_PROD_ENV || config.IS_STAGE_ENV,
@@ -134,6 +134,8 @@ const setRollbar = (config, server) => {
       return res.code(error.statusCode).send(`error: ${message}`);
     });
   });
+
+  return config.IS_DEV_ENV ? console : rollbar;
 };
 
 const prepareTimezones = (config) => {
@@ -158,8 +160,8 @@ const app = async (envName) => {
   const db = await initDatabase(config);
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
-  const cronJobs = setTasks(config);
-  setRollbar(config, server);
+  const reporter = initReporter(config, server);
+  const cronJobs = setTasks(config, reporter);
   setAuth(config, server);
   setStatic(config, server);
 

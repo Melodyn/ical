@@ -1,5 +1,8 @@
 import axios from 'axios';
 import luxon from 'luxon';
+import errors from '../../../utils/errors.cjs';
+
+const { CronTaskError } = errors;
 
 const { DateTime } = luxon;
 
@@ -33,7 +36,7 @@ export default (
     };
   };
 
-  const send = ({ widgetToken, widget }) => axios
+  const send = ({ widgetToken, widget, clubId }) => axios
     .get(
       'https://api.vk.com/method/appWidgets.update',
       {
@@ -45,7 +48,10 @@ export default (
         },
       },
     )
-    .then(({ data }) => data);
+    .then(({ data }) => data)
+    .catch((err) => {
+      throw new CronTaskError(err, { clubId, widget });
+    });
 
   return {
     create,

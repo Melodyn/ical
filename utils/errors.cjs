@@ -21,4 +21,16 @@ class AuthError extends ICalAppError {
   }
 }
 
-module.exports = { ICalAppError, ConfigValidationError, AuthError };
+class CronTaskError extends ICalAppError {
+  constructor(originalError, params = {}) {
+    super();
+    this.name = originalError.name;
+    this.stack = originalError.stack;
+    this.params = params;
+    this.message = `${originalError.message}, params: ${JSON.stringify(params, null, 2)}`;
+  }
+}
+
+module.exports = {
+  ICalAppError, ConfigValidationError, AuthError, CronTaskError,
+};

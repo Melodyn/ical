@@ -1,6 +1,9 @@
 import _ from 'lodash';
 import luxon from 'luxon';
 import rrule from 'rrule';
+import errors from '../../utils/errors.cjs';
+
+const { CronTaskError } = errors;
 
 const { RRule } = rrule;
 const { DateTime } = luxon;
@@ -16,7 +19,7 @@ export const getDateFormat = (datetype) => ((datetype === 'date')
   ? createFormat("'с' dd.MM", "'до' dd.MM")
   : createFormat("'с' HH:mm dd.MM", "'до' HH:mm dd.MM"));
 
-export const prepareEvents = (event) => {
+export const prepareEvents = (event, reporter) => {
   try {
     const type = _.has(event, 'rrule') ? eventTypes.periodic : eventTypes.once;
     const startMS = toMS(event.start);
@@ -95,8 +98,9 @@ export const prepareEvents = (event) => {
       description: event.description,
     };
   } catch (e) {
-    console.log('error event', JSON.stringify(event));
-    console.error(e);
+    const error = new CronTaskError(e, { event });
+    reporter.error(error);
+
     return { isFinished: true };
   }
 };

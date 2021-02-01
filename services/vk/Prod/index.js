@@ -11,6 +11,7 @@ const {
 const syncWidget = async ({
   period,
   widgetService,
+  reporter,
 }) => {
   const calendarRepo = getConnection().getRepository('Calendar');
   const updateDate = DateTime.local().minus(period).toSQL();
@@ -35,7 +36,7 @@ const syncWidget = async ({
     }) => {
       const events = ical
         .filter(({ type }) => (type === 'VEVENT'))
-        .map(prepareEvents)
+        .map((event) => prepareEvents(event, reporter))
         .filter(({ isFinished }) => !isFinished);
 
       return {
