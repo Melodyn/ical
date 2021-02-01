@@ -26,6 +26,7 @@ const setApp = (bridge, logger) => {
         source: 'VKWebAppAddToCommunity',
         page: gon.app.page,
         query: gon.app.query,
+        originalError: JSON.stringify(err),
       }));
 
       return null;
