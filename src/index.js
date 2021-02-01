@@ -68,6 +68,7 @@ const setToken = (bridge, logger) => {
         source: 'VKWebAppGetCommunityToken',
         page: gon.app.page,
         query: gon.app.query,
+        originalError: JSON.stringify(err),
       }));
 
       return null;
