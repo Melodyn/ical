@@ -57,7 +57,7 @@ const routes = [
         clubId,
         calendarId,
         timezone,
-        widgetToken: (widgetToken === '') ? null : widgetToken,
+        ...((widgetToken === '') ? null : { widgetToken }),
       };
 
       await clubRepository

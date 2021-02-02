@@ -53,16 +53,22 @@ const syncWidget = async ({
   const requests = calendarsWithWidget
     .map((calendar) => widgetService
       .send(calendar)
-      .then((result) => (!result.error
-        ? result
-        : calendarRepo.update(calendar.id, {
+      .then((result) => {
+        if (!result.error) return result;
+        reporter.error({
+          ...result.error,
+          clubId: calendar.clubId,
+        });
+
+        return calendarRepo.update(calendar.id, {
           widgetToken: null,
           widgetSyncedAt: null,
           extra: {
             ...calendar.extra,
             widgetError: result.error,
           },
-        }))));
+        });
+      }));
 
   return Promise.all(requests);
 };
