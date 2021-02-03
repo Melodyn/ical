@@ -1,10 +1,13 @@
 extends index
 
+mixin ms(text)
+  span.font-monospace.bg-light.ps-1.pe-1.text-break #{text}
+
 mixin adminText
   p.
-    Укажите идентификатор общедоступного календаря, вида
-    #[span.font-monospace.bg-warning.text-break ob1gcsbo877671s4295f693nv0@group.calendar.google.com],
-    и сохраните, чтобы привязать календарь к сообществу.
+    Идентификатор календаря вид электронной почты, его можно взять в настройках
+    или из URL календаря. Можно подключить тестовый календарь:
+    #[ms('ob1gcsbo877671s4295f693nv0@group.calendar.google.com')].
     По умолчанию используется московское время, это можно изменить в поле "Часовой пояс".
 
 mixin userText
