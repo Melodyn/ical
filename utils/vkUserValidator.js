@@ -1,17 +1,11 @@
 import qs from 'querystring';
 import crypto from 'crypto';
+import _ from 'lodash';
 import errors from './errors.cjs';
 
 const { AuthError } = errors;
 
 const removePrefix = (text, prefix = 'vk_') => text.split(prefix).filter((x) => x).join('');
-
-const camelize = (text, separator = '_') => {
-  const [firstWord, ...tail] = text.split(separator);
-  const camelizedTail = tail.map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`);
-
-  return [firstWord, ...camelizedTail].join('');
-};
 
 const numberify = (value) => {
   const parsed = parseFloat(value);
@@ -63,7 +57,7 @@ export const createValidator = (secret, appAdminId) => (request) => {
     Object.entries(query)
       .filter(([key]) => key.startsWith('vk_'))
       .map(([key, value]) => [removePrefix(key), numberify(value)])
-      .map(([key, value]) => [camelize(key), value]),
+      .map(([key, value]) => [_.camelCase(key), value]),
   );
 
   const user = {
