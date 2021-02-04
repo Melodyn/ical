@@ -40,16 +40,30 @@ const routes = [
         calendarId,
         timezone,
         widgetToken,
+        errors = null,
       } = await yup
         .object({
           calendarId: yup.string()
-            .matches(/^.+@(group.calendar.google.com|gmail.com)$/)
+            .matches(/^\w+@(group.calendar.google.com|gmail.com)$/)
             .required(),
           timezone: yup.string().oneOf(allowedZones).required(),
           widgetToken: yup.string().default('').optional(),
         })
         .required()
-        .validate(req.body);
+        .validate(req.body, { abortEarly: false })
+        .catch((err) => {
+          const validationErrors = err.inner.map((error) => [
+            error.path,
+            { value: error.value, message: error.message },
+          ]);
+
+          return { errors: validationErrors };
+        });
+
+      if (errors !== null) {
+        req.errors(errors);
+        return res.redirect(req.url);
+      }
 
       const clubId = req.user.groupId;
       const clubRepository = this.db.getRepository('Calendar');

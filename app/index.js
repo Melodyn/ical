@@ -83,6 +83,18 @@ const setAuth = (config, server) => {
 };
 
 const setStatic = (config, server) => {
+  server.decorate('container', new Map());
+  server.decorateRequest('errors', (data = []) => {
+    server.container.set('errors', data);
+  });
+  server.decorateReply('errors', () => {
+    const data = server.container.has('errors')
+      ? server.container.get('errors')
+      : [];
+    server.container.set('errors', []);
+    return data;
+  });
+
   server.register(fastifyForm);
   server.register(fastifyStatic, {
     root: path.resolve(config.STATIC_DIR),
@@ -96,9 +108,19 @@ const setStatic = (config, server) => {
   });
   server.decorateReply('render', function render(template, values = {}) {
     const { user, query } = this.request;
+    const errorsContainer = this.errors();
+    const invalidValues = Object.fromEntries(
+      errorsContainer.map(([key, { value }]) => [key, value]),
+    );
+    const errorMessages = Object.fromEntries(
+      errorsContainer.map(([key, { message }]) => [key, message]),
+    );
+
     this.view(template, {
       user,
       values,
+      ...invalidValues,
+      errors: errorMessages,
       gon: {
         user: {
           ...user,

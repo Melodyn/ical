@@ -12,14 +12,21 @@ form(
     .mb-3
         label.form-label(for='calendarId') Идентификатор календаря
         input#calendarId.form-control(
+            class={
+              'is-invalid': errors.calendarId
+            }
             name='calendarId'
             type='email'
             value=calendarId
             required
         )
+        .invalid-feedback #{errors.calendarId}
     .mb-3
         label.form-label(for='timezone') Часовой пояс
         select#timezone.form-control(
+            class={
+              'is-invalid': errors.timezone
+            }
             name='timezone'
             required
         )
@@ -28,6 +35,7 @@ form(
                   value=timezone.name
                   selected=(timezone.name === calendarTimezone)
               ) #{timezone.offset} #{timezone.name}
+        .invalid-feedback #{errors.timezone}
     input.btn.btn-primary(
         type='submit'
         value=(calendarId ? 'Изменить' : 'Сохранить')
