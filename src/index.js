@@ -1,6 +1,6 @@
 import 'core-js';
 import './index.css';
-import './constants.css';
+// import './constants.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
 import vkBridgeProd from '@vkontakte/vk-bridge';
 import Rollbar from 'rollbar';
@@ -149,13 +149,14 @@ const init = (bridge, logger) => {
 
   bridge.subscribe((e) => {
     const insets = resolveInsets(e);
-    log.log({ insets });
+    log.log({ i: 0, insets });
     if (insets) {
       const htmlElement = window.document.documentElement;
       Object.entries(insets).forEach(([key, value]) => {
-        log.log({ key, value });
+        log.log({ i: 1, key, value });
         if (value > 0 || key === 'bottom') {
-          htmlElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`);
+          log.log({ i: 2, property: `--safe-area-inset-${key}, ${value}px` });
+          // htmlElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`);
         }
       });
       // eslint-disable-next-line no-unused-vars
