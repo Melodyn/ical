@@ -22,6 +22,8 @@ test-dev:
 	NODE_ENV=test npm test -s -- --watchAll
 static:
 	npm run build-static
+static-dev:
+	npm run build-watch
 
 # usage with docker
 container-setup: container-build container-dependency container-run

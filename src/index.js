@@ -8,13 +8,6 @@ import Rollbar from 'rollbar';
 const bridgeProd = vkBridgeProd.default;
 const bridgeDev = vkBridgeDev.default;
 
-let initialState = {
-  bottom: null,
-  top: null,
-  left: null,
-  right: null,
-};
-
 const stringify = (content) => {
   try {
     return JSON.stringify(content, null, 2);
@@ -151,16 +144,14 @@ const init = (bridge, logger) => {
     const insets = resolveInsets(e);
     log.log({ i: 0, insets });
     if (insets) {
-      // const htmlElement = window.document.documentElement;
+      const htmlElement = window.document.documentElement;
       Object.entries(insets).forEach(([key, value]) => {
         log.log({ i: 1, key, value });
         if (value > 0 || key === 'bottom') {
           log.log({ i: 2, property: `--safe-area-inset-${key}, ${value}px` });
-          // htmlElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`);
+          htmlElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`);
         }
       });
-      // eslint-disable-next-line no-unused-vars
-      initialState = insets;
     }
   });
 
