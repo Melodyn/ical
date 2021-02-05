@@ -151,7 +151,7 @@ const init = (bridge, logger) => {
     const insets = resolveInsets(e);
     log.log({ i: 0, insets });
     if (insets) {
-      const htmlElement = window.document.documentElement;
+      // const htmlElement = window.document.documentElement;
       Object.entries(insets).forEach(([key, value]) => {
         log.log({ i: 1, key, value });
         if (value > 0 || key === 'bottom') {
