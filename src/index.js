@@ -1,11 +1,41 @@
 import 'core-js';
 import './index.css';
+import './constants.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
 import vkBridgeProd from '@vkontakte/vk-bridge';
 import Rollbar from 'rollbar';
 
 const bridgeProd = vkBridgeProd.default;
 const bridgeDev = vkBridgeDev.default;
+
+let initialState = {
+  bottom: null,
+  top: null,
+  left: null,
+  right: null,
+};
+
+const stringify = (content) => {
+  try {
+    return JSON.stringify(content, null, 2);
+  } catch (e) {
+    return content.toString();
+  }
+};
+
+const createLogger = () => {
+  const logger = document.createElement('textarea');
+  logger.setAttribute('id', 'logger');
+  document.body.append(logger);
+
+  return {
+    log: (data) => {
+      const textNode = stringify(data);
+      logger.prepend('\n\n-----\n\n');
+      logger.prepend(textNode);
+    },
+  };
+};
 
 class AppError extends Error {
   constructor(originalError, params) {
@@ -88,6 +118,21 @@ const setToken = (bridge, logger) => {
   });
 };
 
+const resolveInsets = (e) => {
+  const { type, data } = e.detail;
+  if (type === 'VKWebAppUpdateConfig') {
+    const { insets } = data;
+    if (insets) {
+      return {
+        ...insets,
+        bottom: insets.bottom > 150 ? 0 : insets.bottom,
+      };
+    }
+  }
+
+  return null;
+};
+
 const handlerByPages = {
   install: [setApp],
   calendar: [setToken],
@@ -97,6 +142,26 @@ const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 const init = (bridge, logger) => {
   bridge.send('VKWebAppInit');
+
+  const log = (gon.user.userId === 365883897 || gon.user.isAppAdmin)
+    ? createLogger()
+    : { log: () => {} };
+
+  bridge.subscribe((e) => {
+    const insets = resolveInsets(e);
+    log.log({ insets });
+    if (insets) {
+      const htmlElement = window.document.documentElement;
+      Object.entries(insets).forEach(([key, value]) => {
+        log.log({ key, value });
+        if (value > 0 || key === 'bottom') {
+          htmlElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`);
+        }
+      });
+      // eslint-disable-next-line no-unused-vars
+      initialState = insets;
+    }
+  });
 
   const currentPage = gon.app.page;
   if (!has(handlerByPages, currentPage)) return;
