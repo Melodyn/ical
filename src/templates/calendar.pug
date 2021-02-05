@@ -10,8 +10,12 @@ mixin calendarIframe(calendarLink)
     frameborder='0'
     scrolling='yes'
   )
-  .clearfix
-    a.btn.btn-link.mt-2.float-end(href=calendarLink target='_blank') Открыть в браузере
+  .d-flex.flex-column.align-items-end
+    p.
+      Добавить мероприятия из этого календаря в свой можно по кнопке
+      #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
+      выше
+    a.btn.btn-outline-primary.m-1(href=calendarLink target='_blank') Открыть в браузере
   hr
 
 mixin widgetBlock(clubId, clubHasWidget)
