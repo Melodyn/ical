@@ -28,6 +28,6 @@ html(lang='ru')
             )
                 img(height='32' width='32' src='/github.svg')
         .d-flex.flex-row.justify-content-center
-            a.btn.btn-light.m-2(href='/install') Добавить приложение в другое сообщество
+            a.btn.btn-light.m-2(href=`/install?${gon.app.query}`) Добавить приложение в другое сообщество
 
         script(src='dist/bundle.js')

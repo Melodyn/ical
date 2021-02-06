@@ -1,4 +1,5 @@
 import 'core-js';
+import '@babel/polyfill';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
