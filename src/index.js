@@ -1,6 +1,6 @@
 import 'core-js';
 import './index.css';
-// import './constants.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
 import vkBridgeProd from '@vkontakte/vk-bridge';
 import Rollbar from 'rollbar';
