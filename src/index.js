@@ -135,16 +135,13 @@ const handlerByPages = {
 const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 const init = (bridge, logger) => {
-  alert('start VKWebAppInit');
   bridge.send('VKWebAppInit');
-  alert('end VKWebAppInit');
 
   const log = (gon.user.userId === 365883897 || gon.user.isAppAdmin)
     ? createLogger()
     : { log: () => {} };
 
   bridge.subscribe((e) => {
-    alert('resolveInsets');
     const insets = resolveInsets(e);
     log.log({ i: 0, insets });
     if (insets) {
@@ -164,11 +161,9 @@ const init = (bridge, logger) => {
 
   const pageHandlers = handlerByPages[currentPage];
   pageHandlers.forEach((handler) => handler(bridge, logger));
-  alert('----------- end -----------');
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  alert('DOMContentLoaded');
   const bridge = gon.app.isProd ? bridgeProd : bridgeDev;
   const rollbar = new Rollbar({
     enabled: gon.app.isProd,
