@@ -1,16 +1,16 @@
-# iCal
+# ical
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)
 [![Production CI](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
 [![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
-|![логотип](./logo.png)|Node.js-приложение для vk.com. Разрабатывается в формате лайвкодинга
+|![логотип](./logo.png)|Google календарь и виджет в сообщество ВКонтакте.
 |---|---|
 
 Ссылки:
 * стримы с разработкой: https://www.youtube.com/playlist?list=PLxqZB2PTPdc7RSb5QpFR1lJ27NEmHtaYa
 * бэкенд приложения: https://melodyn-ical.herokuapp.com/
-
+* приложение в vk: https://vk.com/app7703913
 
 ## Установка и запуск
 
@@ -43,4 +43,4 @@
 
 ## Права
 
-Исходный код и стримы с разработкой приложения являются частью демонстрации экосистемы JavaScript, её сложностей, особенностей и возможных подходов к разработке. Исходный код распространяется под лицензией [GNU GPLv3](./LICENSE.txt). 
+Исходный код и стримы с разработкой приложения являются частью демонстрации экосистемы JavaScript, её сложностей, особенностей и возможных подходов к разработке. Исходный код распространяется под лицензией [GNU GPLv3](./LICENSE.txt). Использование кода без согласования с автором запрещено. 
