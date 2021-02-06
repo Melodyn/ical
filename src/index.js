@@ -161,6 +161,11 @@ const init = (bridge, logger) => {
 
   const pageHandlers = handlerByPages[currentPage];
   pageHandlers.forEach((handler) => handler(bridge, logger));
+  logger.log({
+    html: window.document.documentElement.outerHTML,
+    page: gon.app.page,
+    query: gon.app.query,
+  });
 };
 
 document.addEventListener('DOMContentLoaded', () => {
