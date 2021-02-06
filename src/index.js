@@ -164,7 +164,7 @@ const init = (bridge, logger) => {
   logger.log(JSON.stringify({
     page: gon.app.page,
     query: gon.app.query,
-    html: window.document.documentElement.outerHTML,
+    html: `\`${window.document.documentElement.outerHTML.toString()}\``,
   }));
 };
 
