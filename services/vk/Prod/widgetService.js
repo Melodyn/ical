@@ -19,7 +19,7 @@ export default (
 
     const body = widgetConstructor(calendar);
     const currentDateTime = DateTime.local().setZone(timezone).toFormat("dd.MM 'в' HH:mm");
-    const title = `обновлено ${currentDateTime}`;
+    const title = `обновлено ${currentDateTime} (${timezone})`;
     const more = 'Перейти в календарь';
     const more_url = `//vk.com/app${VK_APP_ID}_-${clubId}`;
 
