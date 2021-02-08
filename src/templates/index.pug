@@ -13,22 +13,23 @@ html(lang='ru')
             const gon = !{JSON.stringify(gon)}
 
     body
-        .container
+        .container-fluid
             block content
 
             .bg-light
-                a.btn.btn-link.m-1(href=`/calendar?${gon.app.query}`) На главную
-                a.btn.btn-link.m-1(href=`/help?${gon.app.query}`) Справка
-                a.btn.btn-link.m-1(
+                a.btn.btn-link.m-1.col(href=`/calendar?${gon.app.query}`) На главную
+                a.btn.btn-link.m-1.col(href=`/help?${gon.app.query}`) Справка
+                a.btn.btn-link.m-1.col(
                     href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
                     target='_blank'
                 ) Чат приложения
-                a.btn.btn-link.ms-auto.m-1(
+                a.btn.btn-link.col.ms-auto.m-1(
                     href='//github.com/Melodyn/iCal/releases'
                     target='_blank'
                 )
                     img(height='32' width='32' src='/github.svg' alt='Иконка Github')
 
-            a.btn.btn-light.m-2(href=`/install?${gon.app.query}`) Добавить приложение в другое сообщество
+            .justify-content-md-center
+                a.btn.btn-light.m-2.col(href=`/install?${gon.app.query}`) Добавить приложение в другое сообщество
 
         script(src='dist/bundle.js')

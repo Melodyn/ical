@@ -18,7 +18,7 @@ const stringify = (content) => {
 };
 
 const createLogger = () => {
-  const container = document.querySelector('.container');
+  const container = document.querySelector('[class^="container"]');
   const logger = document.createElement('textarea');
   logger.setAttribute('id', 'logger');
   container.append(logger);
