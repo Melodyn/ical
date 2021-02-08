@@ -1,43 +1,44 @@
-h4 Настройки календаря
-form(
-    name='adminForm'
-    action=values.formActionUrl
-    method='post'
-)
-    input#widgetToken.form-control(
-        name='widgetToken'
-        type='hidden'
-        value=null
+div
+    h4 Настройки календаря
+    form(
+        name='adminForm'
+        action=values.formActionUrl
+        method='post'
     )
-    .mb-3
-        label.form-label(for='calendarId') Идентификатор календаря
-        input#calendarId.form-control(
-            class={
-              'is-invalid': errors.calendarId
-            }
-            name='calendarId'
-            type='email'
-            value=calendarId
-            required
+        input#widgetToken.form-control(
+            name='widgetToken'
+            type='hidden'
+            value=null
         )
-        .invalid-feedback #{errors.calendarId}
-    .mb-3
-        label.form-label(for='timezone') Часовой пояс
-        select#timezone.form-control(
-            class={
-              'is-invalid': errors.timezone
-            }
-            name='timezone'
-            required
+        .mb-3
+            label.form-label(for='calendarId') Идентификатор календаря
+            input#calendarId.form-control(
+                class={
+                  'is-invalid': errors.calendarId
+                }
+                name='calendarId'
+                type='email'
+                value=calendarId
+                required
+            )
+            .invalid-feedback #{errors.calendarId}
+        .mb-3
+            label.form-label(for='timezone') Часовой пояс
+            select#timezone.form-control(
+                class={
+                  'is-invalid': errors.timezone
+                }
+                name='timezone'
+                required
+            )
+                each timezone in values.timezones.all
+                  option(
+                      value=timezone.name
+                      selected=(timezone.name === calendarTimezone)
+                  ) #{timezone.offset} #{timezone.name}
+            .invalid-feedback #{errors.timezone}
+        input.btn.btn-primary(
+            type='submit'
+            value=(calendarId ? 'Изменить' : 'Сохранить')
         )
-            each timezone in values.timezones.all
-              option(
-                  value=timezone.name
-                  selected=(timezone.name === calendarTimezone)
-              ) #{timezone.offset} #{timezone.name}
-        .invalid-feedback #{errors.timezone}
-    input.btn.btn-primary(
-        type='submit'
-        value=(calendarId ? 'Изменить' : 'Сохранить')
-    )
 hr

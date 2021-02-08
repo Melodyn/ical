@@ -1,20 +1,21 @@
 extends index
 
 mixin calendarIframe(calendarLink)
-  h4 Календарь сообщества
-  iframe#calendarIframe(
-    src=calendarLink
-    style='border: 0'
-    width='100%'
-    height='100%'
-    frameborder='0'
-    scrolling='yes'
-  )
-  p.
-    Добавить мероприятия из этого календаря в свой можно по кнопке
-    #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
-    выше
-  a.btn.btn-outline-primary.m-1(href=calendarLink target='_blank') Открыть в браузере
+  div
+    h4 Календарь сообщества
+    iframe#calendarIframe(
+      src=calendarLink
+      style='border: 0'
+      width='100%'
+      height='100%'
+      frameborder='0'
+      scrolling='yes'
+    )
+    p.
+      Добавить мероприятия из этого календаря в свой можно по кнопке
+      #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
+      выше
+    a.btn.btn-outline-primary.m-1(href=calendarLink target='_blank') Открыть в браузере
   hr
 
 mixin widgetBlock(clubId, clubHasWidget)
