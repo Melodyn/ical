@@ -11,11 +11,10 @@ mixin adminText
     По умолчанию используется московское время, это можно изменить в поле "Часовой пояс".
 
 mixin userText
-  .d-flex.flex-column.justify-content-center.align-items-center.h-100.text-center
-    p
-      | В данном сообществе пока отсутствует календарь.
-      br
-      | Но вы можете #[a(href='/install') установить] в своё.
+  p
+    | В данном сообществе пока отсутствует календарь.
+    br
+    | Но вы можете #[a(href=`/install?${gon.app.query}`) установить] в своё.
 
 
 block content
