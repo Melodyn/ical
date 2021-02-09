@@ -1,59 +1,67 @@
 extends index
 
 mixin calendarIframe(calendarLink)
-  h4 Календарь сообщества
-  .ratio.ratio-1x1
-    iframe#calendarIframe(
-      src=calendarLink
-      style='border: 0'
-      width='100%'
-      height='100%'
-      frameborder='0'
-      scrolling='yes'
-    )
-
-  .d-block
-    p.ms-auto.text-end.
-      Добавить мероприятия из этого календаря в свой можно по кнопке
-      #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
-      выше
-    .w-100
-    a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере
-  hr
+  .container-fluid.d-flex.flex-column.h-100
+    .row
+      .col
+        h2.h4 Календарь сообщества
+    .row.flex-grow-1
+      .col
+        iframe#calendarIframe.w-100.h-100(
+          src=calendarLink
+          frameborder='0'
+          scrolling='yes'
+        )
+  .container-fluid
+    .row.row-cols-1.text-end
+      .col
+        p.
+          Добавить мероприятия из этого календаря в свой можно по кнопке
+          #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
+          выше
+      .col
+        p.
+          Неудобно пользоваться календарём? Попробуйте:
+          #[a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере]
+    hr
 
 mixin widgetBlock(clubId, clubHasWidget)
   - const clubSettingsPageURL = `vk.com/club${clubId}?act=apps`;
   - const clubTokenPageURL = `vk.com/club${clubId}?act=tokens`;
-  .d-block
-    h4.col-12 Настройки виджета
-    if (clubHasWidget === true)
-      p.col-12.
-        Для работы с виджетом выпущен токен, который можно найти тут:
-        #[a(href=`//${clubTokenPageURL}` target='_blank') #{clubTokenPageURL}]
-        #[br]
-        Если токен был случайно (или специально) удалён,
-        то его можно перевыпустить:
-      button#setWidget.btn.btn-warning.mb-3 Перевыпустить токен
-      p.col-12.
-        Максимальная польза от виджета будет при его доступности
-        для просмотра всем пользователям:
-        #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
-        #[br]
-        Синхронизация календаря с виджетом происходит автоматически.
-    else
-      p
-        | Теперь мероприятия из календаря могут отображаться на главной
-        | странице сообщества, как виджет. Чтобы его включить, нужно
-        | жмякнуть по большой красной кнопке и дать доступ к виджету:
-      button#setWidget.btn.btn-danger.mb-3 Сделать хорошо
-      p
-        | Останется только в настройках сообщества
-        | сделать виджет доступным для просмотра всем пользователям:
-        br
-        a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}
-        br
-        | синхронизация календаря с виджетом происходит автоматически.
-  hr
+  .container-fluid
+    .row
+      .col
+        h2.h4 Настройки виджета
+    .row
+      .col
+        if (clubHasWidget === true)
+          p.
+            Для работы с виджетом выпущен токен, который можно найти тут:
+            #[a(href=`//${clubTokenPageURL}` target='_blank') #{clubTokenPageURL}]
+            #[br]
+            Если токен был случайно (или специально) удалён,
+            то его можно перевыпустить:
+          button#setWidget.btn.btn-warning.mb-3 Перевыпустить токен
+          p.
+            Максимальная польза от виджета будет при его доступности
+            для просмотра всем пользователям:
+            #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+            #[br]
+            Синхронизация календаря с виджетом происходит автоматически.
+        else
+          p.
+            Теперь мероприятия из календаря могут отображаться на главной
+            странице сообщества, как виджет. Чтобы его включить, нужно
+            жмякнуть по большой красной кнопке и дать доступ к виджету:
+          button#setWidget.btn.btn-danger.mb-3 Сделать хорошо
+          p.
+            Останется только в настройках сообщества
+            сделать виджет доступным для просмотра всем пользователям:
+            #[br]
+            #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+            #[br]
+            синхронизация календаря с виджетом происходит автоматически.
+    hr
 
 block content
   - const { calendarId, clubId, timezone: calendarTimezone, widgetToken, extra: { calendarLink } } = values.calendar;

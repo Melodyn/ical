@@ -13,23 +13,29 @@ html(lang='ru')
             const gon = !{JSON.stringify(gon)}
 
     body
+        block content
+
         .container-fluid
-            block content
+            .row.row-cols-auto.bg-light
+                .col
+                    a.btn.btn-link.m-1(href=`/calendar?${gon.app.query}`) На главную
+                .col
+                    a.btn.btn-link.m-1(href=`/help?${gon.app.query}`) Справка
+                .col
+                    a.btn.btn-link.m-1(
+                        href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
+                        target='_blank'
+                    ) Чат приложения
+                .col.ms-auto
+                    a.btn.btn-link(
+                        href='//github.com/Melodyn/iCal/releases'
+                        target='_blank'
+                    )
+                        img(height='32' width='32' src='/github.svg' alt='Иконка Github')
 
-            .bg-light
-                a.btn.btn-link.m-1.col(href=`/calendar?${gon.app.query}`) На главную
-                a.btn.btn-link.m-1.col(href=`/help?${gon.app.query}`) Справка
-                a.btn.btn-link.m-1.col(
-                    href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
-                    target='_blank'
-                ) Чат приложения
-                a.btn.btn-link.col.ms-auto.m-1(
-                    href='//github.com/Melodyn/iCal/releases'
-                    target='_blank'
-                )
-                    img(height='32' width='32' src='/github.svg' alt='Иконка Github')
-
-            .justify-content-md-center
-                a.btn.btn-light.m-2.col(href=`/install?${gon.app.query}`) Добавить приложение в другое сообщество
+        .container-fluid
+            .row.text-center
+                .col
+                    a.btn.btn-light.mt-3.mb-3(href=`/install?${gon.app.query}`) Добавить приложение в другое сообщество
 
         script(src='dist/bundle.js')

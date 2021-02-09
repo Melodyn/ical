@@ -1,22 +1,24 @@
 extends index
 
 block content
-  .d-block
-    img.mb-2(src='logo32.png' width='32' height='32' alt='Логотип ical')
-    h3
-      | Google календарь и виджет в сообщество
-    p
-      | Node.js-приложение для vk.com. Разрабатывается в формате лайвкодинга.
-    .d-block
-      a.btn.btn-primary.m-1(
-        href=`//vk.com/app${values.appId}`,
-        target='_blank'
-      ) Перейти к приложению
-      a.btn.btn-danger.m-1(
-        href='https://www.youtube.com/playlist?list=PLxqZB2PTPdc7RSb5QpFR1lJ27NEmHtaYa',
-        target='_blank'
-      ) Посмотреть видео с разработкой
-      a.btn.btn-success.m-1(
-        href='https://github.com/Melodyn/iCal',
-        target='_blank'
-      ) Изучить исходный код
+  .container-fluid.h-100
+    .row.h-100.text-center
+      .col.align-self-center
+        img.mb-2(src='logo32.png' width='32' height='32' alt='Логотип ical')
+        h3
+          | Google календарь и виджет в сообщество
+        p
+          | Node.js-приложение для vk.com. Разрабатывается в формате лайвкодинга.
+        div
+          a.btn.btn-primary.m-1(
+            href=`//vk.com/app${values.appId}`,
+            target='_blank'
+          ) Перейти к приложению
+          a.btn.btn-danger.m-1(
+            href='https://www.youtube.com/playlist?list=PLxqZB2PTPdc7RSb5QpFR1lJ27NEmHtaYa',
+            target='_blank'
+          ) Посмотреть видео с разработкой
+          a.btn.btn-success.m-1(
+            href='https://github.com/Melodyn/iCal',
+            target='_blank'
+          ) Изучить исходный код

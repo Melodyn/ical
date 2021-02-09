@@ -18,10 +18,12 @@ const stringify = (content) => {
 };
 
 const createLogger = () => {
-  const container = document.querySelector('[class^="container"]');
+  const container = document.createElement('div');
+  container.classList.add('container-fluid', 'h-100', 'pb-3');
   const logger = document.createElement('textarea');
   logger.setAttribute('id', 'logger');
   container.append(logger);
+  document.body.append(container);
 
   return {
     log: (data) => {
