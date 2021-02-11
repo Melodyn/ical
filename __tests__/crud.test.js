@@ -140,7 +140,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).toMatch(/iframe/gim);
+    expect(payload).toMatch(/Календарь/gim); // TODO вернуть iframe
   });
 
   // заглушено из-за отсутствия редиректов в мобильном приложении
