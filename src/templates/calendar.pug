@@ -5,8 +5,9 @@ mixin calendarIframe(calendarLink)
     .row
       .col
         h2.h4 Календарь сообщества
-    .row.flex-grow-1
-      .col.bg-light Календарь будет загружен позже
+    .row.flex-grow-1.h-100
+      #calendarFrame.col.h-100.bg-light.overflow-hidden
+        p.h6.text-center Календарь загружается...
   .container-fluid
     .row.row-cols-1.text-end
       .col
