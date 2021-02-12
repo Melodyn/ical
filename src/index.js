@@ -9,30 +9,30 @@ import Rollbar from 'rollbar';
 const bridgeProd = vkBridgeProd.default;
 const bridgeDev = vkBridgeDev.default;
 
-const stringify = (content) => {
-  try {
-    return JSON.stringify(content, null, 2);
-  } catch (e) {
-    return content.toString();
-  }
-};
+// const stringify = (content) => {
+//   try {
+//     return JSON.stringify(content, null, 2);
+//   } catch (e) {
+//     return content.toString();
+//   }
+// };
 
-const createLogger = () => {
-  const container = document.createElement('div');
-  container.classList.add('container-fluid', 'h-100', 'pb-3');
-  const logger = document.createElement('textarea');
-  logger.setAttribute('id', 'logger');
-  container.append(logger);
-  document.body.append(container);
-
-  return {
-    log: (data) => {
-      const textNode = stringify(data);
-      logger.prepend('\n\n-----\n\n');
-      logger.prepend(textNode);
-    },
-  };
-};
+// const createLogger = () => {
+//   const container = document.createElement('div');
+//   container.classList.add('container-fluid', 'h-100', 'pb-3');
+//   const logger = document.createElement('textarea');
+//   logger.setAttribute('id', 'logger');
+//   container.append(logger);
+//   document.body.append(container);
+//
+//   return {
+//     log: (data) => {
+//       const textNode = stringify(data);
+//       logger.prepend('\n\n-----\n\n');
+//       logger.prepend(textNode);
+//     },
+//   };
+// };
 
 class AppError extends Error {
   constructor(originalError, params) {
