@@ -116,7 +116,6 @@ const setToken = (bridge, logger) => {
 };
 
 const insertCalendar = (bridge, logger) => {
-  alert('insertCalendar start');
   const calendarFrame = document.querySelector('#calendarFrame');
   const calendarId = (document.querySelector('#calendarId') || {}).value;
   const timezone = (document.querySelector('#timezone') || {}).value;
@@ -132,12 +131,11 @@ const insertCalendar = (bridge, logger) => {
     return;
   }
 
-  alert('insertCalendar prepare iframe');
   const calendarLink = `https://calendar.google.com/embed?src=${calendarId}&ctz=${timezone}`;
   const iframeElement = document.createElement('iframe');
   iframeElement.classList.add('w-100', 'h-100');
   iframeElement.setAttribute('src', calendarLink);
-  calendarFrame.replaceChild(iframeElement, calendarFrame.firstElementChild);
+  calendarFrame.innerHTML = iframeElement.outerHTML;
   logger.log(JSON.stringify({
     source: 'insertCalendar',
     page: gon.app.page,
@@ -146,7 +144,6 @@ const insertCalendar = (bridge, logger) => {
     calendarId,
     timezone,
   }));
-  alert('insertCalendar done');
 };
 
 const resolveInsets = (e) => {
