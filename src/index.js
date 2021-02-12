@@ -117,14 +117,14 @@ const setToken = (bridge, logger) => {
 
 const insertCalendar = (bridge, logger) => {
   const calendarFrame = document.querySelector('#calendarFrame');
-  const calendarId = (document.querySelector('#calendarId') || {}).value;
-  const timezone = (document.querySelector('#timezone') || {}).value;
+  const calendarId = (document.querySelector('#calendarId') || {}).value || null;
+  const timezone = (document.querySelector('#timezone') || {}).value || null;
   if (!calendarFrame || !calendarId || !timezone) {
     logger.info(JSON.stringify({
       source: 'insertCalendar',
       page: gon.app.page,
       query: gon.app.query,
-      calendarFrame,
+      calendarFrame: calendarFrame ? calendarFrame.innerHTML : null,
       calendarId,
       timezone,
     }));
