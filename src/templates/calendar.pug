@@ -6,8 +6,8 @@ mixin calendarIframe(calendarLink)
       .col
         h2.h4 Календарь сообщества
     .row.flex-grow-1.h-100
-      #calendarFrame.col.h-100
-        p.h6.text-center Календарь загружается...
+      #calendarContainer.col.h-100.overflow-hidden
+        iframe.w-100.h-100(src=calendarLink)
   .container-fluid
     .row.row-cols-1.text-end
       .col

@@ -115,36 +115,36 @@ const setToken = (bridge, logger) => {
   });
 };
 
-const insertCalendar = (bridge, logger) => {
-  const calendarFrame = document.querySelector('#calendarFrame');
-  const calendarId = (document.querySelector('#calendarId') || {}).value;
-  const timezone = (document.querySelector('#timezone') || {}).value;
-  if (!calendarFrame || !calendarId || !timezone) {
-    logger.info(JSON.stringify({
-      source: 'insertCalendar',
-      page: gon.app.page,
-      query: gon.app.query,
-      calendarFrame: calendarFrame ? calendarFrame.innerHTML : null,
-      calendarId: calendarId || null,
-      timezone: timezone || null,
-    }));
-    return;
-  }
-
-  const calendarLink = `https://calendar.google.com/embed?src=${calendarId}&ctz=${timezone}`;
-  const iframeElement = document.createElement('iframe');
-  iframeElement.classList.add('w-100', 'h-100');
-  iframeElement.setAttribute('src', calendarLink);
-  calendarFrame.innerHTML = iframeElement.outerHTML;
-  logger.log(JSON.stringify({
-    source: 'insertCalendar',
-    page: gon.app.page,
-    query: gon.app.query,
-    calendarFrame: calendarFrame.innerHTML,
-    calendarId,
-    timezone,
-  }));
-};
+// const insertCalendar = (bridge, logger) => {
+//   const calendarFrame = document.querySelector('#calendarContainer');
+//   const calendarId = (document.querySelector('#calendarId') || {}).value;
+//   const timezone = (document.querySelector('#timezone') || {}).value;
+//   if (!calendarFrame || !calendarId || !timezone) {
+//     logger.info(JSON.stringify({
+//       source: 'insertCalendar',
+//       page: gon.app.page,
+//       query: gon.app.query,
+//       calendarFrame: calendarFrame ? calendarFrame.innerHTML : null,
+//       calendarId: calendarId || null,
+//       timezone: timezone || null,
+//     }));
+//     return;
+//   }
+//
+//   const calendarLink = `https://calendar.google.com/embed?src=${calendarId}&ctz=${timezone}`;
+//   const iframeElement = document.createElement('iframe');
+//   iframeElement.classList.add('w-100', 'h-100');
+//   iframeElement.setAttribute('src', calendarLink);
+//   calendarFrame.innerHTML = iframeElement.outerHTML;
+//   logger.log(JSON.stringify({
+//     source: 'insertCalendar',
+//     page: gon.app.page,
+//     query: gon.app.query,
+//     calendarFrame: calendarFrame.innerHTML,
+//     calendarId,
+//     timezone,
+//   }));
+// };
 
 const resolveInsets = (e) => {
   const { type, data } = e.detail;
@@ -163,7 +163,7 @@ const resolveInsets = (e) => {
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [setToken, insertCalendar],
+  calendar: [setToken],
 };
 
 const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
