@@ -10,8 +10,8 @@ mixin calendarIframe(calendarLink)
         p.
           Неудобно пользоваться календарём? Попробуйте
           #[a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере]
-    .row.flex-grow-1.h-100.overflow-hidden
-      #calendarContainer.col.h-100
+    .row.flex-grow-1.h-100
+      #calendarContainer.col.h-100.overflow-hidden
         iframe.w-100.h-100(src=calendarLink)
   .container-fluid
     .row.row-cols-1.text-end
