@@ -5,8 +5,13 @@ mixin calendarIframe(calendarLink)
     .row
       .col
         h2.h4 Календарь сообщества
-    .row.flex-grow-1.h-100
-      #calendarContainer.col.h-100.overflow-hidden
+    .row
+      .col
+        p.
+          Неудобно пользоваться календарём? Попробуйте
+          #[a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере]
+    .row.flex-grow-1.h-100.overflow-hidden
+      #calendarContainer.col.h-100
         iframe.w-100.h-100(src=calendarLink)
   .container-fluid
     .row.row-cols-1.text-end
@@ -15,10 +20,6 @@ mixin calendarIframe(calendarLink)
           Добавить мероприятия из этого календаря в свой можно по кнопке
           #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
           выше
-      .col
-        p.
-          Неудобно пользоваться календарём? Попробуйте:
-          #[a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере]
     hr
 
 mixin widgetBlock(clubId, clubHasWidget)
