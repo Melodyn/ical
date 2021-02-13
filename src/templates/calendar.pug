@@ -1,13 +1,11 @@
 extends index
 
 mixin calendarIframe(calendarLink)
-  .container-fluid.d-flex.flex-column.h-100
+  .container-fluid
     .row
       .col
         h2.h4 Календарь сообщества
-    .row.flex-grow-1.h-100
-      #calendarContainer.col.h-100.overflow-hidden
-        iframe.w-100.h-100(src=calendarLink)
+  iframe.w-100.h-100(src=calendarLink)
   .container-fluid
     .row.row-cols-1.text-end
       .col
