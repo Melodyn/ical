@@ -55,10 +55,10 @@ const syncWidget = async ({
       .send(calendar)
       .then((result) => {
         if (!result.error) return result;
-        reporter.error({
+        reporter.error(JSON.stringify({
           ...result.error,
           clubId: calendar.clubId,
-        });
+        }));
 
         return calendarRepo.update(calendar.id, {
           widgetToken: null,

@@ -24,8 +24,10 @@ class AuthError extends ICalAppError {
 class CronTaskError extends ICalAppError {
   constructor(originalError, params = {}) {
     super();
-    this.name = originalError.name;
-    this.stack = originalError.stack;
+    this.name = !originalError ? 'CronTaskError' : originalError.name;
+    if (originalError && originalError.stack) {
+      this.stack = originalError.stack;
+    }
     this.params = params;
     this.message = `${originalError.message}, params: ${JSON.stringify(params, null, 2)}`;
   }
