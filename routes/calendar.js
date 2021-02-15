@@ -44,7 +44,7 @@ const routes = [
       } = await yup
         .object({
           calendarId: yup.string()
-            .matches(/^\w+@(group.calendar.google.com|gmail.com)$/)
+            .matches(/^(\w|\.)+@(group.calendar.google.com|gmail.com)$/)
             .required(),
           timezone: yup.string().oneOf(allowedZones).required(),
           widgetToken: yup.string().default('').optional(),
