@@ -1,4 +1,5 @@
 import yup from 'yup';
+import axios from 'axios';
 import { buildCalendarLinks } from '../utils/helpers.js';
 
 const routes = [
@@ -62,6 +63,24 @@ const routes = [
 
       if (errors !== null) {
         req.errors(errors);
+        return res.redirect(req.url);
+      }
+
+      const { ical } = buildCalendarLinks(calendarId);
+      const isPublic = await axios.get(ical)
+        .then(() => true)
+        .catch(() => false);
+
+      if (!isPublic) {
+        req.errors([
+          [
+            'calendarId',
+            {
+              value: calendarId,
+              message: `Проверьте, что календарь "${calendarId}" общедоступный. Не удалось получить данных.`,
+            },
+          ],
+        ]);
         return res.redirect(req.url);
       }
 
