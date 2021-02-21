@@ -11,6 +11,16 @@ html {
         env(safe-area-inset-left, 0px);
 }
 
+td:hover {
+    background: var(--bs-light);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.container-calendar-events {
+    height: 247px;
+}
+
 #logger {
     height: 100%;
     width: 100%;

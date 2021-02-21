@@ -9,6 +9,8 @@ import Rollbar from 'rollbar';
 const bridgeProd = vkBridgeProd.default;
 const bridgeDev = vkBridgeDev.default;
 
+const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+
 // const stringify = (content) => {
 //   try {
 //     return JSON.stringify(content, null, 2);
@@ -130,12 +132,16 @@ const resolveInsets = (e) => {
   return null;
 };
 
-const handlerByPages = {
-  install: [setApp],
-  calendar: [setToken],
+const setEventsContainerHeight = () => {
+  const calendarElement = document.querySelector('#calendar');
+  const eventsContainerElement = document.querySelector('#container-calendar-events');
+  eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
 };
 
-const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+const handlerByPages = {
+  install: [setApp],
+  calendar: [setEventsContainerHeight],
+};
 
 const init = (bridge, logger) => {
   bridge.send('VKWebAppInit');
