@@ -1,5 +1,5 @@
-import 'core-js';
-import '@babel/polyfill';
+import 'core-js/stable/index.js';
+import 'regenerator-runtime/runtime.js';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
