@@ -1,0 +1,65 @@
+extends index
+
+mixin week(days, className=null, forDay=0)
+  tr
+    each day in days
+      td(class=(day === forDay ? className : null))= day
+
+mixin tableCalendar
+  table#calendar.table.table-bordered
+    thead.table-dark.text-center
+      tr
+        th(scope="col") пн
+        th(scope="col") вт
+        th(scope="col") ср
+        th(scope="col") чт
+        th(scope="col") пт
+        th(scope="col") сб
+        th(scope="col") вс
+    tbody.text-end
+      +week(['', '', '', 1, 2, 3, 4], 'table-primary', 4)
+      +week([5, 6, 7, 8, 9, 10, 11], 'table-primary', 7)
+      +week([12, 13, 14, 15, 16, 17, 18], 'table-dark', 16)
+      +week([19, 20, 21, 22, 23, 24, 25], 'fw-bold', 20)
+      +week([26, 27, 28, 29, 30, 31, ''], 'table-primary', 29)
+
+
+mixin event(time, text)
+  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2.mb-2 #{time}
+  span #{text}
+
+mixin calendarEvents
+  p.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 16.02.2021
+  ul.list-group.rounded-0
+    li.list-group-item
+      +event('06:00 - 07:30', 'на работу')
+    li.list-group-item
+      +event('08:00 - 16:00', 'пятница - сокращённый день, значит, можно забежать за пивасиком и сегодня потюленить')
+    li.list-group-item
+      +event('16:00 - 18:00', 'домой, в магаз, к телику')
+    li.list-group-item
+      +event('18:00 - 20:00', 'потребление пива')
+    li.list-group-item
+      +event('20:00', 'отбой')
+
+
+mixin calendarBlock
+  .container-fluid
+    .row
+      .col
+        h2.h4 Календарь сообщества
+    .row.g-2
+      .col-sm
+        +tableCalendar
+      #container-calendar-events.col-sm.container-calendar-events.overflow-auto
+        +calendarEvents
+    hr
+
+
+block content
+  +calendarBlock
+  .container-fluid
+    .row
+      .col
+        h2.h4 Настройки
+    hr

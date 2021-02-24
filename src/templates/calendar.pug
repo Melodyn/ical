@@ -1,65 +1,71 @@
 extends index
 
-mixin week(days, className=null, forDay=0)
-  tr
-    each day in days
-      td(class=(day === forDay ? className : null))= day
-
-mixin tableCalendar
-  table#calendar.table.table-bordered
-    thead.table-dark.text-center
-      tr
-        th(scope="col") пн
-        th(scope="col") вт
-        th(scope="col") ср
-        th(scope="col") чт
-        th(scope="col") пт
-        th(scope="col") сб
-        th(scope="col") вс
-    tbody.text-end
-      +week(['', '', '', 1, 2, 3, 4], 'table-primary', 4)
-      +week([5, 6, 7, 8, 9, 10, 11], 'table-primary', 7)
-      +week([12, 13, 14, 15, 16, 17, 18], 'table-dark', 16)
-      +week([19, 20, 21, 22, 23, 24, 25], 'fw-bold', 20)
-      +week([26, 27, 28, 29, 30, 31, ''], 'table-primary', 29)
-
-
-mixin event(time, text)
-  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2.mb-2 #{time}
-  span #{text}
-
-mixin calendarEvents
-  p.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 16.02.2021
-  ul.list-group.rounded-0
-    li.list-group-item
-      +event('06:00 - 07:30', 'на работу')
-    li.list-group-item
-      +event('08:00 - 16:00', 'пятница - сокращённый день, значит, можно забежать за пивасиком и сегодня потюленить')
-    li.list-group-item
-      +event('16:00 - 18:00', 'домой, в магаз, к телику')
-    li.list-group-item
-      +event('18:00 - 20:00', 'потребление пива')
-    li.list-group-item
-      +event('20:00', 'отбой')
-
-
-mixin calendarBlock
-  .container-fluid
+mixin calendarIframe(calendarLink)
+  .container-fluid.d-flex.flex-column.h-100
     .row
       .col
         h2.h4 Календарь сообщества
-    .row.g-2
-      .col-sm
-        +tableCalendar
-      #container-calendar-events.col-sm.container-calendar-events.overflow-auto
-        +calendarEvents
+    .row
+      .col
+        p.
+          Неудобно пользоваться календарём? Попробуйте
+          #[a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере]
+    .row.flex-grow-1.h-100
+      #calendarContainer.col.h-100.overflow-hidden
+        iframe.w-100.h-100(src=calendarLink)
+  .container-fluid
+    .row.row-cols-1.text-end
+      .col
+        p.
+          Добавить мероприятия из этого календаря в свой можно по кнопке
+          #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
+          выше
     hr
 
-
-block content
-  +calendarBlock
+mixin widgetBlock(clubId, clubHasWidget)
+  - const clubSettingsPageURL = `vk.com/club${clubId}?act=apps`;
+  - const clubTokenPageURL = `vk.com/club${clubId}?act=tokens`;
   .container-fluid
     .row
       .col
-        h2.h4 Настройки
+        h2.h4 Настройки виджета
+    .row
+      .col
+        if (clubHasWidget === true)
+          p.
+            Для работы с виджетом выпущен токен, который можно найти тут:
+            #[a(href=`//${clubTokenPageURL}` target='_blank') #{clubTokenPageURL}]
+            #[br]
+            Если токен был случайно (или специально) удалён,
+            то его можно перевыпустить:
+          button#setWidget.btn.btn-warning.mb-3 Перевыпустить токен
+          p.
+            Максимальная польза от виджета будет при его доступности
+            для просмотра всем пользователям:
+            #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+            #[br]
+            Синхронизация календаря с виджетом происходит автоматически.
+        else
+          p.
+            Теперь мероприятия из календаря могут отображаться на главной
+            странице сообщества, как виджет. Чтобы его включить, нужно
+            жмякнуть по большой красной кнопке и дать доступ к виджету:
+          button#setWidget.btn.btn-danger.mb-3 Сделать хорошо
+          p.
+            Останется только в настройках сообщества
+            сделать виджет доступным для просмотра всем пользователям:
+            #[br]
+            #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+            #[br]
+            синхронизация календаря с виджетом происходит автоматически.
     hr
+
+block content
+  - const { calendarId, clubId, timezone: calendarTimezone, widgetToken, extra: { calendarLink } } = values.calendar;
+  - const clubHasWidget = widgetToken !== null;
+  if (user.isAdmin)
+    +calendarIframe(calendarLink)
+    include adminForm
+    +widgetBlock(clubId, clubHasWidget)
+  else
+    +calendarIframe(calendarLink)
