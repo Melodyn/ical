@@ -13,17 +13,17 @@ export const eventTypes = {
 export const toMS = (date) => (new Date(date)).getTime();
 export const getDateNowMS = () => Date.now();
 
-const eventHumanable = (event) => { // TODO добавить { includeForDays: n }
+const eventHumanify = (event, referenceMS = DateTime.now().toMillis()) => {
   const type = _.has(event, 'rrule') ? eventTypes.periodic : eventTypes.once;
   const eventStartMS = toMS(event.start);
   const eventEndMS = toMS(event.end);
-  const nowMS = getDateNowMS();
 
   const firstStartDT = DateTime.fromMillis(eventStartMS);
   const firstEndDT = DateTime.fromMillis(eventEndMS);
   const durationMS = firstEndDT.diff(firstStartDT).milliseconds;
   const createEvent = ({ isFinished, startMS = eventStartMS, endMS = eventEndMS }) => ({
     type,
+    referenceMS,
     startMS,
     endMS,
     durationMS,
@@ -34,7 +34,7 @@ const eventHumanable = (event) => { // TODO добавить { includeForDays: n
   });
 
   if (type === eventTypes.once) {
-    return createEvent({ isFinished: nowMS >= eventEndMS });
+    return createEvent({ isFinished: referenceMS >= eventEndMS });
   }
 
   const filledRrules = Object.fromEntries(
@@ -51,8 +51,8 @@ const eventHumanable = (event) => { // TODO добавить { includeForDays: n
   );
 
   const rule = new RRule(filledRrules);
-  const startBeforeNow = rule.before(new Date(nowMS), true);
-  const startAfterNow = rule.after(new Date(nowMS), true);
+  const startBeforeNow = rule.before(new Date(referenceMS), true);
+  const startAfterNow = rule.after(new Date(referenceMS), true);
 
   const isMaybeActiveEvent = (startBeforeNow !== null);
   const isUpcomingEvent = (startAfterNow !== null);
@@ -65,7 +65,7 @@ const eventHumanable = (event) => { // TODO добавить { includeForDays: n
     const startDT = DateTime.fromMillis(startMS);
     const endDT = startDT.plus({ milliseconds: durationMS });
     const endMS = endDT.toMillis();
-    const isFinished = (nowMS >= endMS);
+    const isFinished = (referenceMS >= endMS);
 
     if (!isFinished) {
       return createEvent({ startMS, endMS, isFinished });
@@ -80,15 +80,39 @@ const eventHumanable = (event) => { // TODO добавить { includeForDays: n
   const startDT = DateTime.fromMillis(startMS);
   const endDT = startDT.plus({ milliseconds: durationMS });
   const endMS = endDT.toMillis();
-  const isFinished = (nowMS >= endMS);
+  const isFinished = (referenceMS >= endMS);
 
   return createEvent({ startMS, endMS, isFinished });
 };
 
-fromFile('./27.02.2021.ics')
+export default eventHumanify;
+
+const prepareEventForWidget = eventHumanify;
+
+const prepareEventForCalendar = (event, { nextDays = 0 }) => {
+  const nowDT = DateTime.now();
+
+  let day = 0;
+  let events = [];
+  do {
+    const referenceDT = nowDT.plus({ day }).startOf('day');
+    const processedEvent = eventHumanify(event, referenceDT.toMillis());
+    const { days } = DateTime.fromMillis(processedEvent.startMS).diff(referenceDT, 'days').toObject();
+
+    if (days < 1) {
+      events = events.concat(processedEvent);
+    }
+    day += 1;
+  } while (day < (nextDays + 1));
+
+  return events;
+};
+
+fromFile('./01.03.2021.ics')
   .then((events) => events.filter(({ type }) => type === 'VEVENT'))
-  .then((events) => events.map(eventHumanable))
+  .then((events) => events.flatMap((event) => prepareEventForCalendar(event, { nextDays: 30 })))
   .then((events) => events.filter(({ isFinished }) => !isFinished))
-  .then((events) => _.sortBy(events, 'startMS'))
+  .then((events) => _.sortBy(events, ['referenceMS', 'startMS'])) // prepareEventForWidget
+  // .then((events) => _.sortBy(events, ['startMS'])) // prepareEventForWidget
   .then(console.log)
   .catch(console.error);
