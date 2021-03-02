@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import luxon from 'luxon';
 import rrule from 'rrule';
-import { fromFile } from './parser.js';
 
 const { RRule } = rrule;
 const { DateTime } = luxon;
@@ -13,7 +12,7 @@ export const eventTypes = {
 export const toMS = (date) => (new Date(date)).getTime();
 export const getDateNowMS = () => Date.now();
 
-const eventHumanify = (event, referenceMS = DateTime.now().toMillis()) => {
+export default (event, referenceMS = DateTime.now().toMillis()) => {
   const type = _.has(event, 'rrule') ? eventTypes.periodic : eventTypes.once;
   const eventStartMS = toMS(event.start);
   const eventEndMS = toMS(event.end);
@@ -84,35 +83,3 @@ const eventHumanify = (event, referenceMS = DateTime.now().toMillis()) => {
 
   return createEvent({ startMS, endMS, isFinished });
 };
-
-export default eventHumanify;
-
-const prepareEventForWidget = eventHumanify;
-
-const prepareEventForCalendar = (event, { nextDays = 0 }) => {
-  const nowDT = DateTime.now();
-
-  let day = 0;
-  let events = [];
-  do {
-    const referenceDT = nowDT.plus({ day }).startOf('day');
-    const processedEvent = eventHumanify(event, referenceDT.toMillis());
-    const { days } = DateTime.fromMillis(processedEvent.startMS).diff(referenceDT, 'days').toObject();
-
-    if (days < 1) {
-      events = events.concat(processedEvent);
-    }
-    day += 1;
-  } while (day < (nextDays + 1));
-
-  return events;
-};
-
-fromFile('./01.03.2021.ics')
-  .then((events) => events.filter(({ type }) => type === 'VEVENT'))
-  .then((events) => events.flatMap((event) => prepareEventForCalendar(event, { nextDays: 30 })))
-  .then((events) => events.filter(({ isFinished }) => !isFinished))
-  .then((events) => _.sortBy(events, ['referenceMS', 'startMS'])) // prepareEventForWidget
-  // .then((events) => _.sortBy(events, ['startMS'])) // prepareEventForWidget
-  .then(console.log)
-  .catch(console.error);
