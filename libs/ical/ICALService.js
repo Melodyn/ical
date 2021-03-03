@@ -11,8 +11,8 @@ export default class ICALService {
     this.icalProcessor = icalProcessor;
   }
 
-  get load() {
-    return this.loader;
+  load(calendarId) {
+    return this.loader(calendarId);
   }
 
   get parse() {

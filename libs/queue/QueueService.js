@@ -1,4 +1,4 @@
-export default class Queue {
+export default class QueueService {
   constructor(filler, task) {
     this.queue = [];
     this.filler = filler;
@@ -13,9 +13,3 @@ export default class Queue {
     return this.task(this.queue.shift());
   }
 }
-
-const filler = async () => Array.from(Array(5).keys()).reverse();
-const task = async (data) => console.log(data);
-
-const queue = new Queue(filler, task);
-setInterval(() => queue.run(), 500);
