@@ -78,7 +78,6 @@ const emptyWidgetGenerator = () => {
 };
 
 export default (apiVersion, appId) => {
-  const apiURL = 'https://api.vk.com/method/appWidgets.update';
   const widgetType = 'list';
 
   return (widgetToken, calendar = null) => {
@@ -93,6 +92,6 @@ export default (apiVersion, appId) => {
       access_token: widgetToken,
     };
 
-    return { apiURL, params, widget };
+    return { params, widget };
   };
 };
