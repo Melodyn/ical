@@ -46,7 +46,8 @@ const syncIcal = async (QueueService, icalService, reporter) => {
       reporter.error(error);
 
       return updateCalendarData(calendar, null, err);
-    });
+    })
+    .then((updatedCalendar) => calendarRepo.update(calendar.id, updatedCalendar));
 
   return new QueueService(filler, task);
 };

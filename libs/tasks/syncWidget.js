@@ -1,12 +1,21 @@
-import luxon from 'luxon';
 import typeorm from 'typeorm';
-import _ from 'lodash';
-import { prepareEvents } from '../utils.js';
+import errors from '../../utils/errors.cjs';
 
-const { DateTime } = luxon;
+const { CronTaskError } = errors;
 const {
-  Not, IsNull, LessThan, getConnection,
+  Not, IsNull, getConnection,
 } = typeorm;
+
+const updateCalendarData = (calendar, widgetError = null) => ({
+  id: calendar.id,
+  widgetToken: (widgetError === null) ? calendar.widgetToken : null,
+  widgetSyncedAt: null,
+  extra: {
+    ...calendar.extra,
+    widgetError,
+    ...((widgetError === null) ? {} : { oldToken: calendar.widgetToken }),
+  },
+});
 
 const syncWidget = async (QueueService, icalService, vkService, reporter) => {
   const period = 5; // minutes
@@ -20,6 +29,7 @@ const syncWidget = async (QueueService, icalService, vkService, reporter) => {
   const filler = () => calendarRepo.find({
     where: {
       widgetToken: Not(IsNull()),
+      widgetSyncedAt: Not(IsNull()),
     },
     order: {
       widgetSyncedAt: 'DESC',
@@ -27,7 +37,32 @@ const syncWidget = async (QueueService, icalService, vkService, reporter) => {
     take: maxRecordsPerPeriod,
   });
 
-  // TODO task
+  const task = (calendar) => {
+    const {
+      widgetToken,
+      clubId,
+      timezone,
+      extra: { ical },
+    } = calendar;
+    const events = icalService.toEvents(ical);
+    const widget = vkService.createWidget(widgetToken, {
+      clubId,
+      timezone,
+      events,
+    });
+
+    return vkService.updateWidget(widget)
+      .then(() => updateCalendarData(calendar))
+      .catch((err) => {
+        const error = new CronTaskError(err, { clubId, widget });
+        reporter.error(error);
+
+        return updateCalendarData(calendar, error);
+      })
+      .then((updatedCalendar) => calendarRepo.update(calendar.id, updatedCalendar));
+  };
+
+  return new QueueService(filler, task);
 };
 
 export default syncWidget;
