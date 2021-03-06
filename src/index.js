@@ -132,15 +132,15 @@ const resolveInsets = (e) => {
   return null;
 };
 
-const setEventsContainerHeight = () => {
-  const calendarElement = document.querySelector('#calendar');
-  const eventsContainerElement = document.querySelector('#container-calendar-events');
-  eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
-};
+// const setEventsContainerHeight = () => {
+//   const calendarElement = document.querySelector('#calendar');
+//   const eventsContainerElement = document.querySelector('#container-calendar-events');
+//   eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
+// };
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [setEventsContainerHeight],
+  calendar: [],
 };
 
 const init = (bridge, logger) => {
