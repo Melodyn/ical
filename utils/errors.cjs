@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 const { constants } = require('http2');
 
 class ICalAppError extends Error {}
