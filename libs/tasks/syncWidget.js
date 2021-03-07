@@ -60,8 +60,8 @@ const syncWidget = (QueueService, icalService, vkService, reporter) => {
         return updateCalendarData(calendar, error);
       })
       .then((updatedCalendar) => calendarRepo.update(calendar.id, updatedCalendar))
-      .then(reporter.info)
-      .catch(reporter.error);
+      .then((data) => reporter.info(JSON.stringify(data)))
+      .catch((err) => reporter.error(err));
   };
 
   return new QueueService(filler, task);
