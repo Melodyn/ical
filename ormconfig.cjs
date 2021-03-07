@@ -40,6 +40,9 @@ const configByEnv = {
     migrations: ['migration/*.cjs'],
     synchronize: false,
     logging: ['migration'],
+    ssl: {
+      rejectUnauthorized: false,
+    },
   }),
   [envsMap.stage]: (config) => ({
     type: config.DB_TYPE,
