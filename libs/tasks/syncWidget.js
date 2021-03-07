@@ -17,7 +17,7 @@ const updateCalendarData = (calendar, widgetError = null) => ({
   },
 });
 
-const syncWidget = async (QueueService, icalService, vkService, reporter) => {
+const syncWidget = (QueueService, icalService, vkService, reporter) => {
   const period = 5; // minutes
   const maxRequestTime = 10; // seconds
   const periodMS = period * 60 * 1000; // ms

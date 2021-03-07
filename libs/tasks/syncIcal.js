@@ -17,7 +17,7 @@ const updateCalendarData = (calendar, ical, icalError = null) => ({
   },
 });
 
-const syncIcal = async (QueueService, icalService, reporter) => {
+const syncIcal = (QueueService, icalService, reporter) => {
   const period = 5; // minutes
   const maxRequestTime = 10; // seconds
   const periodMS = period * 60 * 1000; // ms
