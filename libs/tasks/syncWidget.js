@@ -57,11 +57,11 @@ const syncWidget = (QueueService, icalService, vkService, reporter) => {
         const error = new CronTaskError(err, { clubId, widget });
         reporter.error(error);
 
-        const newData = updateCalendarData(calendar, error);
-        console.log('newData', newData);
-        return newData;
+        return updateCalendarData(calendar, error);
       })
-      .then((updatedCalendar) => calendarRepo.update(calendar.id, updatedCalendar));
+      .then((updatedCalendar) => calendarRepo.update(calendar.id, updatedCalendar))
+      .then(reporter.info)
+      .catch(reporter.error);
   };
 
   return new QueueService(filler, task);
