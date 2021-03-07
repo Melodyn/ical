@@ -15,11 +15,6 @@ const prodService = (apiURL) => ({ params }) => axios
     throw new ICalAppError(JSON.stringify(data.error));
   });
 
-const devService = async ({ widget }) => {
-  console.log('widgetUpdater', JSON.stringify(widget));
-  return widget;
-};
-
 const testService = async ({ widget }) => widget;
 
 export default (env, apiURL) => {
@@ -27,8 +22,6 @@ export default (env, apiURL) => {
     case envsMap.prod:
     case envsMap.stage:
       return prodService(apiURL);
-    case envsMap.dev:
-      return devService;
     default:
       return testService;
   }

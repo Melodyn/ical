@@ -1,20 +1,3 @@
-export const buildCalendarLinks = (calendarId, timezone = '') => {
-  const baseURL = 'https://calendar.google.com/calendar';
-  const icalPath = `/ical/${calendarId}/public/basic.ics`;
-  const embedPath = '/embed';
-
-  const embedURL = new URL(embedPath, baseURL);
-  embedURL.searchParams.set('src', calendarId);
-  embedURL.searchParams.set('ctz', timezone);
-
-  const icalURL = new URL(icalPath, baseURL);
-
-  return {
-    embed: embedURL.toString(),
-    ical: icalURL.toString(),
-  };
-};
-
 // const { Interval, DateTime} = require("luxon");
 //
 // // adjust this for your exact needs
@@ -38,5 +21,3 @@ export const buildCalendarLinks = (calendarId, timezone = '') => {
 // // or construct an array out of it
 // var arr = Array.from(days(interval));
 // console.log(arr.length);
-
-export const noop = () => {};

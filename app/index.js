@@ -16,7 +16,6 @@ import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
 import routes from '../routes/calendar.js';
-import { createValidator as createVkUserValidator } from '../utils/vkUserValidator.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
@@ -45,10 +44,10 @@ const setAuth = (config, server) => {
   server.decorateRequest('user', null);
   server.decorateRequest('isAuthenticated', false);
 
-  const vkUserValidator = createVkUserValidator(config.VK_PROTECTED_KEY, config.VK_APP_ADMIN_ID);
+  const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
 
   server.decorate('vkUserAuth', (req, res, done) => {
-    const { isValid, user, error } = vkUserValidator(req);
+    const { isValid, user, error } = vkUserValidator(req.query);
     if (!isValid) {
       req.user = null;
       req.isAuthenticated = false;
@@ -67,7 +66,7 @@ const setAuth = (config, server) => {
 
   server.decorate('vkAdminAuth', (req, res, done) => {
     if (!req.isAuthenticated) {
-      const { isValid, user, error } = vkUserValidator(req);
+      const { isValid, user, error } = vkUserValidator(req.query);
       if (!isValid) {
         return done(error);
       }
@@ -146,8 +145,6 @@ const setServices = (config, server) => {
   };
 
   server.decorate('services', services);
-
-  return services;
 };
 
 const initDatabase = () => ormconfig.then(createConnection);

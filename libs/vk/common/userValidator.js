@@ -13,6 +13,7 @@ const validationResult = ({ error = null, user = null, params = {} }) => ({
   isValid: (error === null),
   user,
   params,
+  error,
 });
 
 export const buildSign = (query, secret) => {
