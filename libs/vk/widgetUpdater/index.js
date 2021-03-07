@@ -7,7 +7,7 @@ const { ICalAppError } = errors;
 const { envsMap } = configValidator;
 
 const prodService = (apiURL) => ({ params }) => axios
-  .get(apiURL, { params })
+  .post(apiURL, { params })
   .then(({ data }) => data)
   .then((data) => {
     if (!data.error) return data;

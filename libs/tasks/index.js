@@ -1,3 +1,4 @@
+import ms from 'ms';
 import configValidator from '../../utils/configValidator.cjs';
 import CronService from '../cron/CronService.js';
 import QueueService from '../queue/QueueService.js';
@@ -19,7 +20,7 @@ const prodService = (server, reporter) => {
     reporter,
   );
 
-  return [icalTask, widgetTask].map((task) => new CronService(() => task.run(), 500, 1000));
+  return [icalTask, widgetTask].map((task) => new CronService(() => task.run(), ms('1 minute'), ms('1 minute')));
 };
 
 const testService = () => [{ start: async () => {}, stop: async () => {} }];
