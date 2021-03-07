@@ -81,9 +81,10 @@ export default (apiVersion, appId) => {
   const widgetType = 'list';
 
   return (widgetToken, calendar = null) => {
-    const widget = (calendar === null)
+    const updatedCalendar = (calendar === null)
       ? emptyWidgetGenerator()
       : widgetGenerator(appId, calendar);
+    const { widget } = updatedCalendar;
 
     const params = {
       type: widgetType,
@@ -92,6 +93,6 @@ export default (apiVersion, appId) => {
       access_token: widgetToken,
     };
 
-    return { params, widget };
+    return { params, widget, calendar: updatedCalendar };
   };
 };
