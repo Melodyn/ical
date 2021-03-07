@@ -15,13 +15,13 @@ const asyncTimeout = (task, delay) => {
 };
 
 export default class CronService {
-  constructor(tasks, period, firstDelay = 0) {
-    if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
-      throw new CronServiceError('tasks must be not empty array');
+  constructor(task, period, firstDelay = 0) {
+    if (!task || (typeof task !== 'function')) {
+      throw new CronServiceError('tasks must be function');
     }
     this.period = period;
     this.firstDelay = firstDelay;
-    this.tasks = tasks;
+    this.task = task;
     this.state = 'init';
     this.timerId = null;
   }
@@ -30,15 +30,9 @@ export default class CronService {
     if (this.state === 'init') {
       this.state = 'started';
       await asyncTimeout(() => {}, this.firstDelay);
-      const tasks = this.tasks.slice();
-      const tasksCount = tasks.length;
-      let taskIndex = 0;
 
       while (this.state === 'started') {
-        const currentTaskIndex = taskIndex % tasksCount;
-        const currentTask = tasks[currentTaskIndex];
-        this.timerId = await asyncTimeout(currentTask, this.period);
-        taskIndex += 1;
+        this.timerId = await asyncTimeout(this.task, this.period);
       }
     }
 

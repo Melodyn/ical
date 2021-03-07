@@ -15,12 +15,12 @@ const prodService = (apiURL) => ({ params }) => axios
     throw new ICalAppError(JSON.stringify(data.error));
   });
 
-const devService = ({ widget }) => Promise.resolve(widget).then((res) => {
-  console.log('widgetUpdater', JSON.stringify(res));
-  return res;
-});
+const devService = async ({ widget }) => {
+  console.log('widgetUpdater', JSON.stringify(widget));
+  return widget;
+};
 
-const testService = ({ widget }) => Promise.resolve(widget);
+const testService = async ({ widget }) => widget;
 
 export default (env, apiURL) => {
   switch (env) {

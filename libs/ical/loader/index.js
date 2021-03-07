@@ -9,8 +9,8 @@ const prodService = (calendarId) => {
   const { ical } = linkBuilder(calendarId);
   return fromURL(ical);
 };
-const devService = () => calendarFixture;
-const testService = () => calendarFixture;
+const devService = async () => calendarFixture;
+const testService = async () => calendarFixture;
 
 export default (env) => {
   switch (env) {
