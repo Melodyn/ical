@@ -228,6 +228,7 @@ const app = async (envName) => {
   };
 
   process.on('SIGTERM', stop);
+  process.on('SIGINT', stop);
 
   return {
     server,
