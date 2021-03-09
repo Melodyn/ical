@@ -5,7 +5,7 @@ import nock from 'nock';
 import * as icalParser from '../utils/icalParser.js';
 import parsedICS from '../__fixtures__/calendar.js';
 import calendars from '../__fixtures__/calendars.js';
-import { buildCalendarLinks } from '../utils/helpers.js';
+import buildCalendarLinks from '../libs/ical/common/linkBuilder.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

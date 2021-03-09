@@ -50,9 +50,12 @@ const configSchema = yup.object({
   VK_SERVICES_KEY: yup.string().required(),
   VK_WIDGET_TYPE: yup.string().required(),
   VK_API_VERSION: yup.number().positive().required(),
+  VK_API_URL: yup.string().required(),
   DEFAULT_TIMEZONE: yup.string().oneOf(Object.keys(tz.getAllTimezones())).required(),
   CRON_ICAL_TIME: yup.string().required(),
   SYNC_ICAL_TIME: yup.mixed().transform((value) => ms(value)),
+  CRON_SYNC_PERIOD: yup.mixed().transform((value) => ms(value)),
+  CRON_SYNC_DELAY: yup.mixed().transform((value) => ms(value)),
 }).required();
 
 const configValidator = (envName) => {

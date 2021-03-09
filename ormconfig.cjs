@@ -55,6 +55,9 @@ const configByEnv = {
     migrations: ['migration/*.cjs'],
     synchronize: false,
     logging: ['migration'],
+    ssl: {
+      rejectUnauthorized: false,
+    },
   }),
   [envsMap.invalid]: (config) => ({
     type: config.DB_TYPE,

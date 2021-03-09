@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 const { constants } = require('http2');
 
 class ICalAppError extends Error {}
@@ -30,6 +29,7 @@ class CronTaskError extends ICalAppError {
     }
     this.params = params;
     this.message = `${originalError.message}, params: ${JSON.stringify(params, null, 2)}`;
+    this.originalError = JSON.stringify(originalError);
   }
 }
 

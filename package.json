@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/Melodyn/iCal#readme",
   "dependencies": {
-    "@babel/polyfill": "^7.12.1",
     "@vkontakte/vk-bridge": "^2.3.0",
     "@vkontakte/vk-bridge-mock": "^2.0.3",
     "axios": "^0.21.1",
@@ -58,6 +57,7 @@
     "point-of-view": "^4.13.0",
     "pug": "^3.0.0",
     "reflect-metadata": "^0.1.13",
+    "regenerator-runtime": "^0.13.7",
     "rollbar": "^2.19.4",
     "rrule": "^2.6.6",
     "typeorm": "^0.2.31",

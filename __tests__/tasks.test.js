@@ -8,8 +8,9 @@ import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
 import { buildSign } from '../utils/vkUserValidator.js';
-import syncIcal from '../tasks/syncIcal.js';
-import syncWidget from '../tasks/syncWidget.js';
+import syncIcal from '../libs/tasks/syncIcal.js';
+import syncWidget from '../libs/tasks/syncWidget.js';
+import QueueService from '../libs/queue/QueueService.js';
 
 let app;
 let calendarRepo;
@@ -104,7 +105,13 @@ describe('Positive cases', () => {
   });
 
   test('Sync ical', async () => {
-    await syncIcal(app.config);
+    const sync = syncIcal(QueueService, app.server.services.icalService);
+    await sync.run(); // init queue
+    const syncResult = await sync.run(); // sync
+
+    expect(syncResult).toEqual(expect.objectContaining({
+      affected: 1,
+    }));
 
     const calendarsWithWidget = await calendarRepo.find({
       widgetToken: Not(IsNull()),
@@ -122,28 +129,28 @@ describe('Positive cases', () => {
   });
 
   test('Sync widget', async () => {
-    let requestURL;
-    nock(/api.vk.com/).persist().get(/.*/).reply(200, (uri) => {
-      requestURL = new URL(uri, 'https://api.vk.com');
-      return { data: { response: 1 } };
-    });
+    const sync = syncWidget(
+      QueueService,
+      app.server.services.icalService,
+      app.server.services.vkService,
+    );
+    await sync.run(); // init queue
+    const syncResult = await sync.run(); // sync
 
-    await expect(syncWidget(app.config)).resolves.not.toThrow();
-    const searchParams = Object.fromEntries(requestURL.searchParams);
-
-    expect(searchParams).toEqual(expect.objectContaining({
-      access_token: expect.any(String),
-      type: expect.any(String),
-      code: expect.any(String),
+    expect(syncResult).toEqual(expect.objectContaining({
+      affected: 1,
     }));
 
-    const widgetJSON = searchParams.code.replace(/(return|;)/g, '').trim();
-    const widget = JSON.parse(widgetJSON);
-
-    expect(widget).toEqual(expect.objectContaining({
-      title: expect.any(String),
-      more: expect.any(String),
-      rows: expect.any(Array),
+    const clubCalendar = await calendarRepo.findOne({
+      clubId: calendars.world.clubId,
+      calendarId: calendars.world.calendarId,
+    });
+    expect(clubCalendar).toEqual(expect.objectContaining({
+      widgetSyncedAt: null,
+      widgetToken: calendars.world.widgetToken,
+      extra: expect.objectContaining({
+        widgetError: null,
+      }),
     }));
   });
 });

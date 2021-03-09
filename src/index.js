@@ -1,5 +1,5 @@
-import 'core-js';
-import '@babel/polyfill';
+import 'core-js/stable/index.js';
+import 'regenerator-runtime/runtime.js';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
@@ -131,6 +131,12 @@ const resolveInsets = (e) => {
 
   return null;
 };
+
+// const setEventsContainerHeight = () => {
+//   const calendarElement = document.querySelector('#calendar');
+//   const eventsContainerElement = document.querySelector('#container-calendar-events');
+//   eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
+// };
 
 const handlerByPages = {
   install: [setApp],

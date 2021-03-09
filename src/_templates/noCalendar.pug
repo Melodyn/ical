@@ -1,0 +1,32 @@
+extends index
+
+mixin ms(text)
+  span.font-monospace.bg-light.ps-1.pe-1.text-break #{text}
+
+mixin adminText
+  .container-fluid
+    .row
+      .col
+        p.
+          Идентификатор календаря вид #[+ms('электронной почты')], его можно взять в настройках
+          или из URL календаря. Чтобы "пощупать", можно подключить тестовый календарь:
+          #[+ms('ob1gcsbo877671s4295f693nv0@group.calendar.google.com')].
+          По умолчанию используется московское время, это можно изменить в поле "Часовой пояс".
+
+mixin userText
+  .container-fluid.h-100
+    .row.h-100.text-center
+      .col.align-self-center
+        p
+          | В данном сообществе пока отсутствует календарь.
+          br
+          | Но вы можете #[a(href=`/install?${gon.app.query}`) установить] в своё.
+
+
+block content
+  - const calendarTimezone = values.timezones.default.name;
+  if (user.isAdmin)
+    include adminForm
+    +adminText
+  else
+    +userText

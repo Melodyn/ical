@@ -20,6 +20,7 @@ rules:
   import/extensions: off
   class-methods-use-this: off
   no-underscore-dangle: [1, { allow: ['__dirname'] }]
+  max-classes-per-file: off
 
 overrides:
   - files: '*.test.js'
@@ -29,3 +30,6 @@ overrides:
     rules:
      no-undef: off
      no-alert: off
+  - files: 'libs/cron/CronService.js'
+    rules:
+      no-await-in-loop: off

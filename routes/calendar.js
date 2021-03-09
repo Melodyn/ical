@@ -1,6 +1,6 @@
 import yup from 'yup';
 import axios from 'axios';
-import { buildCalendarLinks } from '../utils/helpers.js';
+import buildCalendarLinks from '../libs/ical/common/linkBuilder.js';
 
 const routes = [
   {

@@ -16,11 +16,12 @@ import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
 import routes from '../routes/calendar.js';
-import { createValidator as createVkUserValidator } from '../utils/vkUserValidator.js';
-import setTasks from '../tasks/index.js';
+import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
 import errors from '../utils/errors.cjs';
+import ICALService from '../libs/ical/ICALService.js';
+import VKService from '../libs/vk/VKService.js';
 
 const { createConnection } = typeorm;
 const { configValidator } = utils;
@@ -43,10 +44,10 @@ const setAuth = (config, server) => {
   server.decorateRequest('user', null);
   server.decorateRequest('isAuthenticated', false);
 
-  const vkUserValidator = createVkUserValidator(config.VK_PROTECTED_KEY, config.VK_APP_ADMIN_ID);
+  const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
 
   server.decorate('vkUserAuth', (req, res, done) => {
-    const { isValid, user, error } = vkUserValidator(req);
+    const { isValid, user, error } = vkUserValidator(req.query);
     if (!isValid) {
       req.user = null;
       req.isAuthenticated = false;
@@ -65,7 +66,7 @@ const setAuth = (config, server) => {
 
   server.decorate('vkAdminAuth', (req, res, done) => {
     if (!req.isAuthenticated) {
-      const { isValid, user, error } = vkUserValidator(req);
+      const { isValid, user, error } = vkUserValidator(req.query);
       if (!isValid) {
         return done(error);
       }
@@ -137,6 +138,15 @@ const setStatic = (config, server) => {
   });
 };
 
+const setServices = (config, server) => {
+  const services = {
+    vkService: new VKService(config),
+    icalService: new ICALService(config),
+  };
+
+  server.decorate('services', services);
+};
+
 const initDatabase = () => ormconfig.then(createConnection);
 
 const initReporter = (config, server) => {
@@ -185,7 +195,7 @@ const app = async (envName) => {
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
-  const cronJobs = setTasks(config, reporter);
+  setServices(config, server);
   setAuth(config, server);
   setStatic(config, server);
 
@@ -194,13 +204,12 @@ const app = async (envName) => {
   server.decorate('config', config);
   server.decorate('timezones', timezones);
 
-  await server.listen(config.PORT, config.HOST);
-  cronJobs.forEach((job) => job.start());
+  const cronJobs = setTasks(config, server, reporter);
 
   const stop = async () => {
     server.log.info('Stop app', config);
     server.log.info('  Stop cron');
-    cronJobs.forEach((job) => job.stop());
+    await Promise.all(cronJobs.map((job) => job.stop()));
     server.log.info('  Disconnect db');
     await db.close();
     server.log.info('  Stop server');
@@ -213,6 +222,10 @@ const app = async (envName) => {
   };
 
   process.on('SIGTERM', stop);
+  process.on('SIGINT', stop);
+
+  await server.listen(config.PORT, config.HOST);
+  await Promise.all(cronJobs.map((job) => job.start()));
 
   return {
     server,
