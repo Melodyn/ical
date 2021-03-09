@@ -204,10 +204,7 @@ const app = async (envName) => {
   server.decorate('config', config);
   server.decorate('timezones', timezones);
 
-  await server.listen(config.PORT, config.HOST);
-
   const cronJobs = setTasks(config, server, reporter);
-  await Promise.all(cronJobs.map((job) => job.start()));
 
   const stop = async () => {
     server.log.info('Stop app', config);
@@ -226,6 +223,9 @@ const app = async (envName) => {
 
   process.on('SIGTERM', stop);
   process.on('SIGINT', stop);
+
+  await server.listen(config.PORT, config.HOST);
+  await Promise.all(cronJobs.map((job) => job.start()));
 
   return {
     server,

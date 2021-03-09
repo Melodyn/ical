@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import errors from '../../utils/errors.cjs';
 
 const { ICalAppError } = errors;

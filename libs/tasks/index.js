@@ -1,11 +1,10 @@
-import cron from 'cron';
 import configValidator from '../../utils/configValidator.cjs';
 import QueueService from '../queue/QueueService.js';
+import CronService from '../cron/CronService.js';
 import syncIcal from './syncIcal.js';
 import syncWidget from './syncWidget.js';
 
 const { envsMap } = configValidator;
-const { CronJob } = cron;
 
 const prodService = (config, server, reporter) => {
   const icalTask = syncIcal(
@@ -20,7 +19,11 @@ const prodService = (config, server, reporter) => {
     reporter,
   );
 
-  return [icalTask, widgetTask].map((task) => new CronJob(config.CRON_ICAL_TIME, () => task.run()));
+  return [icalTask, widgetTask].map((task) => new CronService(
+    () => task.run(),
+    config.CRON_SYNC_PERIOD,
+    config.CRON_SYNC_DELAY,
+  ));
 };
 
 const testService = () => [{ start: async () => {}, stop: async () => {} }];
