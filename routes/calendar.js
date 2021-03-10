@@ -1,6 +1,4 @@
 import yup from 'yup';
-import axios from 'axios';
-import buildCalendarLinks from '../libs/ical/common/linkBuilder.js';
 
 const routes = [
   {
@@ -18,10 +16,10 @@ const routes = [
       const clubCalendar = await calendarRepository.findOne({ clubId: req.user.groupId });
 
       const formActionUrl = req.url;
-      const { timezones } = this;
+      const { timezones, services: { icalService } } = this;
 
       if (clubCalendar) {
-        const { embed } = buildCalendarLinks(clubCalendar.calendarId, clubCalendar.timezone);
+        const { embed } = icalService.buildLinks(clubCalendar.calendarId, clubCalendar.timezone);
         clubCalendar.extra.calendarLink = embed;
         res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
       } else {
@@ -66,10 +64,7 @@ const routes = [
         return res.redirect(req.url);
       }
 
-      const { ical } = buildCalendarLinks(calendarId);
-      const isPublic = await axios.get(ical)
-        .then(() => true)
-        .catch(() => false);
+      const isPublic = await this.services.icalService.checkIsPublic(calendarId);
 
       if (!isPublic) {
         req.errors([

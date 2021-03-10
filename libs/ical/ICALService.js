@@ -19,6 +19,10 @@ export default class ICALService {
     return this.parser;
   }
 
+  checkIsPublic(calendarId) {
+    return this.load(calendarId).then(() => true).catch(() => false);
+  }
+
   buildLinks(calendarId, timezone = '') {
     return this.linkBuilder(calendarId, timezone);
   }
