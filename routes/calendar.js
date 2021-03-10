@@ -19,6 +19,19 @@ const routes = [
       const { timezones, services: { icalService } } = this;
 
       if (clubCalendar) {
+        const { COUNT_DAYS_ON_VIEW } = this.config;
+        const upcomingEvents = icalService.toEvents(clubCalendar.extra.ical, {
+          nextDays: COUNT_DAYS_ON_VIEW,
+        });
+        const rangeOfDates = icalService.rangeDates(COUNT_DAYS_ON_VIEW);
+        const eventsByDays = rangeOfDates.map((day) => {
+          const dateOfDay = day.toFormat('dd.MM.yyyy');
+          const msOfDay = day.toMillis();
+          const eventsOfDay = upcomingEvents.filter(({ referenceMS }) => referenceMS === msOfDay);
+
+          return [dateOfDay, eventsOfDay];
+        });
+
         const { embed } = icalService.buildLinks(clubCalendar.calendarId, clubCalendar.timezone);
         clubCalendar.extra.calendarLink = embed;
         res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
@@ -64,7 +77,11 @@ const routes = [
         return res.redirect(req.url);
       }
 
-      const isPublic = await this.services.icalService.checkIsPublic(calendarId);
+      const ical = await this.services.icalService
+        .load(calendarId)
+        .catch(() => null);
+
+      const isPublic = ical !== null;
 
       if (!isPublic) {
         req.errors([
@@ -85,6 +102,7 @@ const routes = [
         clubId,
         calendarId,
         timezone,
+        extra: { ical },
         ...((widgetToken === '') ? null : { widgetToken }),
       };
 

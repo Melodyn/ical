@@ -1,5 +1,6 @@
 import icalProcessor from './common/icalProcessor.js';
 import linkBuilder from './common/linkBuilder.js';
+import rangeDates from './common/rangeDates.js';
 import loader from './loader/index.js';
 import * as parser from './common/parser.js';
 
@@ -9,6 +10,9 @@ export default class ICALService {
     this.parser = parser;
     this.linkBuilder = linkBuilder;
     this.icalProcessor = icalProcessor;
+    this.utils = {
+      rangeDates,
+    };
   }
 
   load(calendarId) {
@@ -19,15 +23,15 @@ export default class ICALService {
     return this.parser;
   }
 
-  checkIsPublic(calendarId) {
-    return this.load(calendarId).then(() => true).catch(() => false);
-  }
-
   buildLinks(calendarId, timezone = '') {
     return this.linkBuilder(calendarId, timezone);
   }
 
   toEvents(icalEvents, params = { uniq: true, nextDays: 0, fromDate: Date.now() }) {
     return this.icalProcessor(icalEvents, params);
+  }
+
+  rangeDates(count, from = Date.now()) {
+    return this.utils.rangeDates(count, from);
   }
 }

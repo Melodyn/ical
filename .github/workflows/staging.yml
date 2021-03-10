@@ -71,3 +71,4 @@ jobs:
           HD_SYNC_ICAL_TIME: 10 minutes
           HD_CRON_SYNC_PERIOD: 5 minutes
           HD_CRON_SYNC_DELAY: 5 minutes
+          HD_COUNT_DAYS_ON_VIEW: 30
