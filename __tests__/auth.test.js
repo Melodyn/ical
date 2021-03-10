@@ -1,7 +1,7 @@
 import { constants } from 'http2';
 import users from '../__fixtures__/users.js';
 import calendars from '../__fixtures__/calendars.js';
-import { buildSign } from '../utils/vkUserValidator.js';
+import { buildSign } from '../libs/vk/common/userValidator.js';
 import createApp from '../index.js';
 
 let app;

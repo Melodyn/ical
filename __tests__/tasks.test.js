@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
-import { buildSign } from '../utils/vkUserValidator.js';
+import { buildSign } from '../libs/vk/common/userValidator.js';
 import syncIcal from '../libs/tasks/syncIcal.js';
 import syncWidget from '../libs/tasks/syncWidget.js';
 import QueueService from '../libs/queue/QueueService.js';

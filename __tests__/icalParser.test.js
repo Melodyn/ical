@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import nock from 'nock';
-import * as icalParser from '../utils/icalParser.js';
+import * as icalParser from '../libs/ical/common/parser.js';
 import parsedICS from '../__fixtures__/calendar.js';
 import calendars from '../__fixtures__/calendars.js';
 import buildCalendarLinks from '../libs/ical/common/linkBuilder.js';

@@ -4,7 +4,7 @@ import nock from 'nock';
 import calendars from '../__fixtures__/calendars.js';
 import users from '../__fixtures__/users.js';
 import createApp from '../index.js';
-import { buildSign } from '../utils/vkUserValidator';
+import { buildSign } from '../libs/vk/common/userValidator.js';
 
 let app;
 let calendarRepo;
