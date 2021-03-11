@@ -132,20 +132,18 @@ const resolveInsets = (e) => {
   return null;
 };
 
-// const setEventsContainerHeight = () => {
-//   const calendarElement = document.querySelector('#calendar');
-//   const eventsContainerElement = document.querySelector('#container-calendar-events');
-//   eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
-// };
+const setEventsContainerHeight = () => {
+  const calendarElement = document.querySelector('#calendar');
+  const eventsContainerElement = document.querySelector('#container-calendar-events');
+  eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
+};
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [setToken],
+  calendar: [setEventsContainerHeight],
 };
 
 const init = (bridge, logger) => {
-  bridge.send('VKWebAppInit');
-
   // const log = (gon.user.isAppAdmin)
   //   ? createLogger()
   //   : { log: () => {} };
@@ -161,6 +159,8 @@ const init = (bridge, logger) => {
       });
     }
   });
+
+  bridge.send('VKWebAppInit');
 
   const currentPage = gon.app.page;
   if (!has(handlerByPages, currentPage)) return;

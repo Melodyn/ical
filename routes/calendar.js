@@ -1,4 +1,9 @@
 import yup from 'yup';
+import luxon from 'luxon';
+
+const { DateTime } = luxon;
+
+const range = (count) => Array.from(Array(count));
 
 const routes = [
   {
@@ -20,20 +25,50 @@ const routes = [
 
       if (clubCalendar) {
         const { COUNT_DAYS_ON_VIEW } = this.config;
+        const localNow = DateTime.now().setZone(clubCalendar.timezone);
+        const localNowMS = localNow.toMillis();
         const upcomingEvents = icalService.toEvents(clubCalendar.extra.ical, {
           nextDays: COUNT_DAYS_ON_VIEW,
+          fromDate: localNowMS,
         });
-        const rangeOfDates = icalService.rangeDates(COUNT_DAYS_ON_VIEW);
+        const msToDT = (ms) => DateTime.fromMillis(ms).setZone(clubCalendar.timezone);
+        const rangeOfDates = icalService.rangeDates(COUNT_DAYS_ON_VIEW, localNowMS);
         const eventsByDays = rangeOfDates.map((day) => {
-          const dateOfDay = day.toFormat('dd.MM.yyyy');
+          const dateOfDay = day;
           const msOfDay = day.toMillis();
-          const eventsOfDay = upcomingEvents.filter(({ referenceMS }) => referenceMS === msOfDay);
+          const eventsOfDay = upcomingEvents
+            .filter(({ referenceMS }) => referenceMS === msOfDay)
+            .map((event) => {
+              const { referenceMS, startMS, endMS } = event;
+
+              return {
+                referenceDT: msToDT(referenceMS),
+                startDT: msToDT(startMS),
+                endDT: msToDT(endMS),
+                ...event,
+              };
+            });
 
           return [dateOfDay, eventsOfDay];
         });
 
+        const emptyDaysHeadCount = (localNow.weekday - 1) % 7;
+        const filledDaysCount = (rangeOfDates.length + emptyDaysHeadCount) % 7;
+        const emptyDaysTailCount = (7 - filledDaysCount) % 7;
+        const emptyDaysHead = range(emptyDaysHeadCount);
+        const emptyDaysTail = range(emptyDaysTailCount);
+        const fullMonthWeeks = emptyDaysHead.concat(eventsByDays).concat(emptyDaysTail);
+        const eventsByWeeks = fullMonthWeeks.reduce((acc, event, weekday) => {
+          const isWeekdayStart = weekday % 7 === 0;
+          const currentWeekday = isWeekdayStart ? [] : acc[acc.length - 1];
+          currentWeekday.push(event);
+
+          return isWeekdayStart ? acc.concat([currentWeekday]) : acc;
+        }, []);
+
         const { embed } = icalService.buildLinks(clubCalendar.calendarId, clubCalendar.timezone);
-        clubCalendar.extra.calendarLink = embed;
+        clubCalendar.calendarLink = embed;
+        clubCalendar.events = eventsByWeeks;
         res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
       } else {
         res.render('noCalendar', { formActionUrl, timezones });

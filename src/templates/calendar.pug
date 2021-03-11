@@ -1,71 +1,88 @@
 extends index
 
-mixin calendarIframe(calendarLink)
-  .container-fluid.d-flex.flex-column.h-100
+mixin weeks
+  each week in values.calendar.events
+    tr
+      each day in week
+        - const isEmptyCell = !Array.isArray(day);
+        - const [dayDate, dayEvents] = isEmptyCell ? [{ day: '' }, []] : day;
+        - const dayHasEvents = dayEvents.length > 0;
+        td(class=(dayHasEvents ? 'table-primary' : null))= dayDate.day
+
+mixin tableCalendar
+  table#calendar.table.table-bordered
+    thead.table-dark.text-center
+      tr
+        th(scope="col") пн
+        th(scope="col") вт
+        th(scope="col") ср
+        th(scope="col") чт
+        th(scope="col") пт
+        th(scope="col") сб
+        th(scope="col") вс
+    tbody.text-end
+      +weeks
+
+
+mixin event(time, text)
+  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2.mb-2 #{time}
+  span #{text}
+
+mixin calendarEventsOld
+  p.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 16.02.2021
+  ul.list-group.rounded-0
+    li.list-group-item
+      +event('06:00 - 07:30', 'на работу')
+    li.list-group-item
+      +event('08:00 - 16:00', 'пятница - сокращённый день, значит, можно забежать за пивасиком и сегодня потюленить')
+    li.list-group-item
+      +event('16:00 - 18:00', 'домой, в магаз, к телику')
+    li.list-group-item
+      +event('18:00 - 20:00', 'потребление пива')
+    li.list-group-item
+      +event('20:00', 'отбой')
+
+mixin eventHeader(date)
+  dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 #{date.toFormat('dd.MM.yyyy')}
+
+mixin eventTime(event)
+  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2 #{event.startDT.toFormat('HH:mm')} - #{event.endDT.toFormat('HH:mm')}
+
+mixin eventsList(dayEvents)
+  dd.m-0
+    each event in dayEvents
+      .list-group-item.clearfix
+        +eventTime(event)
+        span #{event.summary}
+        if (event.description)
+          p.mt-2 #[span.fw-bold Описание]: #{event.description}
+
+mixin calendarEvents
+  - const allEvents = values.calendar.events.flat(1).filter((e) => e);
+  dl.list-group.rounded-0
+    each dayShedule in allEvents
+      - const [date, dayEvents] = dayShedule;
+      dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 #{date.toFormat('dd.MM.yyyy')}
+      +eventsList(dayEvents)
+
+mixin calendarBlock
+  .container-fluid.mt-2
     .row
       .col
         h2.h4 Календарь сообщества
-    .row
-      .col
-        p.
-          Неудобно пользоваться календарём? Попробуйте
-          #[a.btn.btn-outline-primary(href=calendarLink target='_blank') Открыть в браузере]
-    .row.flex-grow-1.h-100
-      #calendarContainer.col.h-100.overflow-hidden
-        iframe.w-100.h-100(src=calendarLink)
-  .container-fluid
-    .row.row-cols-1.text-end
-      .col
-        p.
-          Добавить мероприятия из этого календаря в свой можно по кнопке
-          #[img.ms-1(src='/calendar-share-button.png' width='138' alt='Кнопка подписки на календарь')]
-          выше
+        p Мероприятия на месяц. Часовой&nbsp;пояс:&nbsp;#{values.calendar.timezone}
+    .row.g-2
+      .col-sm
+        +tableCalendar
+      #container-calendar-events.col-sm.overflow-auto
+        +calendarEvents
     hr
 
-mixin widgetBlock(clubId, clubHasWidget)
-  - const clubSettingsPageURL = `vk.com/club${clubId}?act=apps`;
-  - const clubTokenPageURL = `vk.com/club${clubId}?act=tokens`;
-  .container-fluid
-    .row
-      .col
-        h2.h4 Настройки виджета
-    .row
-      .col
-        if (clubHasWidget === true)
-          p.
-            Для работы с виджетом выпущен токен, который можно найти тут:
-            #[a(href=`//${clubTokenPageURL}` target='_blank') #{clubTokenPageURL}]
-            #[br]
-            Если токен был случайно (или специально) удалён,
-            то его можно перевыпустить:
-          button#setWidget.btn.btn-warning.mb-3 Перевыпустить токен
-          p.
-            Максимальная польза от виджета будет при его доступности
-            для просмотра всем пользователям:
-            #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
-            #[br]
-            Синхронизация календаря с виджетом происходит автоматически.
-        else
-          p.
-            Теперь мероприятия из календаря могут отображаться на главной
-            странице сообщества, как виджет. Чтобы его включить, нужно
-            жмякнуть по большой красной кнопке и дать доступ к виджету:
-          button#setWidget.btn.btn-danger.mb-3 Сделать хорошо
-          p.
-            Останется только в настройках сообщества
-            сделать виджет доступным для просмотра всем пользователям:
-            #[br]
-            #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
-            #[br]
-            синхронизация календаря с виджетом происходит автоматически.
-    hr
 
 block content
-  - const { calendarId, clubId, timezone: calendarTimezone, widgetToken, extra: { calendarLink } } = values.calendar;
-  - const clubHasWidget = widgetToken !== null;
-  if (user.isAdmin)
-    +calendarIframe(calendarLink)
-    include adminForm
-    +widgetBlock(clubId, clubHasWidget)
-  else
-    +calendarIframe(calendarLink)
+  +calendarBlock
+  .container-fluid
+    .row
+      .col
+        h2.h4 Настройки
+    hr

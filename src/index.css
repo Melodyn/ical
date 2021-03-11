@@ -11,11 +11,11 @@ html {
         env(safe-area-inset-left, 0px);
 }
 
-td:not(.table-dark):hover {
-    background-color: var(--bs-light)!important;
-    cursor: pointer;
-    font-weight: bold;
-}
+/*td:not(.table-dark):hover {*/
+/*    background-color: var(--bs-light)!important;*/
+/*    cursor: pointer;*/
+/*    font-weight: bold;*/
+/*}*/
 
 .container-calendar-events {
     height: 247px;
