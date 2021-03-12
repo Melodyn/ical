@@ -1,0 +1,16 @@
+.container-fluid
+  .row
+    .col
+      h2.h4 Настройки
+  .row.g-2
+    .col-sm
+      .card
+        .card-header.bg-dark.fw-bold.text-light.text-end.font-monospace Календарь
+        .card-body
+          include components/adminCalendarForm
+    .col-sm
+      .card
+        .card-header.bg-dark.fw-bold.text-light.text-end.font-monospace Виджет
+        .card-body
+          include components/adminWidgetForm
+  hr

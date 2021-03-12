@@ -140,7 +140,7 @@ const setEventsContainerHeight = () => {
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [setEventsContainerHeight],
+  calendar: [setEventsContainerHeight, setToken],
 };
 
 const init = (bridge, logger) => {

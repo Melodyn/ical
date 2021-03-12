@@ -26,13 +26,12 @@ const routes = [
       if (clubCalendar) {
         const { COUNT_DAYS_ON_VIEW } = this.config;
         const localNow = DateTime.now().setZone(clubCalendar.timezone);
-        const localNowMS = localNow.toMillis();
         const upcomingEvents = icalService.toEvents(clubCalendar.extra.ical, {
           nextDays: COUNT_DAYS_ON_VIEW,
-          fromDate: localNowMS,
+          fromDate: localNow,
         });
         const msToDT = (ms) => DateTime.fromMillis(ms).setZone(clubCalendar.timezone);
-        const rangeOfDates = icalService.rangeDates(COUNT_DAYS_ON_VIEW, localNowMS);
+        const rangeOfDates = icalService.rangeDates(COUNT_DAYS_ON_VIEW, localNow);
         const eventsByDays = rangeOfDates.map((day) => {
           const dateOfDay = day;
           const msOfDay = day.toMillis();
@@ -91,7 +90,10 @@ const routes = [
       } = await yup
         .object({
           calendarId: yup.string()
-            .matches(/^(\w|\.)+@(group.calendar.google.com|gmail.com)$/)
+            .matches(
+              /^(\w|\.)+@(group.calendar.google.com|gmail.com)$/,
+              { message: 'Идентификатор должен быть вида email-адреса и оканчиваться на group.calendar.google.com или gmail.com' },
+            )
             .required(),
           timezone: yup.string().oneOf(allowedZones).required(),
           widgetToken: yup.string().default('').optional(),

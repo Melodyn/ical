@@ -1,0 +1,63 @@
+mixin weeks
+  each week in values.calendar.events
+    tr
+      each day in week
+        - const isEmptyCell = !Array.isArray(day);
+        - const [dayDate, dayEvents] = isEmptyCell ? [{ day: '' }, []] : day;
+        - const dayHasEvents = dayEvents.length > 0;
+        td(class=(dayHasEvents ? 'table-primary' : null))= dayDate.day
+
+mixin tableCalendar
+  table#calendar.table.table-bordered
+    thead.table-dark.text-center
+      tr
+        th(scope="col") пн
+        th(scope="col") вт
+        th(scope="col") ср
+        th(scope="col") чт
+        th(scope="col") пт
+        th(scope="col") сб
+        th(scope="col") вс
+    tbody.text-end
+      +weeks
+
+
+mixin event(time, text)
+  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2.mb-2 #{time}
+  span #{text}
+
+mixin eventHeader(date)
+  dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 #{date.toFormat('dd.MM.yyyy')}
+
+mixin eventTime(event)
+  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2 #{event.startDT.toFormat('HH:mm')} - #{event.endDT.toFormat('HH:mm')}
+
+mixin eventsList(dayEvents)
+  dd.m-0
+    each event in dayEvents
+      .list-group-item.clearfix
+        +eventTime(event)
+        span #{event.summary}
+        if (event.description)
+          p.mt-2 #[span.fw-bold Описание]: #{event.description}
+
+mixin calendarEvents
+  - const allEvents = values.calendar.events.flat(1).filter((e) => e);
+  dl.list-group.rounded-0
+    each dayShedule in allEvents
+      - const [date, dayEvents] = dayShedule;
+      dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 #{date.toFormat('dd.MM.yyyy')}
+      +eventsList(dayEvents)
+
+
+.container-fluid.mt-2
+  .row
+    .col
+      h2.h4 Календарь сообщества
+      p Мероприятия на месяц. Часовой&nbsp;пояс:&nbsp;#{values.calendar.timezone}
+  .row.g-2
+    .col-sm
+      +tableCalendar
+    #container-calendar-events.col-sm.overflow-auto
+      +calendarEvents
+  hr

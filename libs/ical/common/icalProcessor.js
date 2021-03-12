@@ -7,7 +7,9 @@ const { DateTime } = luxon;
 const uniqProcessor = eventHumanify;
 
 const fullProcessor = (event, fromDate, nextDays = 0) => {
-  const nowDT = DateTime.fromMillis(fromDate);
+  const nowDT = fromDate instanceof DateTime
+    ? fromDate
+    : DateTime.fromMillis(fromDate);
 
   let day = 0;
   let events = [];

@@ -25,8 +25,8 @@ mixin userText
 
 block content
   - const calendarTimezone = values.timezones.default.name;
+  - const calendarId = null;
   if (user.isAdmin)
-    include adminForm
-    +adminText
+    include adminInstall
   else
     +userText

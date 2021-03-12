@@ -112,7 +112,9 @@ describe('Positive cases', () => {
       calendarId: calendar.calendarId,
       widgetToken: null,
       timezone: calendar.timezone,
-      extra: {},
+      extra: {
+        ical: expect.any(Array),
+      },
     }));
     calendar.id = clubCalendar.id;
   });
@@ -149,7 +151,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).toMatch(/iframe/gim);
+    expect(payload).toMatch(/Мероприятия на месяц./gim);
   });
 
   // заглушено из-за отсутствия редиректов в мобильном приложении

@@ -1,0 +1,31 @@
+.container-fluid.mt-2
+  .row
+    .col
+      h2.h4 Установка
+      p.
+        Первый этап настройки — подключение Google-календаря в приложение.
+        Создайте публичный календарь, получите его идентификатор и укажите на этой странице.
+        После подключения календаря блок настроек изменится и предложит создать виджет,
+        чтобы показывать ближайшие мероприятия на главной странице сообщества.
+  .row.g-2
+    .col-sm
+      .card
+        .card-header.bg-dark.fw-bold.text-light.text-end.font-monospace Календарь
+        .card-body
+          include components/adminCalendarForm
+    .col-sm
+      .card
+        .card-header.bg-dark.fw-bold.text-light.text-end.font-monospace Справка
+        .card-body
+          p.card-text Идентификатор календаря имеет вид #[+ms('электронной почты')]. Как его найти:
+          ul.card-text
+            li.
+              открыть #[a(href="https://calendar.google.com" target="_blank") свои календари],
+              перейти в настройки календаря и найти идентификатор там;
+            li.
+              при наличии ссылки вида #[+ms('calendar.google.com/calendar/embed?src=<тут идентификатор>')]
+              используйте значение из поля #[+ms('src')];
+            li.
+              используйте тестовый календарь: #[+ms('ob1gcsbo877671s4295f693nv0@group.calendar.google.com')]
+              чтобы "пощупать" приложение. Идентификатор можно будет позже изменить.
+  hr

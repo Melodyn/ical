@@ -1,0 +1,25 @@
+- const { clubId } = values.calendar;
+- const clubSettingsPageURL = `vk.com/club${clubId}?act=apps`;
+- const clubTokenPageURL = `vk.com/club${clubId}?act=tokens`;
+if (clubHasWidget === true)
+  p.
+    Если приложение загружается, а виджет перестал обновляться, возможно, был удалён
+    #[a(href=`//${clubTokenPageURL}` target='_blank') токен] приложения.
+    Попробуйте его перевыпустить:
+  div.text-end
+    button#setWidget.btn.btn-warning.mb-3 Перевыпустить токен
+  ul
+    li Настройки приватности виджета останутся прежними
+    li Настройки виджета в сообществе: #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+    li Синхронизация календаря с виджетом происходит автоматически в течение получаса.
+else
+  p.
+    Теперь мероприятия из календаря могут отображаться на главной
+    странице сообщества, как виджет. Чтобы его включить, нужно
+    жмякнуть по большой красной кнопке и дать доступ к виджету:
+  div.text-end
+    button#setWidget.btn.btn-danger.mb-3 Сделать хорошо
+  ul
+    li Если в сообществе уже имеется виджет, он будет заменён.
+    li Настройки виджета в сообществе: #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+    li Синхронизация календаря с виджетом происходит автоматически в течение получаса.
