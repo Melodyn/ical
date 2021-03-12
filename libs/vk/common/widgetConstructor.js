@@ -42,7 +42,7 @@ const widgetGenerator = (appId, calendar) => {
 
   const body = bodyConstructor(calendar);
   const currentDateTime = DateTime.local().setZone(timezone).toFormat("dd.MM 'в' HH:mm");
-  const title = `обновлено ${currentDateTime} (${timezone})`;
+  const title = `${currentDateTime} (${timezone}) обновлено`;
   const more = 'Перейти в календарь';
   const more_url = `//vk.com/app${appId}_-${clubId}`;
 

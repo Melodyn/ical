@@ -30,7 +30,7 @@ mixin eventHeader(date)
   dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 #{date.toFormat('dd.MM.yyyy')}
 
 mixin eventTime(event)
-  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2 #{event.startDT.toFormat('HH:mm')} - #{event.endDT.toFormat('HH:mm')}
+  span.bg-primary.text-light.font-monospace.rounded.float-end.px-2.py-1.ms-2.mb-2 #{event.startDT.toFormat('HH:mm')} - #{event.endDT.toFormat('HH:mm')}
 
 mixin eventsList(dayEvents)
   dd.m-0
@@ -64,4 +64,7 @@ mixin calendarEvents
       +tableCalendar
     #container-calendar-events.col-sm.overflow-auto
       +calendarEvents
+  .row
+    .col.text-end
+      a.btn.btn-outline-primary(href=values.calendar.calendarLink target="_blank") Открыть в браузере
   hr
