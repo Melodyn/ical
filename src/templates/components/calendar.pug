@@ -42,12 +42,16 @@ mixin eventsList(dayEvents)
           p.mt-2 #[span.fw-bold Описание]: #{event.description}
 
 mixin calendarEvents
-  - const allEvents = values.calendar.events.flat(1).filter((e) => e);
+  - const allEvents = values.calendar.events.flat(1).filter((e) => e).filter(([, dayEvents]) => dayEvents.length > 0);
   dl.list-group.rounded-0
-    each dayShedule in allEvents
-      - const [date, dayEvents] = dayShedule;
-      dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 #{date.toFormat('dd.MM.yyyy')}
-      +eventsList(dayEvents)
+    if (allEvents.length > 0)
+      each dayShedule in allEvents
+        - const [date, dayEvents] = dayShedule;
+        +eventHeader(date)
+        +eventsList(dayEvents)
+    else
+      dt.list-group-item.sticky-top.bg-dark.fw-bold.font-monospace.text-light.text-end.p-2.pe-4.m-0 Сегодня
+      dd.text-center.mt-2 В ближайшие 30 дней нет мероприятий
 
 
 .container-fluid.mt-2
