@@ -1,41 +1,36 @@
 doctype html
 
 html(lang='ru')
-    head
-        meta(charset='utf-8')
-        meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover')
-        title ical
-        link(rel='apple-touch-icon' sizes='180x180' href='/favicons/apple-touch-icon.png')
-        link(rel='icon' type='image/png' sizes='32x32' href='/favicons/favicon-32x32.png')
-        link(rel='icon' type='image/png' sizes='16x16' href='/favicons/favicon-16x16.png')
-        link(rel='manifest' href='/favicons/site.webmanifest')
-        script.
-            const gon = !{JSON.stringify(gon)}
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover')
+    title ical
+    link(rel='apple-touch-icon' sizes='180x180' href='/favicons/apple-touch-icon.png')
+    link(rel='icon' type='image/png' sizes='32x32' href='/favicons/favicon-32x32.png')
+    link(rel='icon' type='image/png' sizes='16x16' href='/favicons/favicon-16x16.png')
+    link(rel='manifest' href='/favicons/site.webmanifest')
+    script.
+      const gon = !{JSON.stringify(gon)}
 
-    body
-        block content
+  body
+    block content
 
-        .container-fluid
-            .row.row-cols-auto.bg-light
-                .col
-                    a.btn.btn-link.m-1(href=`/calendar?${gon.app.query}`) На главную
-                .col
-                    a.btn.btn-link.m-1(href=`/help?${gon.app.query}`) Справка
-                .col
-                    a.btn.btn-link.m-1(
-                        href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
-                        target='_blank'
-                    ) Чат приложения
-                .col.ms-auto
-                    a.btn.btn-link(
-                        href='//github.com/Melodyn/iCal/releases'
-                        target='_blank'
-                    )
-                        img(height='32' width='32' src='/github.svg' alt='Иконка Github')
+    .container-fluid
+      .row.row-cols-auto.bg-light.py-2
+        .col
+          a.btn.btn-link(href=`/help?${gon.app.query}`) Справка
+        .col
+          a.btn.btn-link(
+            href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
+            target='_blank'
+          ) Чат приложения
+        .col
+          a.btn.btn-link(href=`/install?${gon.app.query}`) Установить в другое сообщество
+        .col.ms-auto
+          a.btn.btn-link(
+            href='//github.com/Melodyn/iCal/releases'
+            target='_blank'
+          )
+            img(height='32' width='32' src='/github.svg' alt='Иконка Github с сайта simpleicons.org')
 
-        .container-fluid
-            .row.text-center
-                .col
-                    a.btn.btn-light.mt-3.mb-3(href=`/install?${gon.app.query}`) Добавить приложение в другое сообщество
-
-        script(src='dist/bundle.js')
+    script(src='dist/bundle.js')
