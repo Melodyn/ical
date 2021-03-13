@@ -3,10 +3,6 @@ extends index
 block content
   - const { timezone: calendarTimezone, calendarId } = values.calendar;
   - const clubHasWidget = widgetToken !== null;
-  if (user.isAdmin)
-    include components/calendar
-    include calendarActions
-    include adminSettings
-  else
-    include components/calendar
-    include calendarActions
+  include components/calendar
+  include calendarActions
+  include adminSettings
