@@ -3,8 +3,10 @@ mixin head(name)
     span Откройте в браузере
   else if (name === 'Subscribe')
     span Подпишитесь
+  else if (name === 'Help')
+    span Разберитесь
   else
-    span Справка
+    span ''
 
 mixin body(name)
   if (name === 'GoogleCalendar')
@@ -20,6 +22,12 @@ mixin body(name)
         и подписываться на уведомления, чтобы не пропустить ничего важного.
       .text-end
         a.btn.btn-outline-success(href=values.calendar.subscribeLink target="_blank") Подписаться
+  else if (name === 'Help')
+    .accordion-body
+      p.
+        Если что-то не работает или остались вопросы,
+        перейдите в раздел Справка внизу приложения. Там собраны ответы на
+        часто задаваемые вопросы и ссылка на подробную статью.
   else
     .accordion-body ''
 
@@ -65,4 +73,5 @@ mixin item(name, collapsed='hide')
           'show'
         )
         +item('Subscribe')
+        +item('Help')
   hr
