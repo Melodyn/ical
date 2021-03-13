@@ -2,6 +2,7 @@ import 'core-js/stable/index.js';
 import 'regenerator-runtime/runtime.js';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import vkBridgeDev from '@vkontakte/vk-bridge-mock';
 import vkBridgeProd from '@vkontakte/vk-bridge';
 import Rollbar from 'rollbar';

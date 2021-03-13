@@ -65,8 +65,12 @@ const routes = [
           return isWeekdayStart ? acc.concat([currentWeekday]) : acc;
         }, []);
 
-        const { embed } = icalService.buildLinks(clubCalendar.calendarId, clubCalendar.timezone);
+        const { embed, subscribe } = icalService.buildLinks(
+          clubCalendar.calendarId,
+          clubCalendar.timezone,
+        );
         clubCalendar.calendarLink = embed;
+        clubCalendar.subscribeLink = subscribe;
         clubCalendar.events = eventsByWeeks;
         res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
       } else {
