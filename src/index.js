@@ -83,40 +83,40 @@ const setApp = (bridge, logger) => {
   });
 };
 
-// const setToken = (bridge, logger) => {
-//   if (!gon.user.isAdmin) return;
-//
-//   const requestWidgetToken = () => bridge
-//     .send('VKWebAppGetCommunityToken', {
-//       app_id: gon.user.appId,
-//       group_id: gon.user.groupId,
-//       scope: 'app_widget',
-//     })
-//     .then(({ access_token }) => access_token)
-//     .catch((err) => {
-//       logger.error(new AppError(err, {
-//         source: 'VKWebAppGetCommunityToken',
-//         page: gon.app.page,
-//         query: gon.app.query,
-//         originalError: JSON.stringify(err),
-//       }));
-//
-//       return null;
-//     });
-//
-//   const { adminForm } = document.forms;
-//   const widgetTokenField = adminForm.elements.widgetToken;
-//
-//   const setWidgetButton = document.querySelector('#setWidget');
-//
-//   setWidgetButton.addEventListener('click', async () => {
-//     const token = await requestWidgetToken();
-//     if (token) {
-//       widgetTokenField.setAttribute('value', token);
-//       // adminForm.requestSubmit();
-//     }
-//   });
-// };
+const setToken = (bridge, logger) => {
+  if (!gon.user.isAdmin) return;
+
+  const requestWidgetToken = () => bridge
+    .send('VKWebAppGetCommunityToken', {
+      app_id: gon.user.appId,
+      group_id: gon.user.groupId,
+      scope: 'app_widget',
+    })
+    .then(({ access_token }) => access_token)
+    .catch((err) => {
+      logger.error(new AppError(err, {
+        source: 'VKWebAppGetCommunityToken',
+        page: gon.app.page,
+        query: gon.app.query,
+        originalError: JSON.stringify(err),
+      }));
+
+      return null;
+    });
+
+  const { adminForm } = document.forms;
+  const widgetTokenField = adminForm.elements.widgetToken;
+
+  const setWidgetButton = document.querySelector('#setWidget');
+
+  setWidgetButton.addEventListener('click', async () => {
+    const token = await requestWidgetToken();
+    if (token) {
+      widgetTokenField.setAttribute('value', token);
+      // adminForm.requestSubmit();
+    }
+  });
+};
 
 const resolveInsets = (e) => {
   const { type, data } = e.detail;
@@ -141,7 +141,7 @@ const setEventsContainerHeight = () => {
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [setEventsContainerHeight],
+  calendar: [setEventsContainerHeight, setToken],
 };
 
 const init = (bridge, logger) => {

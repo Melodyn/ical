@@ -5,4 +5,5 @@ block content
   - const clubHasWidget = widgetToken !== null;
   include components/calendar
   include calendarActions
-  include adminSettings
+  if (user.isAdmin)
+    include adminSettings
