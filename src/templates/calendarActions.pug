@@ -1,10 +1,10 @@
 mixin head(name)
   if (name === 'GoogleCalendar')
-    span Откройте в браузере
+    span Открыть календарь
   else if (name === 'Subscribe')
-    span Подпишитесь
+    span Добавить календарь себе
   else if (name === 'Help')
-    span Разберитесь
+    span Изучить справку
   else
     span ''
 
@@ -64,7 +64,7 @@ mixin item(name, collapsed='hide')
       h2.h4 Полезное
       p.
         Приложение показывает ближайшие мероприятия из Google-календаря.
-        Если вы хотите получать больше актуальной информации:
+        Если вы хотите получать больше актуальной информации, попробуйте:
   .row
     .col
       #accordionCalendar.accordion
