@@ -4,7 +4,7 @@
 [![Production CI](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
 [![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
-|![логотип](./logo.png)|Google календарь и виджет в сообщество ВКонтакте.
+|![логотип](./logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
 
 Ссылки:

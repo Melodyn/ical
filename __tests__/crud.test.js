@@ -47,7 +47,7 @@ describe('Positive cases', () => {
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).toMatch(/Google календарь и виджет в сообщество/gim);
+    expect(payload).toMatch(/Google-календарь и виджет в сообщество/gim);
   });
 
   test('Get help page', async () => {

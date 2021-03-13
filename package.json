@@ -1,7 +1,7 @@
 {
   "name": "@melodyn/ical",
   "version": "v1.0.6-beta",
-  "description": "Google календарь и виджет в сообщество ВКонтакте",
+  "description": "Google-календарь и виджет в сообщество ВКонтакте",
   "main": "index.js",
   "type": "module",
   "jest": {
