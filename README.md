@@ -1,6 +1,6 @@
 # ical
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/ical/maintainability)
 [![Production CI](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
 [![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
