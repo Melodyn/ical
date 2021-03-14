@@ -2,8 +2,6 @@ import linkBuilder from '../common/linkBuilder.js';
 import { fromURL } from '../common/parser.js';
 import configValidator from '../../../utils/configValidator.cjs';
 import calendarFixture from '../../../__fixtures__/calendar.js';
-// import newFixture from '../10.03.2021.ics.js';
-// import newFixture2 from '../10.03.2021_2.ics.js';
 
 const { envsMap } = configValidator;
 

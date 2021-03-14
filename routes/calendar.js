@@ -25,7 +25,7 @@ const routes = [
 
       if (clubCalendar) {
         const { COUNT_DAYS_ON_VIEW } = this.config;
-        const localNow = DateTime.now().setZone(clubCalendar.timezone);
+        const localNow = DateTime.now();
         const upcomingEvents = icalService.toEvents(clubCalendar.extra.ical, {
           nextDays: COUNT_DAYS_ON_VIEW,
           fromDate: localNow,
