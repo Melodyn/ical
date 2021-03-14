@@ -17,8 +17,9 @@ html(lang='ru')
 
     .container-fluid
       .row.row-cols-auto.bg-light.py-2
-        .col
-          a.btn.btn-link(href=`/install?${gon.app.query}`) Установить в другое сообщество
+        if (gon.app.page !== 'install')
+          .col
+            a.btn.btn-link(href=`/install?${gon.app.query}`) Установить в другое сообщество
         .col
           a.btn.btn-link(
             href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
