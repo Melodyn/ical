@@ -95,8 +95,8 @@ const routes = [
         .object({
           calendarId: yup.string()
             .matches(
-              /^(\w|\.)+@(group.calendar.google.com|gmail.com)$/,
-              { message: 'Идентификатор должен быть вида email-адреса и оканчиваться на group.calendar.google.com или gmail.com' },
+              /^(\w|\.)+@.*(calendar.google.com|gmail.com)$/,
+              { message: 'Идентификатор должен быть вида email-адреса и оканчиваться на calendar.google.com или gmail.com' },
             )
             .required(),
           timezone: yup.string().oneOf(allowedZones).required(),
