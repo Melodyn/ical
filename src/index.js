@@ -113,7 +113,7 @@ const setToken = (bridge, logger) => {
     const token = await requestWidgetToken();
     if (token) {
       widgetTokenField.setAttribute('value', token);
-      // adminForm.requestSubmit();
+      adminForm.requestSubmit();
     }
   });
 };

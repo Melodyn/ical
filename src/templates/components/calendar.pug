@@ -8,7 +8,7 @@ mixin weeks
         td(class=(dayHasEvents ? 'table-primary' : null))= dayDate.day
 
 mixin tableCalendar
-  table#calendar.table.table-bordered
+  table#calendar.table.table-bordered.user-select-none
     thead.table-dark.text-center
       tr
         th(scope="col") пн
