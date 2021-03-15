@@ -109,6 +109,7 @@ describe('Positive cases', () => {
   test('Sync ical', async () => {
     const sync = syncIcal(QueueService, app.server.services.icalService);
     await sync.run(); // init queue
+    await sync.run(); // sync
     const syncResult = await sync.run(); // sync
 
     expect(syncResult).toEqual(expect.objectContaining({
