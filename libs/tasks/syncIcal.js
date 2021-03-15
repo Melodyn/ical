@@ -26,7 +26,7 @@ const syncIcal = (QueueService, icalService, reporter) => {
 
   const filler = () => calendarRepo.find({
     order: {
-      updatedAt: 'DESC',
+      updatedAt: 'ASC',
     },
     take: maxRecordsPerPeriod,
   });
