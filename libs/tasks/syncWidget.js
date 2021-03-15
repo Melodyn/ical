@@ -32,7 +32,7 @@ const syncWidget = (QueueService, icalService, vkService, reporter) => {
       widgetSyncedAt: Not(IsNull()),
     },
     order: {
-      widgetSyncedAt: 'DESC',
+      widgetSyncedAt: 'ASC',
     },
     take: maxRecordsPerPeriod,
   });
