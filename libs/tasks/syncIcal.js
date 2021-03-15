@@ -3,11 +3,9 @@ import errors from '../../utils/errors.cjs';
 
 const { CronTaskError } = errors;
 
-const {
-  Not, IsNull, getConnection,
-} = typeorm;
+const { getConnection } = typeorm;
 
-const updateCalendarData = (calendar, ical, icalError = null) => ({
+const updateCalendarData = (calendar, ical = [], icalError = null) => ({
   id: calendar.id,
   widgetSyncedAt: (icalError === null) ? calendar.updatedAt : null,
   extra: {
@@ -27,9 +25,6 @@ const syncIcal = (QueueService, icalService, reporter) => {
   const calendarRepo = getConnection().getRepository('Calendar');
 
   const filler = () => calendarRepo.find({
-    where: {
-      widgetToken: Not(IsNull()),
-    },
     order: {
       updatedAt: 'DESC',
     },
