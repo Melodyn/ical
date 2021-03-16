@@ -13,13 +13,16 @@ html(lang='ru')
       const gon = !{JSON.stringify(gon)}
 
   body
-    div(style={
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      height: 'env(safe-area-inset-top)',
-      background: '#fff',
-    })
+    div#iphoneStatusbar(
+      data-comment='Fix for iphone status bar: hide text from app'
+      style={
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        height: 0,
+        background: '#fff',
+      }
+    )
 
     block content
 
