@@ -1,6 +1,7 @@
 html,
 body {
     height: 100%;
+    padding-top: env(safe-area-inset, 10px)!important;
 }
 
 html {
@@ -15,8 +16,9 @@ html {
     position: fixed;
     top: 0;
     left: 0;
-    background: #f00;
+    background: rgba(255, 0, 0, 0.8);
     height: env(safe-area-inset, 20px)!important;
+    z-index: 1050;
 }
 
 .container-calendar-events {
