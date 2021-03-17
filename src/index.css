@@ -12,7 +12,11 @@ html {
 }
 
 #iphoneStatusbar {
-    height: env(safe-area-inset-top, 20px)!important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #f00;
+    height: env(safe-area-inset, 20px)!important;
 }
 
 .container-calendar-events {

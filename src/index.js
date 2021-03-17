@@ -153,11 +153,7 @@ const init = (bridge, logger) => {
     const insets = resolveInsets(e);
     if (insets) {
       const htmlElement = window.document.documentElement;
-      const iphoneStatusbar = document.querySelector('#iphoneStatusbar');
       Object.entries(insets).forEach(([key, value]) => {
-        if (value > 0 || key === 'top') {
-          iphoneStatusbar.style.setProperty(height, `${value}px`);
-        }
         if (value > 0 || key === 'bottom') {
           htmlElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`);
         }
