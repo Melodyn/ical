@@ -8,7 +8,7 @@ const getDateFormat = (datetype) => ((datetype === 'date')
   ? createFormat("'с' dd.MM", "'до' dd.MM")
   : createFormat("'с' HH:mm dd.MM", "'до' HH:mm dd.MM"));
 
-const bodyConstructor = (calendar) => {
+const bodyConstructor = (calendar, appUrl = null) => {
   const { timezone, events } = calendar;
 
   if (events.length === 0) {
@@ -17,11 +17,13 @@ const bodyConstructor = (calendar) => {
         title: 'Здесь будут показаны ближайшие мероприятия',
         descr: 'Пока что вы можете изучить возможности приложения',
         time: 'Виджет будет регулярно обновляться',
+        title_url: appUrl,
       },
       {
         title: 'Прочитайте статью про google-календарь',
         descr: 'Она иллюстрирует основные возможности и преимущества сервиса',
-        title_url: 'https://vk.com/@samelodyn-google-calendar-basics',
+        time: '5 минут',
+        title_url: '//vk.com/@samelodyn-google-calendar-basics',
       },
     ];
 
