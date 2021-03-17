@@ -13,13 +13,12 @@ html(lang='ru')
       const gon = !{JSON.stringify(gon)}
 
   body
-    div#iphoneStatusbar(
+    #iphoneStatusbar.container-fluid(
       data-comment='Fix for iphone status bar: hide text from app'
       style={
         position: 'fixed',
         top: 0,
         left: 0,
-        height: 0,
         background: '#fff',
       }
     )
