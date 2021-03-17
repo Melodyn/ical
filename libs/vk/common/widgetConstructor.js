@@ -11,6 +11,23 @@ const getDateFormat = (datetype) => ((datetype === 'date')
 const bodyConstructor = (calendar) => {
   const { timezone, events } = calendar;
 
+  if (events.length === 0) {
+    const rows = [
+      {
+        title: 'Здесь будут показаны ближайшие мероприятия',
+        descr: 'Пока что вы можете изучить возможности приложения',
+        time: 'Виджет будет регулярно обновляться',
+      },
+      {
+        title: 'Прочитайте статью про google-календарь',
+        descr: 'Она иллюстрирует основные возможности и преимущества сервиса',
+        title_url: 'https://vk.com/@samelodyn-google-calendar-basics',
+      },
+    ];
+
+    return { rows };
+  }
+
   const maxTitleLength = 100;
   const maxDescriptionLength = 100;
   const maxElementsCount = 6;
