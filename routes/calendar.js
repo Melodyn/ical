@@ -1,4 +1,5 @@
 import yup from 'yup';
+import _ from 'lodash';
 import luxon from 'luxon';
 
 const { DateTime } = luxon;
@@ -139,19 +140,28 @@ const routes = [
 
       const clubId = req.user.groupId;
       const clubRepository = this.db.getRepository('Calendar');
-      const calendarBody = {
+      const createCalendarBody = (previousData = null) => ({
+        ...previousData,
         clubId,
         calendarId,
         timezone,
-        extra: { ical },
+        extra: {
+          ...(_.isObject(previousData) ? (previousData.extra || {}) : {}),
+          ical,
+          icalError: null,
+          wasFirstWidget: previousData !== null,
+        },
         ...((widgetToken === '') ? null : { widgetToken }),
-      };
+      });
 
       await clubRepository
         .findOne({ clubId })
-        .then((calendar) => (calendar
-          ? clubRepository.update(calendar.id, calendarBody)
-          : clubRepository.insert(calendarBody)));
+        .then((calendar) => {
+          const calendarBody = createCalendarBody(calendar || null);
+          return calendar
+            ? clubRepository.update(calendar.id, calendarBody)
+            : clubRepository.insert(calendarBody);
+        });
 
       return res.redirect(req.url);
     },
