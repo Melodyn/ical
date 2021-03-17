@@ -59,11 +59,11 @@ const bodyConstructor = (calendar, appUrl = null) => {
 const widgetGenerator = (appId, calendar) => {
   const { clubId, timezone } = calendar;
 
-  const body = bodyConstructor(calendar);
+  const more_url = `//vk.com/app${appId}_-${clubId}`;
+  const body = bodyConstructor(calendar, more_url);
   const currentDateTime = DateTime.local().setZone(timezone).toFormat("dd.MM 'в' HH:mm");
   const title = `${currentDateTime} (${timezone}) обновлено`;
   const more = 'Перейти в календарь';
-  const more_url = `//vk.com/app${appId}_-${clubId}`;
 
   const widget = {
     title,
