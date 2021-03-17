@@ -112,9 +112,11 @@ describe('Positive cases', () => {
       calendarId: calendar.calendarId,
       widgetToken: null,
       timezone: calendar.timezone,
-      extra: {
+      extra: expect.objectContaining({
         ical: expect.any(Array),
-      },
+        icalError: null,
+        wasFirstWidget: false,
+      }),
     }));
     calendar.id = clubCalendar.id;
   });

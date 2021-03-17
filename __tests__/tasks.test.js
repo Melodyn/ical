@@ -100,9 +100,11 @@ describe('Positive cases', () => {
     expect(clubCalendar).toEqual(expect.objectContaining({
       widgetToken: calendars.world.widgetToken,
       widgetSyncedAt: null,
-      extra: {
+      extra: expect.objectContaining({
         ical: expect.any(Array),
-      },
+        icalError: null,
+        wasFirstWidget: true,
+      }),
     }));
   });
 
@@ -126,6 +128,7 @@ describe('Positive cases', () => {
         extra: expect.objectContaining({
           ical: expect.any(Array),
           icalError: null,
+          wasFirstWidget: true,
         }),
       }));
     });
