@@ -169,7 +169,6 @@ const routes = [
           ...(_.isObject(previousData) ? (previousData.extra || {}) : {}),
           ical,
           icalError: null,
-          wasFirstWidget: previousData !== null,
         },
         ...((widgetToken === '') ? null : { widgetToken }),
       });
@@ -178,9 +177,36 @@ const routes = [
         .findOne({ clubId })
         .then((calendar) => {
           const calendarBody = createCalendarBody(calendar || null);
-          return calendar
-            ? clubRepository.update(calendar.id, calendarBody)
-            : clubRepository.insert(calendarBody);
+
+          if (!calendar) { // первая установка календаря
+            calendarBody.extra.wasFirstWidget = false;
+            return clubRepository.insert(calendarBody);
+          }
+
+          const isFirstWidgetInstall = (calendar.extra.wasFirstWidget === false)
+            && (widgetToken.length > 1);
+
+          if (isFirstWidgetInstall) { // первая установка виджета
+            const widget = this.services.vkService.createWidget(calendarId);
+
+            return this.services.vkService.updateWidget(widget)
+              .catch((error) => {
+                this.services.reporter.error(error);
+                return { isWidgetUpdateError: true, error };
+              })
+              .then((result) => {
+                if (result && result.isWidgetUpdateError) {
+                  calendarBody.extra.widgetError = result.error;
+                } else {
+                  calendarBody.extra.wasFirstWidget = true;
+                }
+
+                return clubRepository.update(calendar.id, calendarBody);
+              });
+          }
+
+          // остальные обновления
+          return clubRepository.update(calendar.id, calendarBody);
         });
 
       return res.redirect(req.url);

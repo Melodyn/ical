@@ -139,10 +139,11 @@ const setStatic = (config, server) => {
   });
 };
 
-const setServices = (config, server) => {
+const setServices = (config, server, reporter) => {
   const services = {
     vkService: new VKService(config),
     icalService: new ICALService(config),
+    reporter: new ICALService(config),
   };
 
   server.decorate('services', services);
@@ -196,7 +197,7 @@ const app = async (envName) => {
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
-  setServices(config, server);
+  setServices(config, server, reporter);
   setAuth(config, server);
   setStatic(config, server);
 
