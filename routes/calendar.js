@@ -187,7 +187,7 @@ const routes = [
             && (widgetToken.length > 1);
 
           if (isFirstWidgetInstall) { // первая установка виджета
-            const widget = this.services.vkService.createWidget(calendarId);
+            const widget = this.services.vkService.createWidget(widgetToken);
 
             return this.services.vkService.updateWidget(widget)
               .catch((error) => {
