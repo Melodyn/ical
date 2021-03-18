@@ -91,7 +91,7 @@ const routes = [
     method: 'POST',
     url: '/calendar',
     preHandler(...params) {
-      return this.auth([this.vkAdminAuth])(...params);
+      return this.auth([this.vkUserAuth])(...params);
     },
     async handler(req, res) {
       const { action } = req.body;

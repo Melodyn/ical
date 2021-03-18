@@ -53,8 +53,9 @@ html(lang='ru')
                 value='help'
               )
               input.btn.btn-link(
-                type='submit'
+                type='button'
                 value='Справка'
+                onclick=`alert("${values.formActionUrl}");`
               )
         .col.ms-auto
           a.btn.btn-link(
