@@ -85,6 +85,18 @@ const setAuth = (config, server) => {
 
 const setStatic = (config, server) => {
   server.decorate('container', new Map());
+
+  server.decorateRequest('flash', (data = []) => {
+    server.container.set('flash', data);
+  });
+  server.decorateReply('flash', () => {
+    const data = server.container.has('flash')
+      ? server.container.get('flash')
+      : [];
+    server.container.set('flash', []);
+    return data;
+  });
+
   server.decorateRequest('errors', (data = []) => {
     server.container.set('errors', data);
   });
@@ -110,6 +122,8 @@ const setStatic = (config, server) => {
   server.decorateReply('render', function render(template, values = {}) {
     const { user, query } = this.request;
     const errorsContainer = this.errors();
+    const flashContainer = this.flash();
+    const flashMessages = flashContainer.map(([level, text]) => ({ level, text }));
     const invalidValues = Object.fromEntries(
       errorsContainer.map(([key, { value }]) => [key, value]),
     );
@@ -121,6 +135,7 @@ const setStatic = (config, server) => {
       user,
       values,
       ...invalidValues,
+      flash: flashMessages,
       errors: errorMessages,
       gon: {
         user: {

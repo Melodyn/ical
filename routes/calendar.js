@@ -198,6 +198,12 @@ const routes = [
                 if (result && result.isWidgetUpdateError) {
                   calendarBody.extra.widgetError = result.error;
                 } else {
+                  req.flash([
+                    [
+                      'success',
+                      `Виджет установлен! Посмотрите его <a href="//vk.com/club${clubId}" class="alert-link" target="_blank">в&nbsp;сообществе</a>`,
+                    ],
+                  ]);
                   calendarBody.extra.wasFirstWidget = true;
                 }
 
