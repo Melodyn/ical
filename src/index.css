@@ -20,6 +20,10 @@ body {
     z-index: 1050;
 }
 
+#eventsWord {
+    background-color: #cfe2ff;
+}
+
 .container-calendar-events {
     height: 247px;
 }

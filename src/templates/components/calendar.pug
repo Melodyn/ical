@@ -64,7 +64,7 @@ mixin calendarEvents
   .row
     .col
       h2.h4 Календарь сообщества
-      p Мероприятия на 30 дней. Часовой&nbsp;пояс:&nbsp;#{values.calendar.timezone}
+      p #[span#eventsWord.px-1.py-1 Мероприятия] на 30 дней. Часовой&nbsp;пояс:&nbsp;#{values.calendar.timezone}
   .row.g-2.mb-3
     .col-sm
       +tableCalendar
