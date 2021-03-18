@@ -102,7 +102,7 @@ const routes = [
       }
 
       if (!req.user.isAdmin) {
-        res.code(401).send('Access denied');
+        res.code(401).send(`Access denied for user with role "${req.user.viewerGroupRole}"`);
       }
 
       const allowedZones = this.timezones.all.map(({ name }) => name);
