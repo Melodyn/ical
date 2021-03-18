@@ -101,6 +101,10 @@ const routes = [
         return res.redirect(req.url);
       }
 
+      if (!req.user.isAdmin) {
+        res.code(401).send('Access denied');
+      }
+
       const allowedZones = this.timezones.all.map(({ name }) => name);
       const {
         calendarId,
