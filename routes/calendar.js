@@ -14,8 +14,16 @@ const routes = [
       return this.auth([this.vkUserAuth])(...params);
     },
     async handler(req, res) {
-      if (!req.isAuthenticated) {
+      const action = this.container.has('action') ? this.container.get('action') : null;
+      console.log('GET', { action });
+      if (!req.isAuthenticated || action === 'install') {
+        this.container.set('action', null);
         res.render('install', { appId: this.config.VK_APP_ID });
+      }
+
+      if (action === 'help') {
+        this.container.set('action', null);
+        res.render('help');
       }
 
       const calendarRepository = this.db.getRepository('Calendar');
@@ -88,12 +96,14 @@ const routes = [
     async handler(req, res) {
       const allowedZones = this.timezones.all.map(({ name }) => name);
       const {
+        action,
         calendarId,
         timezone,
         widgetToken,
         errors = null,
       } = await yup
         .object({
+          action: yup.string().default('').optional(),
           calendarId: yup.string()
             .matches(
               /^.+@.*(calendar.google.com|gmail.com)$/,
@@ -116,6 +126,12 @@ const routes = [
 
       if (errors !== null) {
         req.errors(errors);
+        return res.redirect(req.url);
+      }
+
+      console.log('POST', { action });
+      if (action) {
+        this.container.set('action', action);
         return res.redirect(req.url);
       }
 
