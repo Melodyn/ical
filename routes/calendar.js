@@ -15,21 +15,21 @@ const routes = [
     },
     async handler(req, res) {
       const action = this.container.has('action') ? this.container.get('action') : null;
-      console.log('GET', { action });
+      const formActionUrl = req.url;
+
       if (!req.isAuthenticated || action === 'install') {
         this.container.set('action', null);
-        res.render('install', { appId: this.config.VK_APP_ID, isAction: true });
+        res.render('install', { appId: this.config.VK_APP_ID, isAction: true, formActionUrl });
       }
 
       if (action === 'help') {
         this.container.set('action', null);
-        res.render('help', { isAction: true });
+        res.render('help', { isAction: true, formActionUrl });
       }
 
       const calendarRepository = this.db.getRepository('Calendar');
       const clubCalendar = await calendarRepository.findOne({ clubId: req.user.groupId });
 
-      const formActionUrl = req.url;
       const { timezones, services: { icalService } } = this;
 
       if (clubCalendar) {
@@ -96,7 +96,6 @@ const routes = [
     async handler(req, res) {
       const { action } = req.body;
 
-      console.log('POST', { action });
       if (action) {
         this.container.set('action', action);
         return res.redirect(req.url);
