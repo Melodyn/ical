@@ -143,7 +143,7 @@ const setServices = (config, server, reporter) => {
   const services = {
     vkService: new VKService(config),
     icalService: new ICALService(config),
-    reporter: new ICALService(config),
+    reporter,
   };
 
   server.decorate('services', services);
