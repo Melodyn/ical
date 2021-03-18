@@ -131,6 +131,7 @@ const setStatic = (config, server) => {
           env: config.NODE_ENV,
           rollbarToken: config.ROLLBAR_CLIENT_TOKEN,
           page: template,
+          isAction: values.isAction === true,
           query: qs.stringify(query),
         },
       },

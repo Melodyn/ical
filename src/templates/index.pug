@@ -21,21 +21,48 @@ html(lang='ru')
 
     .container-fluid
       .row.row-cols-auto.bg-light.py-2
-        if (gon.app.page !== 'install')
+        if (gon.app.page !== 'install' && gon.app.page !== 'main')
           .col
-            a.btn.btn-link(href=`/install?${gon.app.query}`) Установить в другое сообщество
+            form#navigationFormInstall(
+              action=values.formActionUrl
+              method='post'
+            )
+              input#action.form-control(
+                name='action'
+                type='hidden'
+                value='install'
+              )
+              input.btn.btn-link(
+                type='submit'
+                value='Установить в другое сообщество'
+              )
         .col
           a.btn.btn-link(
             href=`//vk.me/join/qV74WOs_mSpeOSE9E8er089WI_uQsZdB9N8=`
             target='_blank'
           ) Чат
-        .col
-          a.btn.btn-link(href=`/help?${gon.app.query}`) Справка
+        if (gon.app.page !== 'help')
+          .col
+            form#navigationFormHelp(
+              action=values.formActionUrl
+              method='post'
+            )
+              input#action.form-control(
+                name='action'
+                type='hidden'
+                value='help'
+              )
+              input.btn.btn-link(
+                type='submit'
+                value='Справка'
+              )
         .col.ms-auto
           a.btn.btn-link(
             href='//github.com/Melodyn/ical/releases'
             target='_blank'
           )
             img(height='32' width='32' src='/github.svg' alt='Иконка Github с сайта simpleicons.org')
+          if (gon.app.isAction)
+            button.btn.btn-outline-secondary(onclick="location.reload();") « назад
 
     script(src='dist/bundle.js')

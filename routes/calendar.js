@@ -18,12 +18,12 @@ const routes = [
       console.log('GET', { action });
       if (!req.isAuthenticated || action === 'install') {
         this.container.set('action', null);
-        res.render('install', { appId: this.config.VK_APP_ID });
+        res.render('install', { appId: this.config.VK_APP_ID, isAction: true });
       }
 
       if (action === 'help') {
         this.container.set('action', null);
-        res.render('help');
+        res.render('help', { isAction: true });
       }
 
       const calendarRepository = this.db.getRepository('Calendar');
@@ -94,9 +94,16 @@ const routes = [
       return this.auth([this.vkAdminAuth])(...params);
     },
     async handler(req, res) {
+      const { action } = req.body;
+
+      console.log('POST', { action });
+      if (action) {
+        this.container.set('action', action);
+        return res.redirect(req.url);
+      }
+
       const allowedZones = this.timezones.all.map(({ name }) => name);
       const {
-        action,
         calendarId,
         timezone,
         widgetToken,
@@ -126,12 +133,6 @@ const routes = [
 
       if (errors !== null) {
         req.errors(errors);
-        return res.redirect(req.url);
-      }
-
-      console.log('POST', { action });
-      if (action) {
-        this.container.set('action', action);
         return res.redirect(req.url);
       }
 
