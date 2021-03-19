@@ -19,7 +19,11 @@ const routes = [
 
       if (!req.isAuthenticated || action === 'install') {
         this.container.set('action', null);
-        res.render('install', { appId: this.config.VK_APP_ID, isAction: true, formActionUrl });
+        res.render('install', {
+          appId: this.config.VK_APP_ID,
+          isAction: !req.isAuthenticated,
+          formActionUrl,
+        });
       }
 
       if (action === 'help') {
