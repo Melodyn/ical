@@ -21,7 +21,7 @@ const routes = [
         this.container.set('action', null);
         res.render('install', {
           appId: this.config.VK_APP_ID,
-          isAction: !req.isAuthenticated,
+          isAction: req.isAuthenticated,
           formActionUrl,
         });
       }
