@@ -136,7 +136,7 @@ const resolveInsets = (e) => {
 const setEventsContainerHeight = () => {
   const calendarElement = document.querySelector('#calendar');
   const eventsContainerElement = document.querySelector('#container-calendar-events');
-  eventsContainerElement.style.height = `${calendarElement.clientHeight}px`;
+  eventsContainerElement.style.minHeight = `${calendarElement.clientHeight}px`;
 };
 
 const handlerByPages = {
