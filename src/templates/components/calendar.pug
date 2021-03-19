@@ -1,6 +1,6 @@
 mixin weeks
   each week in values.calendar.events
-    tr
+    tr.align-middle
       each day in week
         - const isEmptyCell = !Array.isArray(day);
         - const [dayDate, dayEvents] = isEmptyCell ? [{ day: '' }, []] : day;
@@ -10,7 +10,7 @@ mixin weeks
 mixin tableCalendar
   table#calendar.table.table-bordered.user-select-none
     thead.table-dark.text-center
-      tr
+      tr.align-middle
         th(scope="col") пн
         th(scope="col") вт
         th(scope="col") ср

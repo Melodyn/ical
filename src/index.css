@@ -24,6 +24,10 @@ body {
     background-color: #cfe2ff;
 }
 
+tr {
+    height: 48px;
+}
+
 .container-calendar-events {
     height: 247px;
 }
@@ -31,4 +35,10 @@ body {
 #logger {
     height: 100%;
     width: 100%;
+}
+
+@media (max-width: 575px) {
+    #container-calendar-events {
+        height: 70vh!important;
+    }
 }
