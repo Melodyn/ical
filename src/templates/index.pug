@@ -20,7 +20,7 @@ html(lang='ru')
     block content
 
     .container-fluid
-      .row.row-cols-auto.bg-light.py-2
+      .row.row-cols-auto.bg-light.pb-2.g-3
         if (gon.app.page !== 'install' && gon.app.page !== 'main')
           .col
             form#navigationFormInstall(
@@ -56,12 +56,12 @@ html(lang='ru')
                 type='submit'
                 value='Справка'
               )
-        .col.ms-auto
+        .col.ms-auto.mt-2
           a.btn.btn-link(
             href='//github.com/Melodyn/ical/releases'
             target='_blank'
           )
-            img(height='32' width='32' src='/github.svg' alt='Иконка Github с сайта simpleicons.org')
+            img(height='38' width='32' src='/github.svg' alt='Иконка Github с сайта simpleicons.org')
           if (gon.app.isAction)
             button.btn.btn-outline-secondary(onclick="location.reload();") « назад
 
