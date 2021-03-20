@@ -1,6 +1,6 @@
 {
   "name": "@melodyn/ical",
-  "version": "v1.0.6-beta",
+  "version": "1.0.6",
   "description": "Google-календарь и виджет в сообщество ВКонтакте",
   "main": "index.js",
   "type": "module",
@@ -16,7 +16,7 @@
     "node": "14.x"
   },
   "bin": {
-    "ical": "./bin/index.js"
+    "ical": "bin/index.js"
   },
   "scripts": {
     "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles",
