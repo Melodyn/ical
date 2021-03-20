@@ -49,6 +49,7 @@ export const createValidator = (secret, appAdminId) => (query = {}) => {
 
   const user = {
     ...userParams,
+    platform: userParams.platform || '',
     isAdmin: (userParams.viewerGroupRole === 'admin'),
     isAppAdmin: (userParams.userId === appAdminId),
   };

@@ -1,6 +1,25 @@
 - const { clubId } = values.calendar;
 - const clubSettingsPageURL = `vk.com/club${clubId}?act=apps`;
 - const clubTokenPageURL = `vk.com/club${clubId}?act=tokens`;
+- const isWeb = user.platform.includes('desktop') || user.platform.includes('other') || (user.platform === '');
+
+mixin widgetHelp
+  if (clubHasWidget)
+    li Приватность виджета останется прежней;
+  else
+    li Если в сообществе уже имеется виджет, он будет заменён;
+  if (!isWeb)
+    li.
+      Настройки виджета #[span.fw-bold недоступны] с мобильных версий ВКонтакте,
+      но можно копировать ссылку на страницу настроек и открыть в мобильном браузере,
+      если он поддерживает эмуляцию версии для ПК;
+  li.
+    В управлении сообществом с ПК на странице приложения:
+    #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
+    можно настроить видимость виджета участникам сообщества;
+  li Синхронизация календаря с виджетом происходит автоматически в течение получаса.
+
+
 if (clubHasWidget === true)
   p.
     Если приложение загружается, а виджет перестал обновляться, возможно, был удалён
@@ -8,10 +27,7 @@ if (clubHasWidget === true)
     Попробуйте его перевыпустить:
   div.text-end
     button#setWidget.btn.btn-warning.mb-3 Перевыпустить токен
-  ul
-    li Настройки приватности виджета останутся прежними
-    li Настройки виджета в сообществе: #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
-    li Синхронизация календаря с виджетом происходит автоматически в течение получаса.
+  +widgetHelp
 else
   p.
     Теперь мероприятия из календаря могут отображаться на главной
@@ -19,7 +35,4 @@ else
     жмякнуть по большой красной кнопке и дать доступ к виджету:
   div.text-end
     button#setWidget.btn.btn-danger.mb-3 Сделать хорошо
-  ul
-    li Если в сообществе уже имеется виджет, он будет заменён.
-    li Настройки виджета в сообществе: #[a(href=`//${clubSettingsPageURL}` target='_blank') #{clubSettingsPageURL}]
-    li Синхронизация календаря с виджетом происходит автоматически в течение получаса.
+  +widgetHelp
