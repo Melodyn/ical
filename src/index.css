@@ -24,11 +24,24 @@ body {
     background-color: #cfe2ff;
 }
 
-.container-calendar-events {
-    height: 247px;
+tr {
+    height: 48px;
 }
 
 #logger {
     height: 100%;
     width: 100%;
+}
+
+@media (min-width: 576px) {
+    #container-calendar-events {
+        height: 289px;
+    }
+}
+
+@media (max-width: 575px) {
+    #container-calendar-events {
+        min-height: 289px;
+        max-height: 70vh;
+    }
 }

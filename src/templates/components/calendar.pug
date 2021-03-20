@@ -1,6 +1,10 @@
+- const htmlEscape = string => string.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+- const processURLs = string => string.replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank">$1</a>');
+- const processBreaks = string => string.replace(/\n/g, '<br>');
+
 mixin weeks
   each week in values.calendar.events
-    tr
+    tr.align-middle
       each day in week
         - const isEmptyCell = !Array.isArray(day);
         - const [dayDate, dayEvents] = isEmptyCell ? [{ day: '' }, []] : day;
@@ -10,7 +14,7 @@ mixin weeks
 mixin tableCalendar
   table#calendar.table.table-bordered.user-select-none
     thead.table-dark.text-center
-      tr
+      tr.align-middle
         th(scope="col") пн
         th(scope="col") вт
         th(scope="col") ср
@@ -39,13 +43,15 @@ mixin eventTime(event)
       span #{event.startDT.toFormat('HH:mm')} - #{event.endDT.toFormat('HH:mm')}
 
 mixin eventsList(dayEvents)
+  - const processBreaks = (text) => text.replace(/\n/g, ' <br>');
   dd.m-0
     each event in dayEvents
       .list-group-item.clearfix
         +eventTime(event)
         span #{event.summary}
         if (event.description)
-          p.mt-2 #[span.fw-bold Описание]: #{event.description}
+          - const preparedDescr = processBreaks(processURLs(htmlEscape(event.description)));
+          p.mt-2 #[span.fw-bold Описание:] !{preparedDescr}
 
 mixin calendarEvents
   - const allEvents = values.calendar.events.flat(1).filter((e) => e).filter(([, dayEvents]) => dayEvents.length > 0);

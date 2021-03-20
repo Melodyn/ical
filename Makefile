@@ -1,3 +1,5 @@
+V?=patch
+
 setup: install-dependencies create-config run
 install-dependencies:
 	npm ci
@@ -24,6 +26,8 @@ static:
 	npm run build-static
 static-dev:
 	npm run build-watch
+version:
+	npm version ${V} && git push --tags
 
 # usage with docker
 container-setup: container-build container-dependency container-run
