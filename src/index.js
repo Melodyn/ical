@@ -12,30 +12,30 @@ const bridgeDev = vkBridgeDev.default;
 
 const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
-const stringify = (content) => {
-  try {
-    return JSON.stringify(content, null, 2);
-  } catch (e) {
-    return content.toString();
-  }
-};
-
-const createLogger = () => {
-  const container = document.createElement('div');
-  container.classList.add('container-fluid', 'h-100', 'pb-3');
-  const logger = document.createElement('textarea');
-  logger.setAttribute('id', 'logger');
-  container.append(logger);
-  document.body.append(container);
-
-  return {
-    log: (data) => {
-      const textNode = stringify(data);
-      logger.prepend('\n\n-----\n\n');
-      logger.prepend(textNode);
-    },
-  };
-};
+// const stringify = (content) => {
+//   try {
+//     return JSON.stringify(content, null, 2);
+//   } catch (e) {
+//     return content.toString();
+//   }
+// };
+//
+// const createLogger = () => {
+//   const container = document.createElement('div');
+//   container.classList.add('container-fluid', 'h-100', 'pb-3');
+//   const logger = document.createElement('textarea');
+//   logger.setAttribute('id', 'logger');
+//   container.append(logger);
+//   document.body.append(container);
+//
+//   return {
+//     log: (data) => {
+//       const textNode = stringify(data);
+//       logger.prepend('\n\n-----\n\n');
+//       logger.prepend(textNode);
+//     },
+//   };
+// };
 
 class AppError extends Error {
   constructor(originalError, params) {
@@ -81,6 +81,11 @@ const setApp = (bridge, logger) => {
       currentInvisibleBlock.classList.add('d-block');
     }
   });
+};
+
+const showPreloadAds = (bridge, logger) => {
+  bridge.send('VKWebAppShowNativeAds', { ad_format: 'preloader' })
+    .catch((error) => logger.log(error));
 };
 
 const setToken = (bridge, logger) => {
@@ -141,16 +146,15 @@ const setEventsContainerHeight = () => {
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [setEventsContainerHeight, setToken],
+  calendar: [showPreloadAds, setEventsContainerHeight, setToken],
 };
 
 const init = (bridge, logger) => {
-  const log = (gon.user.isAppAdmin)
-    ? createLogger()
-    : { log: () => {} };
+  // const log = (gon.user.isAppAdmin)
+  //   ? createLogger()
+  //   : { log: () => {} };
 
   bridge.subscribe((e) => {
-    log.log(e.detail);
     const insets = resolveInsets(e);
     if (insets) {
       const htmlElement = window.document.documentElement;
@@ -163,10 +167,6 @@ const init = (bridge, logger) => {
   });
 
   bridge.send('VKWebAppInit');
-  bridge.send('VKWebAppGetAds');
-  bridge.send('VKWebAppShowNativeAds', { ad_format: 'preloader' })
-    .then((data) => console.log(data.result))
-    .catch((error) => console.log(error));
 
   const currentPage = gon.app.page;
   if (!has(handlerByPages, currentPage)) return;
