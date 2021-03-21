@@ -9,50 +9,8 @@ html(lang='ru')
     link(rel='icon' type='image/png' sizes='32x32' href='/favicons/favicon-32x32.png')
     link(rel='icon' type='image/png' sizes='16x16' href='/favicons/favicon-16x16.png')
     link(rel='manifest' href='/favicons/site.webmanifest')
-    script.
+    script(type='text/javascript').
       const gon = !{JSON.stringify(gon)}
-    script(type='text/javascript').
-      setTimeout(function() {
-        const adsParams = {"ad_unit_id":132388,"ad_unit_hash":"5cc24df278abff2aeff255e843f7455b"};
-        function vkAdsInit() {
-          VK.Widgets.Ads('vk_ads_132388', {}, adsParams);
-        }
-        if (window.VK && VK.Widgets) {
-          vkAdsInit();
-        } else {
-          if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
-          vkAsyncInitCallbacks.push(vkAdsInit);
-          const protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
-          const adsElem = document.getElementById('vk_ads_132388');
-          const scriptElem = document.createElement('script');
-          scriptElem.type = 'text/javascript';
-          scriptElem.async = true;
-          scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
-          adsElem.parentNode.insertBefore(scriptElem, adsElem.nextSibling);
-        }
-      }, 0);
-    script(type='text/javascript').
-      setTimeout(function () {
-        const adsParams = {"ad_unit_id": 132389, "ad_unit_hash": "bbac12697aa992d4bc3eaba31dab828c"};
-
-        function vkAdsInit() {
-          VK.Widgets.Ads('vk_ads_132389', {}, adsParams);
-        }
-
-        if (window.VK && VK.Widgets) {
-          vkAdsInit();
-        } else {
-          if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
-          vkAsyncInitCallbacks.push(vkAdsInit);
-          const protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
-          const adsElem = document.getElementById('vk_ads_132389');
-          const scriptElem = document.createElement('script');
-          scriptElem.type = 'text/javascript';
-          scriptElem.async = true;
-          scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
-          adsElem.parentNode.insertBefore(scriptElem, adsElem.nextSibling);
-        }
-      }, 0);
 
   body
     #iphoneStatusbar.container-fluid(
@@ -114,3 +72,47 @@ html(lang='ru')
       #vk_ads_132389
 
     script(src='dist/bundle.js')
+    script(type='text/javascript').
+      setTimeout(function () {
+        const adsParams = {"ad_unit_id": 132388, "ad_unit_hash": "5cc24df278abff2aeff255e843f7455b"};
+
+        function vkAdsInit() {
+          VK.Widgets.Ads('vk_ads_132388', {}, adsParams);
+        }
+
+        if (window.VK && VK.Widgets) {
+          vkAdsInit();
+        } else {
+          if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
+          vkAsyncInitCallbacks.push(vkAdsInit);
+          const protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
+          const adsElem = document.getElementById('vk_ads_132388');
+          const scriptElem = document.createElement('script');
+          scriptElem.type = 'text/javascript';
+          scriptElem.async = true;
+          scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
+          adsElem.parentNode.insertBefore(scriptElem, adsElem.nextSibling);
+        }
+      }, 0);
+    script(type='text/javascript').
+      setTimeout(function () {
+        const adsParams = {"ad_unit_id": 132389, "ad_unit_hash": "bbac12697aa992d4bc3eaba31dab828c"};
+
+        function vkAdsInit() {
+          VK.Widgets.Ads('vk_ads_132389', {}, adsParams);
+        }
+
+        if (window.VK && VK.Widgets) {
+          vkAdsInit();
+        } else {
+          if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
+          vkAsyncInitCallbacks.push(vkAdsInit);
+          const protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
+          const adsElem = document.getElementById('vk_ads_132389');
+          const scriptElem = document.createElement('script');
+          scriptElem.type = 'text/javascript';
+          scriptElem.async = true;
+          scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
+          adsElem.parentNode.insertBefore(scriptElem, adsElem.nextSibling);
+        }
+      }, 0);
