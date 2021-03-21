@@ -11,11 +11,34 @@ html(lang='ru')
     link(rel='manifest' href='/favicons/site.webmanifest')
     script.
       const gon = !{JSON.stringify(gon)}
+    script(type='text/javascript').
+      setTimeout(function() {
+        var adsParams = {"ad_unit_id":132388,"ad_unit_hash":"5cc24df278abff2aeff255e843f7455b"};
+        function vkAdsInit() {
+          VK.Widgets.Ads('vk_ads_132388', {}, adsParams);
+        }
+        if (window.VK && VK.Widgets) {
+          vkAdsInit();
+        } else {
+          if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
+          vkAsyncInitCallbacks.push(vkAdsInit);
+          var protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
+          var adsElem = document.getElementById('vk_ads_132388');
+          var scriptElem = document.createElement('script');
+          scriptElem.type = 'text/javascript';
+          scriptElem.async = true;
+          scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
+          adsElem.parentNode.insertBefore(scriptElem, adsElem.nextSibling);
+        }
+      }, 0);
 
   body
     #iphoneStatusbar.container-fluid(
       data-comment='Fix for iphone status bar: hide text from app'
     )
+
+    .container-fluid.pt2
+      #vk_ads_132388
 
     block content
 
