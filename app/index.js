@@ -135,7 +135,7 @@ const setStatic = (config, server) => {
       user,
       values,
       ...invalidValues,
-      flash: concat(flashMessages),
+      flash: flashMessages,
       errors: errorMessages,
       gon: {
         user: {
