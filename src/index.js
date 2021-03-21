@@ -164,6 +164,9 @@ const init = (bridge, logger) => {
 
   bridge.send('VKWebAppInit');
   bridge.send('VKWebAppGetAds');
+  bridge.send('VKWebAppShowNativeAds', { ad_format: 'preloader' })
+    .then((data) => console.log(data.result))
+    .catch((error) => console.log(error));
 
   const currentPage = gon.app.page;
   if (!has(handlerByPages, currentPage)) return;
