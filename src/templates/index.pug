@@ -13,7 +13,7 @@ html(lang='ru')
       const gon = !{JSON.stringify(gon)}
     script(type='text/javascript').
       setTimeout(function() {
-        var adsParams = {"ad_unit_id":132388,"ad_unit_hash":"5cc24df278abff2aeff255e843f7455b"};
+        const adsParams = {"ad_unit_id":132388,"ad_unit_hash":"5cc24df278abff2aeff255e843f7455b"};
         function vkAdsInit() {
           VK.Widgets.Ads('vk_ads_132388', {}, adsParams);
         }
@@ -22,9 +22,31 @@ html(lang='ru')
         } else {
           if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
           vkAsyncInitCallbacks.push(vkAdsInit);
-          var protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
-          var adsElem = document.getElementById('vk_ads_132388');
-          var scriptElem = document.createElement('script');
+          const protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
+          const adsElem = document.getElementById('vk_ads_132388');
+          const scriptElem = document.createElement('script');
+          scriptElem.type = 'text/javascript';
+          scriptElem.async = true;
+          scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
+          adsElem.parentNode.insertBefore(scriptElem, adsElem.nextSibling);
+        }
+      }, 0);
+    script(type='text/javascript').
+      setTimeout(function () {
+        const adsParams = {"ad_unit_id": 132389, "ad_unit_hash": "bbac12697aa992d4bc3eaba31dab828c"};
+
+        function vkAdsInit() {
+          VK.Widgets.Ads('vk_ads_132389', {}, adsParams);
+        }
+
+        if (window.VK && VK.Widgets) {
+          vkAdsInit();
+        } else {
+          if (!window.vkAsyncInitCallbacks) window.vkAsyncInitCallbacks = [];
+          vkAsyncInitCallbacks.push(vkAdsInit);
+          const protocol = ((location.protocol === 'https:') ? 'https:' : 'http:');
+          const adsElem = document.getElementById('vk_ads_132389');
+          const scriptElem = document.createElement('script');
           scriptElem.type = 'text/javascript';
           scriptElem.async = true;
           scriptElem.src = protocol + '//vk.com/js/api/openapi.js?168';
@@ -37,7 +59,7 @@ html(lang='ru')
       data-comment='Fix for iphone status bar: hide text from app'
     )
 
-    .container-fluid.pt2
+    .container-fluid
       #vk_ads_132388
 
     block content
@@ -87,5 +109,8 @@ html(lang='ru')
             img(height='38' width='32' src='/github.svg' alt='Иконка Github с сайта simpleicons.org')
           if (gon.app.isAction)
             button.btn.btn-outline-secondary(onclick="location.reload();") « назад
+
+    .container-fluid
+      #vk_ads_132389
 
     script(src='dist/bundle.js')
