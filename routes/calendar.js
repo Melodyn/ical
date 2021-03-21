@@ -20,7 +20,6 @@ const routes = [
       if (!req.isAuthenticated || action === 'install') {
         this.container.set('action', null);
         res.render('install', {
-          appId: this.config.VK_APP_ID,
           isAction: req.isAuthenticated,
           formActionUrl,
         });
@@ -226,7 +225,7 @@ const routes = [
     method: 'GET',
     url: '/install',
     handler(req, res) {
-      res.render('install', { appId: this.config.VK_APP_ID });
+      res.render('install');
     },
   },
   {
@@ -240,7 +239,7 @@ const routes = [
     method: 'GET',
     url: '/',
     handler(req, res) {
-      res.render('main', { appId: this.config.VK_APP_ID });
+      res.render('main');
     },
   },
 ];
