@@ -83,10 +83,10 @@ const setApp = (bridge, logger) => {
   });
 };
 
-const showPreloadAds = (bridge, logger) => {
-  bridge.send('VKWebAppShowNativeAds', { ad_format: 'preloader' })
-    .catch((error) => logger.log(error));
-};
+// const showPreloadAds = (bridge, logger) => {
+//   bridge.send('VKWebAppShowNativeAds', { ad_format: 'preloader' })
+//     .catch((error) => logger.log(error));
+// };
 
 const setToken = (bridge, logger) => {
   if (!gon.user.isAdmin) return;
@@ -146,7 +146,7 @@ const setEventsContainerHeight = () => {
 
 const handlerByPages = {
   install: [setApp],
-  calendar: [showPreloadAds, setEventsContainerHeight, setToken],
+  calendar: [setEventsContainerHeight, setToken],
 };
 
 const init = (bridge, logger) => {
