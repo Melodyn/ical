@@ -17,6 +17,11 @@ const routes = [
       const action = this.container.has('action') ? this.container.get('action') : null;
       const formActionUrl = req.url;
 
+      if (action === 'help') {
+        this.container.set('action', null);
+        res.render('help', { isAction: true, formActionUrl });
+      }
+
       if (!req.isAuthenticated || action === 'install') {
         this.container.set('action', null);
         res.render('install', {
@@ -25,18 +30,12 @@ const routes = [
         });
       }
 
-      if (action === 'help') {
-        this.container.set('action', null);
-        res.render('help', { isAction: true, formActionUrl });
-      }
-
       const calendarRepository = this.db.getRepository('Calendar');
       const clubCalendar = await calendarRepository.findOne({ clubId: req.user.groupId });
 
       const { timezones, services: { icalService } } = this;
 
       if (clubCalendar) {
-        console.log('clubCalendar', clubCalendar);
         if (!clubCalendar.extra.ical) {
           res.render('noCalendar', { formActionUrl, timezones, calendarId: clubCalendar.calendarId });
           return;
