@@ -44,7 +44,9 @@ const syncWidget = (QueueService, icalService, vkService, reporter) => {
       timezone,
       extra: { ical },
     } = calendar;
-    const events = ical.length > 0 ? icalService.toEvents(ical) : [];
+    const events = (ical !== null) && (ical.length > 0)
+      ? icalService.toEvents(ical)
+      : [];
     const widget = vkService.createWidget(widgetToken, {
       clubId,
       timezone,

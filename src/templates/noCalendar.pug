@@ -3,20 +3,30 @@ extends index
 mixin ms(text)
   span.font-monospace.bg-light.ps-1.pe-1.text-break #{text}
 
+mixin calendarDisabledText
+  .alert.alert-warning(role='alert').
+    Календарь "#{calendarId}" был удалён или скрыт из общего доступа
+
 mixin userText
   .container-fluid.h-100
     .row.h-100.text-center
       .col.align-self-center
+        if (calendarId)
+          +calendarDisabledText
         p
           | В данном сообществе пока отсутствует календарь.
           br
           | Но вы можете #[a(href=`//vk.com/app${gon.app.appId}` target="_blank") установить] в своё.
 
-
 block content
   - const calendarTimezone = values.timezones.default.name;
-  - const calendarId = null;
+  - const calendarId = values.calendarId;
   if (user.isAdmin)
+    if (calendarId)
+      .container-fluid
+        .row
+          .col
+            +calendarDisabledText
     include adminInstall
   else
     +userText

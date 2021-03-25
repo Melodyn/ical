@@ -36,6 +36,12 @@ const routes = [
       const { timezones, services: { icalService } } = this;
 
       if (clubCalendar) {
+        console.log('clubCalendar', clubCalendar);
+        if (!clubCalendar.extra.ical) {
+          res.render('noCalendar', { formActionUrl, timezones, calendarId: clubCalendar.calendarId });
+          return;
+        }
+
         const { COUNT_DAYS_ON_VIEW } = this.config;
         const localNow = DateTime.now();
         const upcomingEvents = icalService.toEvents(clubCalendar.extra.ical, {
@@ -86,7 +92,7 @@ const routes = [
         clubCalendar.events = eventsByWeeks;
         res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
       } else {
-        res.render('noCalendar', { formActionUrl, timezones });
+        res.render('noCalendar', { formActionUrl, timezones, calendarId: null });
       }
     },
   },

@@ -29,7 +29,8 @@ const syncIcal = (QueueService, icalService, reporter) => {
       updatedAt: 'ASC',
     },
     take: maxRecordsPerPeriod,
-  });
+  })
+    .then((calendars) => calendars.filter(({ extra }) => (extra.ical !== null)));
 
   const task = (calendar) => icalService.load(calendar.calendarId)
     .then((data) => updateCalendarData(calendar, data))
