@@ -1,7 +1,7 @@
 extends index
 
 mixin calendarLink
-  a(href='//calendar.google.com/calendar') calendar.google.com/calendar
+  a(href='//calendar.google.com/calendar' target='_blank') calendar.google.com/calendar
 
 mixin ms(text)
   span.font-monospace.bg-light.ps-1.pe-1.text-break #{text}
@@ -13,7 +13,7 @@ block content
         h2 Google Календарь
         p.
           Если вы впервые работаете с сервисом Google Календарь, посмотрите
-          #[a(href="https://vk.com/@samelodyn-google-calendar-basics" target="_blank") подробную статью] с демонстрацией
+          #[a(href="//vk.com/@samelodyn-google-calendar-basics" target="_blank") подробную статью] с демонстрацией
           интерфейса. Она объяснит основные механики.
         p.
           Обратите внимание, что часть задач решать с мобильных устройств
