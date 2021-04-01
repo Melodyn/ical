@@ -30,8 +30,8 @@ const bodyConstructor = (calendar, appUrl = null) => {
     return { rows };
   }
 
-  const maxTitleLength = 90;
-  const maxDescriptionLength = 90;
+  const maxTitleLength = 50;
+  const maxDescriptionLength = 50;
   const maxElementsCount = 6;
 
   const rows = _.take(events, maxElementsCount)
