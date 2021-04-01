@@ -31,8 +31,8 @@ const bodyConstructor = (calendar, appUrl = null) => {
     return { rows };
   }
 
-  const maxTitleLength = 100;
-  const maxDescriptionLength = 100;
+  const maxTitleLength = 90;
+  const maxDescriptionLength = 90;
   const maxElementsCount = 6;
 
   const rows = _.take(events, maxElementsCount)
@@ -47,9 +47,20 @@ const bodyConstructor = (calendar, appUrl = null) => {
       const eventStartDate = DateTime.fromMillis(startMS).setZone(timezone).toFormat(startFormat);
       const eventEndDate = DateTime.fromMillis(endMS).setZone(timezone).toFormat(endFormat);
 
+      // vk парсит текст как html и строка <a> будет превращена в
+      // &lt;a&gt; -> &amp;lt;a&amp;gt; - 17 символов вместо 3
+      const escapedSummary = htmlEscape(summary);
+      const escapedDescription = htmlEscape(description);
+      const summaryLengthDiff = escapedSummary.length - summary.length;
+      const descriptionLengthDiff = escapedDescription.length - description.length;
+
       return {
-        title: _.truncate(htmlEscape(summary), { length: maxTitleLength }),
-        descr: _.truncate(htmlEscape(description), { length: maxDescriptionLength }),
+        title: _.truncate(htmlEscape(summary), {
+          length: (maxTitleLength - summaryLengthDiff),
+        }),
+        descr: _.truncate(htmlEscape(description), {
+          length: (maxDescriptionLength - descriptionLengthDiff),
+        }),
         time: `${eventStartDate} ${eventEndDate}`.trim(),
       };
     });
