@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { htmlEscape } from 'escape-goat';
 import luxon from 'luxon';
 
 const { DateTime } = luxon;
@@ -30,8 +31,8 @@ const bodyConstructor = (calendar, appUrl = null) => {
     return { rows };
   }
 
-  const maxTitleLength = 50;
-  const maxDescriptionLength = 50;
+  const maxTitleLength = 100;
+  const maxDescriptionLength = 100;
   const maxElementsCount = 6;
 
   const rows = _.take(events, maxElementsCount)
@@ -47,8 +48,8 @@ const bodyConstructor = (calendar, appUrl = null) => {
       const eventEndDate = DateTime.fromMillis(endMS).setZone(timezone).toFormat(endFormat);
 
       return {
-        title: _.truncate(summary, { length: maxTitleLength }),
-        descr: _.truncate(description, { length: maxDescriptionLength }),
+        title: _.truncate(htmlEscape(summary), { length: maxTitleLength }),
+        descr: _.truncate(htmlEscape(description), { length: maxDescriptionLength }),
         time: `${eventStartDate} ${eventEndDate}`.trim(),
       };
     });
