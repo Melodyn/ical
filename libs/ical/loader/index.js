@@ -18,7 +18,7 @@ export default (env) => {
     case envsMap.stage:
       return prodService;
     case envsMap.dev:
-      return devService;
+      return prodService;
     default:
       return testService;
   }
