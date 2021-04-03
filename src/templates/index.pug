@@ -5,12 +5,14 @@ html(lang='ru')
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover')
     title ical
+    link(rel='stylesheet' type='text/css' href='/index.css')
     link(rel='apple-touch-icon' sizes='180x180' href='/favicons/apple-touch-icon.png')
     link(rel='icon' type='image/png' sizes='32x32' href='/favicons/favicon-32x32.png')
     link(rel='icon' type='image/png' sizes='16x16' href='/favicons/favicon-16x16.png')
     link(rel='manifest' href='/favicons/site.webmanifest')
     script(type='text/javascript').
       const gon = !{JSON.stringify(gon)}
+    script(src='dist/bundle.js')
 
   body
     #iphoneStatusbar.container-fluid(
@@ -68,5 +70,3 @@ html(lang='ru')
             img(height='38' width='32' src='/github.svg' alt='Иконка Github с сайта simpleicons.org')
           if (gon.app.isAction)
             button.btn.btn-outline-secondary(onclick="location.reload();") « Назад
-
-    script(src='dist/bundle.js')
