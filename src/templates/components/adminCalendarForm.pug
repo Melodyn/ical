@@ -19,7 +19,7 @@ form(
       value=calendarId
       required
     )
-    .invalid-feedback #{errors.calendarId}
+    .invalid-feedback.text-break #{errors.calendarId}
   .mb-3.text-start
     label.form-label(for='timezone') Часовой пояс
     select#timezone.form-control(

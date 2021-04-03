@@ -48,10 +48,10 @@ mixin eventsList(dayEvents)
     each event in dayEvents
       .list-group-item.clearfix
         +eventTime(event)
-        span #{event.summary}
+        span.text-break #{event.summary}
         if (event.description)
           - const preparedDescr = processBreaks(processURLs(htmlEscape(event.description)));
-          p.mt-2 #[span.fw-bold Описание:] !{preparedDescr}
+          p.mt-2.text-break #[span.fw-bold Описание:] !{preparedDescr}
 
 mixin calendarEvents
   - const allEvents = values.calendar.events.flat(1).filter((e) => e).filter(([, dayEvents]) => dayEvents.length > 0);
