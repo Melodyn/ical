@@ -1,5 +1,5 @@
 - const htmlEscape = string => string.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-- const processURLs = string => string.replace(/(https?:\/\/\S+)/g, (url) => `<a href="${url.replace(/&amp;/g, '&')}" target="_blank">url</a>`);
+- const processURLs = string => string.replace(/(https?:\/\/\S+)/g, (url) => `<a href="${url.replace(/&amp;/g, '&')}" target="_blank">${url}</a>`);
 - const processBreaks = string => string.replace(/\n/g, '<br>');
 
 mixin weeks
