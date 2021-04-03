@@ -1,6 +1,12 @@
 import _ from 'lodash';
-import { htmlEscape } from 'escape-goat';
 import luxon from 'luxon';
+
+const htmlEscape = (string) => string
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/&/g, '&amp;');
 
 const { DateTime } = luxon;
 
@@ -47,18 +53,21 @@ const bodyConstructor = (calendar, appUrl = null) => {
       const eventStartDate = DateTime.fromMillis(startMS).setZone(timezone).toFormat(startFormat);
       const eventEndDate = DateTime.fromMillis(endMS).setZone(timezone).toFormat(endFormat);
 
+      // В гуглокалендаре можно создать событие с пустым заголовком, а в ВК заголовок обязателен
+      const processedSummary = summary.length === 0 ? 'Мероприятие' : summary;
+
       // vk парсит текст как html и строка <a> будет превращена в
       // &lt;a&gt; -> &amp;lt;a&amp;gt; - 17 символов вместо 3
-      const escapedSummary = htmlEscape(summary);
+      const escapedSummary = htmlEscape(processedSummary);
       const escapedDescription = htmlEscape(description);
       const summaryLengthDiff = escapedSummary.length - summary.length;
       const descriptionLengthDiff = escapedDescription.length - description.length;
 
       return {
-        title: _.truncate(htmlEscape(summary), {
+        title: _.truncate(summary, {
           length: (maxTitleLength - summaryLengthDiff),
         }),
-        descr: _.truncate(htmlEscape(description), {
+        descr: _.truncate(description, {
           length: (maxDescriptionLength - descriptionLengthDiff),
         }),
         time: `${eventStartDate} ${eventEndDate}`.trim(),
