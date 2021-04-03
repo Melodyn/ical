@@ -1,0 +1,9 @@
+mixin ms(text, select=false)
+    span(class={
+        'font-monospace': true,
+        'bg-light': true,
+        'ps-1': true,
+        'pe-1': true,
+        'text-break': true,
+        'user-select-all': select
+    }) #{text}

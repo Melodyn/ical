@@ -1,3 +1,4 @@
+include components/monospaceUtil
 .container-fluid.mt-2
   .row
     .col
@@ -26,6 +27,6 @@
               при наличии ссылки вида #[+ms('calendar.google.com/calendar/embed?src=<тут идентификатор>')]
               используйте значение из поля #[+ms('src')];
             li.
-              используйте тестовый календарь: #[+ms('ob1gcsbo877671s4295f693nv0@group.calendar.google.com')]
+              используйте тестовый календарь: #[+ms('ob1gcsbo877671s4295f693nv0@group.calendar.google.com', 'select')]
               чтобы "пощупать" приложение. Идентификатор можно будет позже изменить.
   hr
