@@ -64,7 +64,7 @@ const bodyConstructor = (calendar, appUrl = null) => {
       const descriptionLengthDiff = escapedDescription.length - description.length;
 
       return {
-        title: _.truncate(summary, {
+        title: _.truncate(processedSummary, {
           length: (maxTitleLength - summaryLengthDiff),
         }),
         descr: _.truncate(description, {
