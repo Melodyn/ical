@@ -2,7 +2,9 @@ html,
 body {
     height: 100%;
     background-color: #fff;
-    overscroll-behavior: none;
+    overscroll-behavior: none!important;
+    overflow: auto;
+    position: fixed;
 }
 
 body {
