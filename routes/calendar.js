@@ -16,15 +16,34 @@ const routes = [
     async handler(req, res) {
       const action = this.container.has('action') ? this.container.get('action') : null;
       const formActionUrl = req.url;
+      if (req.user.userId === 229425562) {
+        this.services.reporter.info(JSON.stringify({
+          log: 'GET',
+          user: req.user,
+          action,
+          body: req.body,
+          url: req.url,
+        }));
+      }
 
       if (action === 'help') {
         this.container.set('action', null);
-        res.render('help', { isAction: true, formActionUrl });
+        if (req.user.userId === 229425562) {
+          this.services.reporter.info(JSON.stringify({
+            log: "if (action === 'help')",
+          }));
+        }
+        return res.render('help', { isAction: true, formActionUrl });
       }
 
       if (!req.isAuthenticated || action === 'install') {
         this.container.set('action', null);
-        res.render('install', {
+        if (req.user.userId === 229425562) {
+          this.services.reporter.info(JSON.stringify({
+            log: "if (action === 'install')",
+          }));
+        }
+        return res.render('install', {
           isAction: req.isAuthenticated,
           formActionUrl,
         });
@@ -37,8 +56,7 @@ const routes = [
 
       if (clubCalendar) {
         if (!clubCalendar.extra.ical) {
-          res.render('noCalendar', { formActionUrl, timezones, calendarId: clubCalendar.calendarId });
-          return;
+          return res.render('noCalendar', { formActionUrl, timezones, calendarId: clubCalendar.calendarId });
         }
 
         const { COUNT_DAYS_ON_VIEW } = this.config;
@@ -89,10 +107,9 @@ const routes = [
         clubCalendar.calendarLink = embed;
         clubCalendar.subscribeLink = subscribe;
         clubCalendar.events = eventsByWeeks;
-        res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
-      } else {
-        res.render('noCalendar', { formActionUrl, timezones, calendarId: null });
+        return res.render('calendar', { calendar: clubCalendar, formActionUrl, timezones });
       }
+      return res.render('noCalendar', { formActionUrl, timezones, calendarId: null });
     },
   },
   {
@@ -103,11 +120,22 @@ const routes = [
     },
     async handler(req, res) {
       const { action } = req.body;
+      if (req.user.userId === 229425562) {
+        this.services.reporter.info(JSON.stringify({
+          log: 'POST',
+          user: req.user,
+          action,
+          body: req.body,
+          url: req.url,
+        }));
+      }
 
       if (action) {
         this.container.set('action', action);
         return res.redirect(req.url);
       }
+
+      // 229425562
 
       if (!req.user.isAdmin) {
         res.code(401).send(`Access denied for user with role "${req.user.viewerGroupRole}"`);
