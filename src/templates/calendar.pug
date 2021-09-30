@@ -1,9 +1,0 @@
-extends index
-
-block content
-  - const { timezone: calendarTimezone, calendarId, widgetToken } = values.calendar;
-  - const clubHasWidget = widgetToken !== null;
-  include components/calendar
-  include calendarActions
-  if (user.isAdmin)
-    include adminSettings

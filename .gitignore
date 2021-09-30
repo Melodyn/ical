@@ -2,4 +2,3 @@ node_modules
 .idea
 .vercel
 *.env
-utils/vkWidget.js
