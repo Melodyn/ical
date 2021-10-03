@@ -7,12 +7,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Build
+        uses: actions/checkout@v2
+        run: make ci-build
+      - name: Commit report
+        uses: actions/checkout@v2
         with:
           token: ${{ secrets.PAT }}
-      - name: Build
-      - run: make ci-build
-      - name: Commit report
         run: |
           git config --global user.name 'Sergei Melodyn'
           git config --global user.email 'samelodyn@gmail.com'
