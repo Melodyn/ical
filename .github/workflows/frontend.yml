@@ -14,12 +14,11 @@ jobs:
       - run: |
           git config --global user.name 'Sergei Melodyn'
           git config --global user.email 'samelodyn@gmail.com'
-      - run: git remote -v
-      - run: git checkout --orphan gh-pages
-      - run: git merge frontend
+          git checkout --orphan gh-pages
+          git merge frontend
       - run: make ci-build
       - run: |
           cp -r ./public/* ./
           git add .
           git commit -am "Release"
-      - run: git push --set-upstream origin gh-pages --force
+          git push --set-upstream origin gh-pages

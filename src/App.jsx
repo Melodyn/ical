@@ -1,5 +1,5 @@
 import React from 'react';
 
-const App = () => (<h1>Hello from React App</h1>);
+const App = () => (<h1>Hello ical frontend</h1>);
 
 export default App;
