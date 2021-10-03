@@ -1,14 +1,16 @@
 # ical
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/ical/maintainability)
-[![Production CI](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
-[![Staging CI](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
+[![Frontend production](../../workflows/Frontend%20CI/badge.svg)](../../actions?query=workflow%3A"Frontend+CI")
+[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
+[![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
-|![логотип](./logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
+|![логотип](logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
 
 Ссылки:
 * стримы с разработкой: https://www.youtube.com/playlist?list=PLxqZB2PTPdc7RSb5QpFR1lJ27NEmHtaYa
+* фронтенд приложения: https://melodyn.github.io/ical/
 * бэкенд приложения: https://melodyn-ical.herokuapp.com/
 * приложение в vk: https://vk.com/app7703913
 
@@ -23,11 +25,12 @@
 
 Разворачивание:
 * Клонировать этот репозиторий;
+* Перейти в нужную ветку (frontend / backend)
 * `make setup` для установки первый раз.
 
 Использование
 * `make run` запуск приложения;
-* **или** `make run-heroku` для запуска как хероку-приложения.
+* **или для бэкенда** `make run-heroku` для запуска как хероку-приложения.
 
 Ещё команды:
 * `make test` - запустить тесты;
@@ -38,7 +41,9 @@
 
 ### Как это работает
 
-`make setup` запустит установку зависимостей, из example-конфига создаст девелоперский конфиг и запустит с ним приложение.
+`make setup` на бэкенде запустит установку зависимостей, из example-конфига создаст девелоперский конфиг и запустит с ним приложение.
+
+`make setup` на фронтенде запустит установку зависимостей и запустит приложение через webpack-dev-server.
 
 
 ## Права

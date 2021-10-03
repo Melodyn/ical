@@ -1,0 +1,27 @@
+name: Frontend CI
+on:
+  push:
+    branches: frontend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and deploy
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
+      - run: |
+          git config --global user.name 'Sergei Melodyn'
+          git config --global user.email 'samelodyn@gmail.com'
+          git checkout --orphan gh-pages
+          git merge frontend
+      - run: |
+          cd frontend
+          make ci-build
+          cp -r ./public/* ../
+          cd ..
+          rm -rf ./frontend
+          git add .
+          git commit -am "Release"
+          git push --force --set-upstream origin gh-pages
