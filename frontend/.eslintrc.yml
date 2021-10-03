@@ -5,6 +5,7 @@ env:
 extends:
   - 'plugin:react/recommended'
   - 'plugin:jest/recommended'
+  - 'plugin:jsx-a11y/recommended'
   - airbnb
 parserOptions:
   ecmaFeatures:
@@ -14,5 +15,6 @@ parserOptions:
 plugins:
   - react
   - jest
+  - jsx-a11y
 rules:
   import/extensions: off
