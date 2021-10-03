@@ -7,8 +7,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Build an deploy
+      - name: Build and deploy
+        uses: actions/checkout@v2
         with:
           token: ${{ secrets.PAT }}
       - run: make ci-build
