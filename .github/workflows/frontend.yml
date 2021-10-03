@@ -15,7 +15,7 @@ jobs:
       - run: |
           rm -rf node_modules
           mkdir app
-          mv ./* ./.* ./app
+          mv ./* ./.* ./app 2>/dev/null; true
           cp -r ./app/public/* ./
           rm -rf ./app
       - run: |
