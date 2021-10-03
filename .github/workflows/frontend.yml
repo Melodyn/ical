@@ -21,4 +21,4 @@ jobs:
           cp -r ./public/* ./
           git add .
           git commit -am "Release"
-          git push --set-upstream origin gh-pages
+          git push --set-upstream origin gh-pages --force
