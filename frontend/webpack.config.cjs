@@ -10,10 +10,10 @@ module.exports = {
     rules: [
       {
         test: /\.jsx$/,
-        exclude: /(node_modules)/,
+        exclude: /node_modules/,
         loader: 'babel-loader',
         options: {
-          presets: ['@babel/preset-env', '@babel/preset-react'],
+          presets: ['@babel/preset-env', '@babel/preset-react', { targets: { node: 'current' }}],
         },
       },
       {

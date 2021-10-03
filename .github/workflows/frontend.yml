@@ -1,15 +1,34 @@
 name: Frontend CI
 on:
   push:
-    branches: frontend
+    branches: [frontend]
 
 jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: cd frontend
+      - run: make install-dependencies
+      - run: make test
+      - run: make lint
+
   deploy:
+    needs: pre-deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Build and deploy
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
+          node-version: ${{ matrix.node-version }}
           token: ${{ secrets.PAT }}
       - run: |
           git config --global user.name 'Sergei Melodyn'

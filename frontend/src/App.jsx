@@ -14,7 +14,6 @@ import {
   Group,
   SimpleCell,
 } from '@vkontakte/vkui';
-import '@vkontakte/vkui/dist/vkui.css';
 
 const Main = () => {
   const { viewWidth } = useAdaptivity();
