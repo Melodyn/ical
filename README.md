@@ -5,7 +5,7 @@
 [![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
 [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
-|![логотип](./logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
+|![логотип](./frontend/logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
 
 Ссылки:
