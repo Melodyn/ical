@@ -13,8 +13,15 @@ jobs:
           token: ${{ secrets.PAT }}
       - run: make ci-build
       - run: |
+          rm -rf node_modules
+          mkdir app
+          mv ./* ./.* ./app
+          cp -r ./app/public/* ./
+          rm -rf ./app
+      - run: |
+          git init
           git config --global user.name 'Sergei Melodyn'
           git config --global user.email 'samelodyn@gmail.com'
-          git add ./public/*
-          git commit -am "Release"
-          git push -u origin gh-pages --tags
+          git add .
+          git commit am "Release"
+          git push -u origin gh-pages
