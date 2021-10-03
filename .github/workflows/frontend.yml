@@ -16,9 +16,12 @@ jobs:
           git config --global user.email 'samelodyn@gmail.com'
           git checkout --orphan gh-pages
           git merge frontend
+      - run: cd frontend
       - run: make ci-build
       - run: |
-          cp -r ./public/* ./
+          cp -r ./public/* ../
+          cd ..
+          rm -rf ./frontend
           git add .
           git commit -am "Release"
-          git push --set-upstream origin gh-pages --force
+          git push --force --set-upstream origin gh-pages

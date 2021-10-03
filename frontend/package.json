@@ -2,7 +2,7 @@
   "name": "@melodyn/ical",
   "version": "1.3.4",
   "description": "Google-календарь и виджет в сообщество ВКонтакте",
-  "main": "./src/index.jsx",
+  "main": "src/index.jsx",
   "type": "module",
   "private": true,
   "scripts": {
