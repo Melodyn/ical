@@ -6,6 +6,7 @@ extends:
   - 'plugin:react/recommended'
   - 'plugin:jest/recommended'
   - 'plugin:jsx-a11y/recommended'
+  - 'plugin:import/recommended'
   - airbnb
 parserOptions:
   ecmaFeatures:
@@ -16,5 +17,6 @@ plugins:
   - react
   - jest
   - jsx-a11y
+  - import
 rules:
   import/extensions: off
