@@ -13,11 +13,15 @@ jobs:
           token: ${{ secrets.PAT }}
       - run: make ci-build
       - run: |
-          rm -rf node_modules
+          rm -rf ./node_modules
           mkdir app
+          ls -la ./app
           mv ./* ./.* ./app 2>/dev/null; true
+          ls -la ./app
           cp -r ./app/public/* ./
+          ls -la .
           rm -rf ./app
+          ls -la .
       - run: |
           git init
           git config --global user.name 'Sergei Melodyn'
