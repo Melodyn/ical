@@ -21,4 +21,4 @@ jobs:
           git remote add origin git@github.com:Melodyn/ical.git
           git add .
           git commit -am "Release"
-          git push -u origin gh-pages
+          git push -u origin gh-pages --force
