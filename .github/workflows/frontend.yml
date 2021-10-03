@@ -15,10 +15,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd frontend
-      - run: make install-dependencies
-      - run: make test
-      - run: make lint
+      - run: cd frontend && make install-dependencies test lint
 
   deploy:
     needs: pre-deploy

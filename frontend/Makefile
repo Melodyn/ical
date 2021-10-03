@@ -5,8 +5,10 @@ install-dependencies:
 	npm ci
 
 # dev
+test:
+	npm test
 lint:
-	npx eslint .
+	npx eslint . --ext .jsx
 run:
 	npm run dev
 build:
