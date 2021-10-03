@@ -1,4 +1,4 @@
-name: Frontend
+name: Frontend CI
 on:
   push:
     branches: frontend
@@ -7,14 +7,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Build
-        uses: actions/checkout@v2
-        run: make ci-build
-      - name: Commit report
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Build an deploy
         with:
           token: ${{ secrets.PAT }}
-        run: |
+      - run: make ci-build
+      - run: |
           git config --global user.name 'Sergei Melodyn'
           git config --global user.email 'samelodyn@gmail.com'
           git add ./public/*
