@@ -14,10 +14,10 @@ jobs:
       - run: make ci-build
       - run: |
           cp -r ./public/* ./
-          ls -la .
       - run: |
           git config --global user.name 'Sergei Melodyn'
           git config --global user.email 'samelodyn@gmail.com'
           git add .
           git commit -am "Release"
-          git push -u origin gh-pages --force
+      - run: git status
+      - run: git push -u origin gh-pages --force
