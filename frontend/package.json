@@ -64,6 +64,7 @@
     "webpack-dev-server": "^4.3.0"
   },
   "dependencies": {
+    "@unexp/router": "^1.0.0-beta8",
     "@vkontakte/icons": "^1.129.0",
     "@vkontakte/vk-bridge": "^2.4.8",
     "@vkontakte/vkui": "^4.17.0",
