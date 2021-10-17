@@ -8,7 +8,7 @@ install-dependencies:
 test:
 	npm test
 lint:
-	npx eslint . --ext .jsx
+	npx eslint . --ext .jsx --ext .js
 run:
 	npm run dev
 build:

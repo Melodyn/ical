@@ -1,73 +1,75 @@
 import React from 'react';
 import {
-  Group, Panel, PanelHeader, SimpleCell,
+  // eslint-disable-next-line
+  Root, Group, Panel, PanelHeader, SimpleCell, View,
 } from '@vkontakte/vkui';
+import { useLocation } from '@happysanta/router';
 import {
-  Match, View, Root,
-} from '@unexp/router';
+  views, panels, router, routes,
+} from './router.js';
+
+const onClick = (route) => () => router.pushPage(route);
+
+const Main = () => {
+  const location = useLocation();
+
+  return (
+    <View id={views.MAIN} activePanel={location.getViewActivePanel(views.MAIN)}>
+      <Panel id={panels.MAIN}>
+        <PanelHeader>Hello</PanelHeader>
+        <Group>
+          <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
+          <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
+        </Group>
+      </Panel>
+      <Panel id={panels.KITTY}>
+        <PanelHeader>Hello Kitty</PanelHeader>
+        <Group>
+          <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
+          <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
+        </Group>
+      </Panel>
+      <Panel id={panels.WORLD}>
+        <PanelHeader>Hello World</PanelHeader>
+        <Group>
+          <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
+          <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
+        </Group>
+      </Panel>
+    </View>
+  );
+};
 
 // const Main = () => (
-//   <Match>
-//     <Root>
-//       <View nav="/">
-//         <Panel nav="/">
-//           <PanelHeader>Main</PanelHeader>
-//           <Group>
-//             <SimpleCell>Kitty</SimpleCell>
-//             <SimpleCell>World</SimpleCell>
-//           </Group>
-//         </Panel>
-//         <Panel nav="/kitty">
-//           <PanelHeader>Kitty</PanelHeader>
-//           <Group>
-//             <SimpleCell>Kitty</SimpleCell>
-//             <SimpleCell>World</SimpleCell>
-//           </Group>
-//         </Panel>
-//         <Panel nav="/world">
-//           <PanelHeader>World</PanelHeader>
-//           <Group>
-//             <SimpleCell>Hello</SimpleCell>
-//             <SimpleCell>World</SimpleCell>
-//           </Group>
-//         </Panel>
-//       </View>
-//     </Root>
-//   </Match>
+//   <Root>
+//     <View>
+//       <Panel>
+//         <PanelHeader>Main</PanelHeader>
+//         <Group>
+//           <SimpleCell>Kitty</SimpleCell>
+//           <SimpleCell>World</SimpleCell>
+//         </Group>
+//       </Panel>
+//     </View>
+//     <View>
+//       <Panel>
+//         <PanelHeader>Kitty</PanelHeader>
+//         <Group>
+//           <SimpleCell>Hello</SimpleCell>
+//           <SimpleCell>Kitty</SimpleCell>
+//         </Group>
+//       </Panel>
+//     </View>
+//     <View>
+//       <Panel>
+//         <PanelHeader>World</PanelHeader>
+//         <Group>
+//           <SimpleCell>Hello</SimpleCell>
+//           <SimpleCell>World</SimpleCell>
+//         </Group>
+//       </Panel>
+//     </View>
+//   </Root>
 // );
-
-const Main = () => (
-  <Match>
-    <Root>
-      <View nav="/">
-        <Panel nav="/">
-          <PanelHeader>Main</PanelHeader>
-          <Group>
-            <SimpleCell>Kitty</SimpleCell>
-            <SimpleCell>World</SimpleCell>
-          </Group>
-        </Panel>
-      </View>
-      <View nav="/kitty">
-        <Panel nav="/">
-          <PanelHeader>Kitty</PanelHeader>
-          <Group>
-            <SimpleCell>Hello</SimpleCell>
-            <SimpleCell>Kitty</SimpleCell>
-          </Group>
-        </Panel>
-      </View>
-      <View nav="/world">
-        <Panel nav="/">
-          <PanelHeader>World</PanelHeader>
-          <Group>
-            <SimpleCell>Hello</SimpleCell>
-            <SimpleCell>World</SimpleCell>
-          </Group>
-        </Panel>
-      </View>
-    </Root>
-  </Match>
-);
 
 export default Main;

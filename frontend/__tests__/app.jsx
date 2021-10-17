@@ -8,5 +8,5 @@ import App from '../src/App.jsx';
 test('Init app', () => {
   render(<App />);
 
-  expect(screen.getByText('VKUI')).toBeInTheDocument();
+  expect(screen.getByText('Hello')).toBeInTheDocument();
 });

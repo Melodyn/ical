@@ -13,7 +13,8 @@
   "jest": {
     "testEnvironment": "jsdom",
     "transform": {
-      "\\.jsx$": "babel-jest"
+      "\\.jsx$": "babel-jest",
+      "\\.js$": "babel-jest"
     },
     "extensionsToTreatAsEsm": [
       ".jsx"
@@ -64,7 +65,8 @@
     "webpack-dev-server": "^4.3.0"
   },
   "dependencies": {
-    "@unexp/router": "^1.0.0-beta8",
+    "@happysanta/router": "^0.1.19",
+    "@unexp/router": "^1.0.0-beta9",
     "@vkontakte/icons": "^1.129.0",
     "@vkontakte/vk-bridge": "^2.4.8",
     "@vkontakte/vkui": "^4.17.0",
