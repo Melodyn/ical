@@ -175,8 +175,21 @@ const Main = () => {
         <Panel id={panels.KITTY}>
           <PanelHeader>Hello Kitty</PanelHeader>
           <Group>
-            <SimpleCell>Hello</SimpleCell>
-            <SimpleCell>Kitty</SimpleCell>
+            <SimpleCell />
+            <SimpleCell>H</SimpleCell>
+            <SimpleCell>e</SimpleCell>
+            <SimpleCell>l</SimpleCell>
+            <SimpleCell>l</SimpleCell>
+            <SimpleCell>o</SimpleCell>
+            <SimpleCell />
+            <SimpleCell />
+            <SimpleCell>K</SimpleCell>
+            <SimpleCell>i</SimpleCell>
+            <SimpleCell>t</SimpleCell>
+            <SimpleCell>t</SimpleCell>
+            <SimpleCell>y</SimpleCell>
+            <SimpleCell />
+            <SimpleCell />
           </Group>
         </Panel>
       </View>
@@ -188,8 +201,7 @@ const Main = () => {
         <Panel id={panels.WORLD}>
           <PanelHeader>Hello World</PanelHeader>
           <Group>
-            <SimpleCell>Hello</SimpleCell>
-            <SimpleCell>World</SimpleCell>
+            <SimpleCell>{'World '.repeat(10)}</SimpleCell>
           </Group>
         </Panel>
       </View>
