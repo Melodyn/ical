@@ -27,13 +27,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Set git config
       - run: |
           git config --global user.name 'Sergei Melodyn'
           git config --global user.email 'samelodyn@gmail.com'
           git checkout --orphan gh-pages
           git merge frontend
-      - name: Build app and push to Github Pages
       - run: |
           cd frontend
           make ci-build
