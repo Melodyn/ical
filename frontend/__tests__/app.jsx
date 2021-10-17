@@ -5,6 +5,8 @@ import '@testing-library/jest-dom';
 
 import App from '../src/App.jsx';
 
+window.scrollTo = jest.fn();
+
 test('Init app', () => {
   render(<App />);
 

@@ -13,24 +13,25 @@ export const routes = {
   KITTY: '/kitty',
   WORLD: '/world',
 };
-
 export const views = generateEnum(Object.keys(routes), 'view');
-
 export const panels = generateEnum(Object.keys(routes), 'panel');
-
-// export const pages = {
-//   [routes.MAIN]: new Page(panels.MAIN, views.MAIN),
-//   [routes.KITTY]: new Page(panels.KITTY, views.KITTY),
-//   [routes.WORLD]: new Page(panels.WORLD, views.WORLD),
-// };
-
-export const pages = Object.entries(routes).reduce((acc, [name, route]) => {
+const viewsPages = Object.entries(routes).reduce((acc, [name, route]) => {
   const panel = panels[name];
   const view = views[name];
   acc[route] = new Page(panel, view);
   return acc;
 }, {});
+// const panelsPages = Object.entries(routes).reduce((acc, [name, route]) => {
+//   const panel = panels[name];
+//   acc[route] = new Page(panel, views.MAIN);
+//   return acc;
+// }, {});
 
-export const router = new Router(pages);
+const viewsRouter = new Router(viewsPages);
+// viewsRouter.start();
+// const panelsRouter = new Router(panelsPages);
+// panelsRouter.start();
+const epicRouter = viewsRouter;
+epicRouter.start();
 
-router.start();
+export { epicRouter as router };
