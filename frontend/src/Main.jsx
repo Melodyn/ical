@@ -105,47 +105,49 @@ import {
 
 const Main = () => {
   const location = useLocation();
-  const onStoryChange = (e) => {
-    const newStory = e.currentTarget.dataset.story;
-    router.pushPage(newStory);
-  };
-  const onStoryBack = () => {
-    router.popPage();
-  };
   const viewId = location.getViewId();
+
+  const onClick = (e) => router.pushPage(e.currentTarget.dataset.story);
+  const onBack = () => router.popPage();
 
   return (
     <Epic
       activeStory={viewId}
       tabbar={(
-        <Tabbar>
+        <Tabbar
+          role="navigation"
+        >
           <TabbarItem
-            onClick={onStoryChange}
+            onClick={onClick}
             selected={viewId === views.MAIN}
             data-story={routes.MAIN}
             text="Home"
+            role="button"
           >
             <Icon16Play width={24} height={24} />
           </TabbarItem>
           <TabbarItem
-            onClick={onStoryChange}
+            onClick={onClick}
             selected={viewId === views.KITTY}
             data-story={routes.KITTY}
             text="Kitty"
+            role="button"
           >
             <Icon16ArrowTriangleUp width={24} height={24} />
           </TabbarItem>
           <TabbarItem
-            onClick={onStoryChange}
+            onClick={onClick}
             selected={viewId === views.WORLD}
             data-story={routes.WORLD}
             text="World"
+            role="button"
           >
             <Icon16ArrowTriangleDown width={24} height={24} />
           </TabbarItem>
           <TabbarItem
-            onClick={onStoryBack}
+            onClick={onBack}
             text="Back"
+            role="button"
           >
             <Icon16ChevronLeft width={24} height={24} />
           </TabbarItem>
