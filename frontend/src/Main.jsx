@@ -9,6 +9,7 @@ import {
 } from './router.js';
 
 const onClick = (route) => () => router.pushPage(route);
+const onBack = () => () => router.popPage();
 
 const Main = () => {
   const location = useLocation();
@@ -27,6 +28,7 @@ const Main = () => {
         <Group>
           <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
           <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
+          <SimpleCell onClick={onBack()}>back</SimpleCell>
         </Group>
       </Panel>
       <Panel id={panels.WORLD}>
@@ -34,6 +36,7 @@ const Main = () => {
         <Group>
           <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
           <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
+          <SimpleCell onClick={onBack()}>back</SimpleCell>
         </Group>
       </Panel>
     </View>

@@ -25,3 +25,5 @@ export const pages = Object.entries(routes).reduce((acc, [name, route]) => {
 }, {});
 
 export const router = new Router(pages);
+
+router.start();
