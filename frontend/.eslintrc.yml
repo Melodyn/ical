@@ -20,3 +20,4 @@ plugins:
   - import
 rules:
   import/extensions: off
+  no-console: off
