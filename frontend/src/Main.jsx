@@ -11,14 +11,17 @@ import {
   Icon16Play,
   Icon16ChevronLeft,
   Icon24Palette,
+  Icon20HieroglyphCharacterOutline,
 } from '@vkontakte/icons';
 import { useLocation } from '@happysanta/router';
 import {
   views, panels, router, routes,
 } from './router.js';
+import { useTranslations } from './resources';
 
 const Main = () => {
   const location = useLocation();
+  const [t, i18n] = useTranslations();
   const viewId = location.getViewId();
 
   const onClick = (e) => router.pushPage(e.currentTarget.dataset.story);
@@ -35,7 +38,7 @@ const Main = () => {
             onClick={onClick}
             selected={viewId === views.MAIN}
             data-story={routes.MAIN}
-            text="Home"
+            text={t('nav.home')}
             role="button"
           >
             <Icon16Play width={24} height={24} />
@@ -44,7 +47,7 @@ const Main = () => {
             onClick={onClick}
             selected={viewId === views.KITTY}
             data-story={routes.KITTY}
-            text="Kitty"
+            text={t('nav.world')}
             role="button"
           >
             <Icon16ArrowTriangleUp width={24} height={24} />
@@ -53,14 +56,14 @@ const Main = () => {
             onClick={onClick}
             selected={viewId === views.WORLD}
             data-story={routes.WORLD}
-            text="World"
+            text={t('nav.kitty')}
             role="button"
           >
             <Icon16ArrowTriangleDown width={24} height={24} />
           </TabbarItem>
           <TabbarItem
             onClick={onBack}
-            text="Back"
+            text={t('nav.back')}
             role="button"
           >
             <Icon16ChevronLeft width={24} height={24} />
@@ -69,13 +72,23 @@ const Main = () => {
             {(ctx) => (
               <TabbarItem
                 onClick={ctx.changeScheme}
-                text="Change theme"
+                text={t('settings.theme')}
                 role="button"
               >
                 <Icon24Palette />
               </TabbarItem>
             )}
           </ConfigProviderContext.Consumer>
+          <TabbarItem
+            onClick={() => {
+              const lng = i18n.language === 'en' ? 'ru' : 'en';
+              return i18n.changeLanguage(lng);
+            }}
+            text={t('settings.lang')}
+            role="button"
+          >
+            <Icon20HieroglyphCharacterOutline width={24} height={24} />
+          </TabbarItem>
         </Tabbar>
     )}
     >
@@ -135,91 +148,3 @@ const Main = () => {
 };
 
 export default Main;
-
-// const onClick = (route) => () => router.pushPage(route);
-// const onBack = () => () => router.popPage();
-
-// const Main = () => {
-//   const location = useLocation();
-//
-//   return (
-//     <View id={views.MAIN} activePanel={location.getViewActivePanel(views.MAIN)}>
-//       <Panel id={panels.MAIN}>
-//         <PanelHeader>Main</PanelHeader>
-//         <Group>
-//           <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
-//           <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
-//         </Group>
-//       </Panel>
-//       <Panel id={panels.KITTY}>
-//         <PanelHeader>Hello Kitty</PanelHeader>
-//         <Group>
-//           <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
-//           <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
-//           <SimpleCell onClick={onBack()}>back</SimpleCell>
-//         </Group>
-//       </Panel>
-//       <Panel id={panels.WORLD}>
-//         <PanelHeader>Hello World</PanelHeader>
-//         <Group>
-//           <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
-//           <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
-//           <SimpleCell onClick={onBack()}>back</SimpleCell>
-//         </Group>
-//       </Panel>
-//     </View>
-//   );
-// };
-
-// const Main = () => {
-//   const location = useLocation();
-//
-//   return (
-//     <Root activeView={location.getViewId()}>
-//       <View
-//         id={views.MAIN}
-//         onSwipeBack={onBack()}
-//         activePanel={location.getViewActivePanel(views.MAIN)}
-//         history={location.hasOverlay() ? [] : location.getViewHistory(views.MAIN)}
-//       >
-//         <Panel id={panels.MAIN}>
-//           <PanelHeader>Main</PanelHeader>
-//           <Group>
-//             <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
-//             <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
-//           </Group>
-//         </Panel>
-//       </View>
-//       <View
-//         id={views.KITTY}
-//         onSwipeBack={onBack()}
-//         activePanel={location.getViewActivePanel(views.KITTY)}
-//         history={location.hasOverlay() ? [] : location.getViewHistory(views.MAIN)}
-//       >
-//         <Panel id={panels.KITTY}>
-//           <PanelHeader>Hello Kitty</PanelHeader>
-//           <Group>
-//             <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
-//             <SimpleCell onClick={onClick(routes.WORLD)}>World</SimpleCell>
-//             <SimpleCell onClick={onBack()}>back</SimpleCell>
-//           </Group>
-//         </Panel>
-//       </View>
-//       <View
-//         id={views.WORLD}
-//         onSwipeBack={onBack()}
-//         activePanel={location.getViewActivePanel(views.WORLD)}
-//         history={location.hasOverlay() ? [] : location.getViewHistory(views.MAIN)}
-//       >
-//         <Panel id={panels.WORLD}>
-//           <PanelHeader>Hello World</PanelHeader>
-//           <Group>
-//             <SimpleCell onClick={onClick(routes.MAIN)}>Hello</SimpleCell>
-//             <SimpleCell onClick={onClick(routes.KITTY)}>Kitty</SimpleCell>
-//             <SimpleCell onClick={onBack()}>back</SimpleCell>
-//           </Group>
-//         </Panel>
-//       </View>
-//     </Root>
-//   );
-// };
