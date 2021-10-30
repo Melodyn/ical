@@ -13,7 +13,6 @@ import {
   Icon20HieroglyphCharacterOutline,
 } from '@vkontakte/icons';
 import { useLocation } from '@happysanta/router';
-import { useRollbar } from '@rollbar/react';
 import {
   views, panels, router, routes,
 } from './router.js';
@@ -30,16 +29,12 @@ const Main = ({ appIsLoaded = false, userLng }) => {
       </View>
     );
   }
-  const rollbar = useRollbar();
 
   const location = useLocation();
   const [t, i18n] = useTranslations();
   const viewId = location.getViewId();
 
-  const onClick = (e) => {
-    rollbar.debug('Testing errors', null, JSON.stringify(e.currentTarget.dataset));
-    router.pushPage(e.currentTarget.dataset.story);
-  };
+  const onClick = (e) => router.pushPage(e.currentTarget.dataset.story);
   const onBack = () => router.popPage();
 
   return (
