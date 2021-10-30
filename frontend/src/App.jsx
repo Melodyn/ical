@@ -20,24 +20,20 @@ import { router } from './router.js';
 import Main from './Main.jsx';
 
 const App = () => {
+  const userLng = 'en'; // TODO: надо брать из параметров: https://vk.com/dev/vk_apps_docs3?f=6.%2B%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B%2B%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA%D0%B0#:~:text=%D0%BE%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%BA%D0%B0%20%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B9%20%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B0.-,vk_language,-string
   const [appIsLoaded, setAppIsLoaded] = useState(false);
   const [i18n, setTranslation] = useState(null);
-  const [lng, setLng] = useState('en');
+  const [lng, setLng] = useState(userLng);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (i18n === null) {
       const i18nInstance = i18next.createInstance();
       i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
-      i18nInstance
-        .init({
-          lng,
-          debug: true,
-          resources,
-        })
-        .then(() => {
-          setTranslation(i18nInstance);
-          setAppIsLoaded(true);
-        });
+      await i18nInstance
+        .init({ lng, resources })
+        .then(() => setTranslation(i18nInstance));
+
+      setAppIsLoaded(true);
     }
   });
 
@@ -49,12 +45,6 @@ const App = () => {
     light: 'bright_light',
     dark: 'space_gray',
   }[theme];
-  console.log({
-    lng,
-    appearance,
-    theme,
-    scheme,
-  });
 
   return (
     <RouterContext.Provider value={router}>
@@ -68,12 +58,12 @@ const App = () => {
           <AppRoot>
             <SplitLayout>
               <SplitCol>
-                {appIsLoaded
-                && (
                 <translationContext.Provider value={i18n}>
-                  <Main />
+                  <Main
+                    appIsLoaded={appIsLoaded}
+                    userLng={i18n ? i18n.language : userLng}
+                  />
                 </translationContext.Provider>
-                )}
               </SplitCol>
             </SplitLayout>
           </AppRoot>

@@ -1,5 +1,7 @@
 import React from 'react';
-import { screen, render, within } from '@testing-library/react';
+import {
+  screen, render, within, waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -15,12 +17,18 @@ const getItem = {
 describe('Positive cases', () => {
   beforeEach(() => render(<App />));
 
-  test('Init app', () => {
-    expect(screen.getByText('Main')).toBeInTheDocument();
+  test('Init app', async () => {
+    await waitFor(() => expect(screen.getByText('Main')).toBeInTheDocument(), {
+      timeout: 5000,
+    });
     expect(getItem.nav()).toBeInTheDocument();
   });
 
-  test('Navigation', () => {
+  test('Navigation', async () => {
+    await waitFor(() => expect(getItem.button('Home')).toBeInTheDocument(), {
+      timeout: 5000,
+    });
+
     const homeButton = getItem.button('Home');
     const kittyButton = getItem.button('Kitty');
     const worldButton = getItem.button('World');

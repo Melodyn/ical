@@ -1,9 +1,8 @@
 import React from 'react';
 import {
-  // eslint-disable-next-line
-  Root, Epic, Tabbar, TabbarItem,
+  Epic, Tabbar, TabbarItem,
   Group, Panel, PanelHeader, SimpleCell, View,
-  ConfigProviderContext,
+  ConfigProviderContext, ScreenSpinner,
 } from '@vkontakte/vkui';
 import {
   Icon16ArrowTriangleDown,
@@ -19,8 +18,20 @@ import {
 } from './router.js';
 import { useTranslations } from './resources';
 
-const Main = () => {
+const Main = ({ appIsLoaded = false, userLng }) => {
+  if (!appIsLoaded) {
+    const loadMsg = (userLng === 'ru') ? 'Загрузка' : 'Loading';
+    return (
+      <View popout={<ScreenSpinner />} activePanel="loading">
+        <Panel id="loading">
+          <PanelHeader>{`${loadMsg}...`}</PanelHeader>
+        </Panel>
+      </View>
+    );
+  }
+
   const location = useLocation();
+  console.log(location);
   const [t, i18n] = useTranslations();
   const viewId = location.getViewId();
 
@@ -47,7 +58,7 @@ const Main = () => {
             onClick={onClick}
             selected={viewId === views.KITTY}
             data-story={routes.KITTY}
-            text={t('nav.world')}
+            text={t('nav.kitty')}
             role="button"
           >
             <Icon16ArrowTriangleUp width={24} height={24} />
@@ -56,7 +67,7 @@ const Main = () => {
             onClick={onClick}
             selected={viewId === views.WORLD}
             data-story={routes.WORLD}
-            text={t('nav.kitty')}
+            text={t('nav.world')}
             role="button"
           >
             <Icon16ArrowTriangleDown width={24} height={24} />
