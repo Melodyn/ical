@@ -15,8 +15,11 @@ import {
 } from '@vkontakte/vkui';
 import Rollbar from 'rollbar';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
+
 import { RouterContext } from '@happysanta/router';
 import i18next from 'i18next';
+import eruda from 'eruda';
+
 import { resources, translationContext } from '../resources';
 import { router } from './router.js';
 import Main from './Main.jsx';
@@ -38,8 +41,13 @@ const App = ({ config }) => {
   };
   const rollbar = new Rollbar(rollbarConfig);
 
+  if (config.IS_PROD_ENV) {
+    eruda.init();
+  }
+
   useEffect(async () => {
     if (i18n === null) {
+      console.log(config);
       const i18nInstance = i18next.createInstance();
       i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
       await i18nInstance
