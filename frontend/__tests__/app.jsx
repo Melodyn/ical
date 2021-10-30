@@ -14,8 +14,18 @@ const getItem = {
   button: (name) => within(getItem.nav()).getByRole('button', { name }),
 };
 
+const NODE_ENV = process.env.NODE_ENV || 'test';
+const config = {
+  NODE_ENV,
+  IS_PROD_ENV: NODE_ENV === 'production',
+  IS_DEV_ENV: NODE_ENV === 'development',
+  IS_TEST_ENV: NODE_ENV === 'test',
+  ROLLBAR_TOKEN: '3fc738e63c1e4cd19b5b2584d06e2391',
+  VK_PARAMS: {},
+};
+
 describe('Positive cases', () => {
-  beforeEach(() => render(<App />));
+  beforeEach(() => render(<App config={config} />));
 
   test('Init app', async () => {
     await waitFor(() => expect(screen.getByText('Main')).toBeInTheDocument(), {
