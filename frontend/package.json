@@ -18,7 +18,8 @@
     },
     "extensionsToTreatAsEsm": [
       ".jsx"
-    ]
+    ],
+    "setupFiles": ["./__setup__/index.js"]
   },
   "repository": {
     "type": "git",

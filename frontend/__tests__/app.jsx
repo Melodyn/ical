@@ -7,8 +7,6 @@ import '@testing-library/jest-dom';
 
 import App from '../src/App.jsx';
 
-window.scrollTo = jest.fn();
-
 const getItem = {
   nav: () => screen.getByRole('navigation'),
   button: (name) => within(getItem.nav()).getByRole('button', { name }),
