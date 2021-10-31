@@ -14,6 +14,7 @@ bridge.subscribe((event) => {
 
   switch (type) {
     case 'VKWebAppUpdateConfig': {
+      console.log('VKWebAppUpdateConfig', data);
       appearance = data.appearance || appearance;
       break;
     }

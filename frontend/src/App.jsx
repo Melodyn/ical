@@ -47,7 +47,6 @@ const App = ({ config }) => {
 
   useEffect(async () => {
     if (i18n === null) {
-      console.log(config);
       const i18nInstance = i18next.createInstance();
       i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
       await i18nInstance
