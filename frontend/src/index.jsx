@@ -5,8 +5,25 @@ import bridge from '@vkontakte/vk-bridge';
 import paramsParser from '../libs/vk.js';
 import App from './App.jsx';
 
+let appearance;
 bridge.send('VKWebAppInit');
+bridge.subscribe((event) => {
+  if (!event.detail) return;
+
+  const { type, data } = event.detail;
+
+  switch (type) {
+    case 'VKWebAppUpdateConfig': {
+      appearance = data.appearance || appearance;
+      break;
+    }
+    default:
+      break;
+  }
+});
 const vkParams = paramsParser(new URL(window.location.href));
+vkParams.appearance = appearance;
+
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const config = {
   NODE_ENV,

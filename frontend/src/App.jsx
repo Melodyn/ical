@@ -72,6 +72,13 @@ const App = ({ config }) => {
     dark: 'space_gray',
   }[theme];
 
+  if (!appIsLoaded) {
+    console.log('config', config);
+    console.log('hooks', {
+      platform, appearance, theme, scheme,
+    });
+  }
+
   return (
     <RollbarProvider instance={rollbar} config={rollbarConfig}>
       <ErrorBoundary>
