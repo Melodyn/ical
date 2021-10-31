@@ -15,6 +15,8 @@ build:
 	npm run build
 version:
 	npm version ${V}
+dep-update:
+	npx npm-check-updates -u
 
 ci-build:
 	NODE_ENV=development CI=false make install-dependencies
