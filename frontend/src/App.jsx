@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
+// third
 import {
   AdaptivityProvider,
   ConfigProvider,
@@ -11,20 +12,43 @@ import {
   SplitLayout,
   SplitCol,
   usePlatform,
-  useAppearance,
 } from '@vkontakte/vkui';
+import bridge from '@vkontakte/vk-bridge';
 import Rollbar from 'rollbar';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
-
 import { RouterContext } from '@happysanta/router';
 import i18next from 'i18next';
 import eruda from 'eruda';
-
+// modules
 import { resources, translationContext } from '../resources';
 import { router } from './router.js';
 import Main from './Main.jsx';
 
 const App = ({ config }) => {
+  const platform = usePlatform();
+  const defaultAppearance = 'light';
+  const [theme, changeTheme] = useState(defaultAppearance);
+  const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
+  const scheme = {
+    light: 'bright_light',
+    dark: 'space_gray',
+  }[theme];
+  bridge.subscribe((event) => {
+    if (!event.detail) return;
+
+    const { type, data } = event.detail;
+
+    switch (type) {
+      case 'VKWebAppUpdateConfig': {
+        console.log('VKWebAppUpdateConfig', data);
+        changeTheme(data.appearance || defaultAppearance);
+        break;
+      }
+      default:
+        break;
+    }
+  });
+
   const whiteListOfLng = Object.keys(resources);
   const defaultLng = 'en';
   const vkLng = config.VK_PARAMS.language || defaultLng;
@@ -62,20 +86,9 @@ const App = ({ config }) => {
     }
   });
 
-  const platform = usePlatform();
-  const appearance = useAppearance();
-  const [theme, changeTheme] = useState(appearance || 'light');
-  const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
-  const scheme = {
-    light: 'bright_light',
-    dark: 'space_gray',
-  }[theme];
-
   if (!appIsLoaded) {
     console.log('config', config);
-    console.log('hooks', {
-      platform, appearance, theme, scheme,
-    });
+    console.log('hooks', { platform, theme, scheme });
   }
 
   return (
