@@ -25,9 +25,18 @@ import { router } from './router.js';
 import Main from './Main.jsx';
 
 const App = ({ config }) => {
+  const whiteListOfLng = Object.keys(resources);
+  const defaultLng = 'en';
+  const vkLng = config.VK_PARAMS.language || defaultLng;
+  const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
+
   const platform = usePlatform();
-  const defaultAppearance = 'light';
-  const [theme, changeTheme] = useState(defaultAppearance);
+  const [appIsLoaded, setAppIsLoaded] = useState(false);
+  const [i18n, setTranslation] = useState(null);
+  const [lng, setLng] = useState(appLng);
+
+  const defaultTheme = 'light';
+  const [theme, changeTheme] = useState(defaultTheme);
   const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
   const scheme = {
     light: 'bright_light',
@@ -40,23 +49,13 @@ const App = ({ config }) => {
 
     switch (type) {
       case 'VKWebAppUpdateConfig': {
-        console.log('VKWebAppUpdateConfig', data);
-        changeTheme(data.appearance || defaultAppearance);
+        changeTheme(data.appearance || defaultTheme);
         break;
       }
       default:
         break;
     }
   });
-
-  const whiteListOfLng = Object.keys(resources);
-  const defaultLng = 'en';
-  const vkLng = config.VK_PARAMS.language || defaultLng;
-  const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
-
-  const [appIsLoaded, setAppIsLoaded] = useState(false);
-  const [i18n, setTranslation] = useState(null);
-  const [lng, setLng] = useState(appLng);
 
   const rollbarConfig = {
     accessToken: config.ROLLBAR_TOKEN,

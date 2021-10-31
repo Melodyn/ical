@@ -21,16 +21,8 @@ const viewsPages = Object.entries(routes).reduce((acc, [name, route]) => {
   acc[route] = new Page(panel, view);
   return acc;
 }, {});
-// const panelsPages = Object.entries(routes).reduce((acc, [name, route]) => {
-//   const panel = panels[name];
-//   acc[route] = new Page(panel, views.MAIN);
-//   return acc;
-// }, {});
 
 const viewsRouter = new Router(viewsPages);
-// viewsRouter.start();
-// const panelsRouter = new Router(panelsPages);
-// panelsRouter.start();
 const epicRouter = viewsRouter;
 epicRouter.start();
 
