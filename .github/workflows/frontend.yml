@@ -6,6 +6,9 @@ on:
 jobs:
   pre-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     strategy:
       matrix:
         node-version: [14.x]
@@ -15,9 +18,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd frontend
-      - run: make install-dependencies
-      - run: make lint
+      - name: Install dependencies & lint
+      - run: make install-dependencies lint
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
         env:
