@@ -6,7 +6,9 @@ install-dependencies:
 
 # dev
 test:
-	NODE_ENV=test npm test
+	NODE_ENV=test npm test -s
+test-coverage:
+	NODE_ENV=test npm test -s -- --coverage
 lint:
 	npx eslint . --ext .jsx --ext .js
 run:
