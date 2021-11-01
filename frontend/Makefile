@@ -5,14 +5,18 @@ install-dependencies:
 	npm ci
 
 # dev
+test:
+	NODE_ENV=test npm test
 lint:
-	npx eslint .
+	npx eslint . --ext .jsx --ext .js
 run:
 	npm run dev
 build:
 	npm run build
 version:
 	npm version ${V}
+dep-update:
+	npx npm-check-updates -u
 
 ci-build:
 	NODE_ENV=development CI=false make install-dependencies

@@ -1,14 +1,14 @@
 # ical
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/ical/maintainability)
-[![Frontend production](../../workflows/Frontend%20CI/badge.svg)](../../actions?query=workflow%3A"Frontend+CI")
-[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
-[![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
-
 |![логотип](logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
+|[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/ical/maintainability)|
+|[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend production](../../workflows/Frontend%20CI/badge.svg)](../../actions?query=workflow%3A"Frontend+CI")
+|[Backend](https://github.com/Melodyn/ical/tree/backend)|[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI") [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
+
 
 Ссылки:
+* **доска задач**: https://github.com/users/Melodyn/projects/1
 * стримы с разработкой: https://www.youtube.com/playlist?list=PLxqZB2PTPdc7RSb5QpFR1lJ27NEmHtaYa
 * фронтенд приложения: https://melodyn.github.io/ical/
 * бэкенд приложения: https://melodyn-ical.herokuapp.com/

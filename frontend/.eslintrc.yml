@@ -1,8 +1,12 @@
 env:
   browser: true
   es2021: true
+  jest: true
 extends:
   - 'plugin:react/recommended'
+  - 'plugin:jest/recommended'
+  - 'plugin:jsx-a11y/recommended'
+  - 'plugin:import/recommended'
   - airbnb
 parserOptions:
   ecmaFeatures:
@@ -11,4 +15,10 @@ parserOptions:
   sourceType: module
 plugins:
   - react
-rules: {}
+  - jest
+  - jsx-a11y
+  - import
+rules:
+  import/extensions: off
+  no-console: off
+  react/prop-types: off
