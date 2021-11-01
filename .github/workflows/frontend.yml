@@ -1,11 +1,14 @@
 name: Frontend CI
 on:
   push:
-    branches: [frontend]
+    branches: [frontend, main]
 
 jobs:
   pre-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     strategy:
       matrix:
         node-version: [14.x]
@@ -15,12 +18,19 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd frontend && make install-dependencies test lint
+      - run: make install-dependencies lint
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_FRONT_TEST_REPORTER_ID }}
+        with:
+          workingDirectory: frontend
+          coverageCommand: make test-coverage
 
   deploy:
     needs: pre-deploy
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, '--no-deploy') }}
+    if: ${{ !contains(github.event.head_commit.message, '--no-deploy') && github.ref == '/refs/heads/frontend' }}
     steps:
       - uses: actions/checkout@v2
       - name: Build and deploy
