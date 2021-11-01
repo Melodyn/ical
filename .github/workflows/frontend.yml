@@ -23,8 +23,8 @@ jobs:
         uses: paambaati/codeclimate-action@v3.0.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_FRONT_TEST_REPORTER_ID }}
-          workingDirectory: frontend
         with:
+          workingDirectory: frontend
           coverageCommand: make test-coverage
 
   deploy:
