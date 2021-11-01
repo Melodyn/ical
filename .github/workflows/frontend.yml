@@ -21,10 +21,11 @@ jobs:
       - run: make install-dependencies lint
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
+        run: cd frontend
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_FRONT_TEST_REPORTER_ID }}
         with:
-          coverageCommand: cd frontend && make test-coverage
+          coverageCommand: make test-coverage
 
   deploy:
     needs: pre-deploy
