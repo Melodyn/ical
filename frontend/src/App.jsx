@@ -87,7 +87,9 @@ const App = ({ config }) => {
 
   if (!appIsLoaded) {
     console.log('config', config);
-    console.log('hooks', { platform, theme, scheme });
+    console.log('hooks', {
+      platform, theme, scheme, changeScheme,
+    });
   }
 
   return (
@@ -96,9 +98,6 @@ const App = ({ config }) => {
         <RouterContext.Provider value={router}>
           <ConfigProvider
             isWebView
-            platform={platform}
-            scheme={scheme}
-            changeScheme={changeScheme}
           >
             <AdaptivityProvider>
               <AppRoot>
