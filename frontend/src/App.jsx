@@ -70,18 +70,21 @@ const App = ({ config }) => {
 
   useEffect(async () => {
     if (i18n === null) {
-      const i18nInstance = i18next.createInstance();
-      i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
-      await i18nInstance
-        .init({
-          lng,
-          resources,
-          fallbackLng: defaultLng,
-          debug: config.IS_DEV_ENV,
-        })
-        .then(() => setTranslation(i18nInstance));
-
-      setAppIsLoaded(true);
+      setTimeout(() => {
+        const i18nInstance = i18next.createInstance();
+        i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
+        i18nInstance
+          .init({
+            lng,
+            resources,
+            fallbackLng: defaultLng,
+            debug: config.IS_DEV_ENV,
+          })
+          .then(() => {
+            setTranslation(i18nInstance);
+            setAppIsLoaded(true);
+          });
+      }, 3000);
     }
   });
 
