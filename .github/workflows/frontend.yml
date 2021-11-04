@@ -1,7 +1,7 @@
-name: Frontend CI
+name: Frontend Production
 on:
   push:
-    branches: [frontend, main]
+    branches: [frontend]
 
 jobs:
   pre-deploy:
@@ -18,14 +18,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: make install-dependencies lint
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_FRONT_TEST_REPORTER_ID }}
-        with:
-          workingDirectory: frontend
-          coverageCommand: make test-coverage
+      - run: make install-dependencies test lint
 
   deploy:
     needs: pre-deploy

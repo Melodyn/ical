@@ -13,7 +13,6 @@ import {
   SplitCol,
   usePlatform,
 } from '@vkontakte/vkui';
-import bridge from '@vkontakte/vk-bridge';
 import Rollbar from 'rollbar';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { RouterContext } from '@happysanta/router';
@@ -24,7 +23,8 @@ import { resources, translationContext } from '../resources';
 import { router } from './router.js';
 import Main from './Main.jsx';
 
-const App = ({ config }) => {
+const App = ({ config, appearance }) => {
+  console.log(config, { appearance });
   const whiteListOfLng = Object.keys(resources);
   const defaultLng = 'en';
   const vkLng = config.VK_PARAMS.language || defaultLng;
@@ -42,20 +42,6 @@ const App = ({ config }) => {
     light: 'bright_light',
     dark: 'space_gray',
   }[theme];
-  bridge.subscribe((event) => {
-    if (!event.detail) return;
-
-    const { type, data } = event.detail;
-
-    switch (type) {
-      case 'VKWebAppUpdateConfig': {
-        changeTheme(data.appearance || defaultTheme);
-        break;
-      }
-      default:
-        break;
-    }
-  });
 
   const rollbarConfig = {
     accessToken: config.ROLLBAR_TOKEN,
@@ -70,30 +56,20 @@ const App = ({ config }) => {
 
   useEffect(async () => {
     if (i18n === null) {
-      setTimeout(() => {
-        const i18nInstance = i18next.createInstance();
-        i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
-        i18nInstance
-          .init({
-            lng,
-            resources,
-            fallbackLng: defaultLng,
-            debug: config.IS_DEV_ENV,
-          })
-          .then(() => {
-            setTranslation(i18nInstance);
-            setAppIsLoaded(true);
-          });
-      }, 3000);
+      const i18nInstance = i18next.createInstance();
+      i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
+      await i18nInstance
+        .init({
+          lng,
+          resources,
+          fallbackLng: defaultLng,
+          debug: config.IS_DEV_ENV,
+        })
+        .then(() => setTranslation(i18nInstance));
+
+      setAppIsLoaded(true);
     }
   });
-
-  if (!appIsLoaded) {
-    console.log('config', config);
-    console.log('hooks', {
-      platform, theme, scheme, changeScheme,
-    });
-  }
 
   return (
     <RollbarProvider instance={rollbar} config={rollbarConfig}>
@@ -101,6 +77,9 @@ const App = ({ config }) => {
         <RouterContext.Provider value={router}>
           <ConfigProvider
             isWebView
+            platform={platform}
+            scheme={scheme}
+            changeScheme={changeScheme}
           >
             <AdaptivityProvider>
               <AppRoot>

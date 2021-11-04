@@ -4,6 +4,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import generateConfig from '../libs/generateConfig.js';
 
 import App from '../src/App.jsx';
 
@@ -12,15 +13,8 @@ const getItem = {
   button: (name) => within(getItem.nav()).getByRole('button', { name }),
 };
 
-const NODE_ENV = process.env.NODE_ENV || 'test';
-const config = {
-  NODE_ENV,
-  IS_PROD_ENV: false,
-  IS_DEV_ENV: false,
-  IS_TEST_ENV: true,
-  ROLLBAR_TOKEN: 'ROLLBAR_TOKEN',
-  VK_PARAMS: {},
-};
+const env = process.env.NODE_ENV || 'test';
+const config = generateConfig(env);
 
 describe('Positive cases', () => {
   beforeEach(() => render(<App config={config} />));
