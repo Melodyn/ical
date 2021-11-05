@@ -23,7 +23,10 @@ import { resources, translationContext } from '../resources';
 import { router } from './router.js';
 import Main from './Main.jsx';
 
-const App = ({ config, appearance }) => {
+export const appearanceCtx = React.createContext('light');
+
+const App = ({ config }) => {
+  const appearance = React.useContext(appearanceCtx);
   console.log(config, { appearance });
   const whiteListOfLng = Object.keys(resources);
   const defaultLng = 'en';

@@ -4,9 +4,9 @@ import '@vkontakte/vkui/dist/vkui.css';
 import bridge from '@vkontakte/vk-bridge';
 import paramsParser from '../libs/vk.js';
 import generateConfig from '../libs/generateConfig.js';
-import App from './App.jsx';
+import App, { appearanceCtx } from './App.jsx';
 
-const [appearance, setTheme] = React.useState('light');
+let appearance = 'light';
 
 bridge.send('VKWebAppInit');
 bridge.subscribe((event) => {
@@ -17,7 +17,7 @@ bridge.subscribe((event) => {
   switch (type) {
     case 'VKWebAppUpdateConfig': {
       console.log('VKWebAppUpdateConfig', data);
-      setTheme(data.appearance);
+      appearance = data.appearance;
       break;
     }
     default:
@@ -29,4 +29,4 @@ const vkParams = paramsParser(new URL(window.location.href));
 const env = process.env.NODE_ENV || 'production';
 const config = generateConfig(env, vkParams);
 
-ReactDOM.render(<App config={config} appearance={appearance} />, document.getElementById('root'));
+ReactDOM.render(<appearanceCtx.Provider value={appearance}><App config={config} /></appearanceCtx.Provider>, document.getElementById('root'));
