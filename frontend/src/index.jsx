@@ -6,7 +6,8 @@ import paramsParser from '../libs/vk.js';
 import generateConfig from '../libs/generateConfig.js';
 import App from './App.jsx';
 
-let appearance = 'light';
+const [appearance, setTheme] = React.useState('light');
+
 bridge.send('VKWebAppInit');
 bridge.subscribe((event) => {
   if (!event.detail) return;
@@ -16,13 +17,14 @@ bridge.subscribe((event) => {
   switch (type) {
     case 'VKWebAppUpdateConfig': {
       console.log('VKWebAppUpdateConfig', data);
-      appearance = data.appearance;
+      setTheme(data.appearance);
       break;
     }
     default:
       break;
   }
 });
+
 const vkParams = paramsParser(new URL(window.location.href));
 const env = process.env.NODE_ENV || 'production';
 const config = generateConfig(env, vkParams);
