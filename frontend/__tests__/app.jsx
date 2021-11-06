@@ -10,8 +10,11 @@ import getVkBridge from '../libs/getVkBridge.js';
 import App from '../src/App.jsx';
 
 const getItem = {
+  heading: () => screen.getByRole('heading'),
   nav: () => screen.getByRole('navigation'),
   button: (name) => within(getItem.nav()).getByRole('button', { name }),
+  existingByTitle: (title) => within(getItem.heading()).getByText(title),
+  nonExistingByTitle: (title) => within(getItem.heading()).queryByText(title),
 };
 
 const env = process.env.NODE_ENV || 'test';
@@ -26,40 +29,38 @@ describe('Positive cases', () => {
   });
 
   test('Init app', async () => {
-    await waitFor(() => expect(screen.getByText('Main')).toBeInTheDocument(), {
+    await waitFor(() => expect(screen.getByText('Events calendar')).toBeInTheDocument(), {
       timeout: 5000,
     });
     expect(getItem.nav()).toBeInTheDocument();
+    expect(getItem.heading()).toBeInTheDocument();
   });
 
-  test('Navigation', async () => {
-    await waitFor(() => expect(getItem.button('Home')).toBeInTheDocument(), {
+  test('Base navigation', async () => {
+    await waitFor(() => expect(getItem.button('Calendar')).toBeInTheDocument(), {
       timeout: 5000,
     });
 
-    const homeButton = getItem.button('Home');
-    const kittyButton = getItem.button('Kitty');
-    const worldButton = getItem.button('World');
+    const calendarButton = getItem.button('Calendar');
+    const installButton = getItem.button('Install');
+    const settingsButton = getItem.button('Settings');
+    const helpButton = getItem.button('Help');
     const backButton = getItem.button('Back');
 
     expect(backButton).toBeInTheDocument();
-    expect(homeButton).toHaveClass('vkuiTabbarItem--selected');
+    expect(helpButton).toBeInTheDocument();
+    expect(calendarButton).toHaveClass('vkuiTabbarItem--selected');
 
-    userEvent.click(kittyButton);
-    expect(screen.queryByText('Main')).not.toBeInTheDocument();
-    expect(screen.getByText('Hello Kitty')).toBeInTheDocument();
-    expect(homeButton).not.toHaveClass('vkuiTabbarItem--selected');
-    expect(kittyButton).toHaveClass('vkuiTabbarItem--selected');
+    userEvent.click(installButton);
+    expect(getItem.nonExistingByTitle('Events calendar')).not.toBeInTheDocument();
+    expect(getItem.existingByTitle('Install to your community')).toBeInTheDocument();
+    expect(calendarButton).not.toHaveClass('vkuiTabbarItem--selected');
+    expect(installButton).toHaveClass('vkuiTabbarItem--selected');
 
-    userEvent.click(worldButton);
-    expect(screen.getByText('Hello World')).toBeInTheDocument();
-    expect(worldButton).toHaveClass('vkuiTabbarItem--selected');
-    expect(kittyButton).not.toHaveClass('vkuiTabbarItem--selected');
-
-    userEvent.click(homeButton);
-    expect(screen.getByText('Main')).toBeInTheDocument();
-    expect(homeButton).toHaveClass('vkuiTabbarItem--selected');
-    expect(worldButton).not.toHaveClass('vkuiTabbarItem--selected');
-    expect(kittyButton).not.toHaveClass('vkuiTabbarItem--selected');
+    userEvent.click(calendarButton);
+    expect(getItem.existingByTitle('Events calendar')).toBeInTheDocument();
+    expect(calendarButton).toHaveClass('vkuiTabbarItem--selected');
+    expect(settingsButton).not.toHaveClass('vkuiTabbarItem--selected');
+    expect(installButton).not.toHaveClass('vkuiTabbarItem--selected');
   });
 });

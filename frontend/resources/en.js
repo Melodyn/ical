@@ -1,14 +1,25 @@
 export default {
   translation: {
     nav: {
-      home: 'Home',
-      world: 'World',
-      kitty: 'Kitty',
+      install: 'Install',
+      calendar: 'Calendar',
+      settings: 'Settings',
+      help: 'Help',
       back: 'Back',
     },
-    settings: {
-      theme: 'Change theme',
-      lang: 'Change language',
+    page: {
+      calendar: {
+        title: 'Events calendar',
+      },
+      settings: {
+        title: 'App settings',
+      },
+      install: {
+        title: 'Install to your community',
+      },
+      help: {
+        title: 'Questions & answers',
+      },
     },
   },
 };

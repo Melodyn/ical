@@ -11,6 +11,7 @@ import {
   AppRoot,
   SplitLayout,
   SplitCol,
+  usePlatform,
 } from '@vkontakte/vkui';
 import Rollbar from 'rollbar';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
@@ -20,9 +21,9 @@ import eruda from 'eruda';
 import pino from 'pino';
 // modules
 import resources from '../resources';
-import { router } from './router.js';
+import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
-import Main from './Main.jsx';
+import Main from './components/Main.jsx';
 
 const App = ({ config, bridge }) => {
   const defaultLng = 'en';
@@ -57,10 +58,6 @@ const App = ({ config, bridge }) => {
         changeTheme(data.appearance || defaultTheme);
         break;
       }
-      case 'VKWebAppCreateHashResult': {
-        logger.info('Check string (ts request_id hash): ', `${data.hash};${data.ts};${data.request_id}`);
-        break;
-      }
       default:
         break;
     }
@@ -73,7 +70,10 @@ const App = ({ config, bridge }) => {
   };
   const rollbar = new Rollbar(rollbarConfig);
 
-  if (config.IS_PROD_ENV) {
+  const queryPlatform = config.VK_PARAMS.platform || '';
+  const hookPlatform = usePlatform();
+  const isMobile = queryPlatform.includes('mobile');
+  if (config.IS_PROD_ENV && isMobile) {
     eruda.init();
   }
 
@@ -95,8 +95,15 @@ const App = ({ config, bridge }) => {
   });
 
   if (!appIsLoaded) {
-    logger.debug('config', config, { lng, theme, vkLng });
-    bridge.send('VKWebAppCreateHash', { request_id: 'user_id:1,data:"Hello World"' });
+    logger.debug('params', {
+      lng,
+      theme,
+      vkLng,
+      isMobile,
+      queryPlatform,
+      hookPlatform,
+      query: config.VK_PARAMS,
+    });
   }
 
   const ViewComponent = () => (appIsLoaded

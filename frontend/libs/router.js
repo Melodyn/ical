@@ -9,9 +9,10 @@ const generateEnum = (names, prefix = '') => {
 };
 
 export const routes = {
-  MAIN: '/',
-  KITTY: '/kitty',
-  WORLD: '/world',
+  INSTALL: '/install',
+  CALENDAR: '/calendar',
+  SETTINGS: '/settings',
+  HELP: '/help',
 };
 export const views = generateEnum(Object.keys(routes), 'view');
 export const panels = generateEnum(Object.keys(routes), 'panel');
@@ -22,8 +23,11 @@ const viewsPages = Object.entries(routes).reduce((acc, [name, route]) => {
   return acc;
 }, {});
 
-const viewsRouter = new Router(viewsPages);
-const epicRouter = viewsRouter;
-epicRouter.start();
+const router = new Router(viewsPages, {
+  defaultPage: routes.CALENDAR,
+  defaultView: views.CALENDAR,
+  defaultPanel: panels.CALENDAR,
+});
+router.start();
 
-export { epicRouter as router };
+export { router };
