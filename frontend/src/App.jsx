@@ -96,7 +96,7 @@ const App = ({ config, bridge }) => {
 
   if (!appIsLoaded) {
     logger.debug('config', config, { lng, theme, vkLng });
-    bridge.send('VKWebAppCreateHash', {});
+    bridge.send('VKWebAppCreateHash', { request_id: JSON.stringify({ user_id: 1, data: 'Hello World' }) });
   }
 
   const ViewComponent = () => (appIsLoaded
