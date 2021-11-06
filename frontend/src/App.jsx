@@ -57,6 +57,10 @@ const App = ({ config, bridge }) => {
         changeTheme(data.appearance || defaultTheme);
         break;
       }
+      case 'VKWebAppCreateHashResult': {
+        logger.info('Check string (ts request_id hash): ', `${data.hash} ${data.ts} ${data.request_id}`);
+        break;
+      }
       default:
         break;
     }
@@ -92,7 +96,7 @@ const App = ({ config, bridge }) => {
 
   if (!appIsLoaded) {
     logger.debug('config', config, { lng, theme, vkLng });
-    bridge.send('VKWebAppCreateHash');
+    bridge.send('VKWebAppCreateHash', {});
   }
 
   const ViewComponent = () => (appIsLoaded
