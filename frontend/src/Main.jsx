@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Epic, Tabbar, TabbarItem,
   Group, Panel, PanelHeader, SimpleCell, View,
-  ConfigProviderContext, ScreenSpinner,
+  ConfigProviderContext,
 } from '@vkontakte/vkui';
 import {
   Icon16ArrowTriangleDown,
@@ -16,37 +16,26 @@ import { useLocation } from '@happysanta/router';
 import {
   views, panels, router, routes,
 } from './router.js';
-import { useTranslations } from '../resources';
+import { useTranslations } from '../hooks';
 
-const Main = ({ appIsLoaded = false, userLng }) => {
-  if (!appIsLoaded) {
-    const loadMsg = (userLng === 'ru') ? 'Загрузка' : 'Loading';
-    return (
-      <View popout={<ScreenSpinner />} activePanel="loading">
-        <Panel id="loading">
-          <PanelHeader>{`${loadMsg}...`}</PanelHeader>
-        </Panel>
-      </View>
-    );
-  }
-
+const Main = () => {
   const location = useLocation();
   const [t, i18n] = useTranslations();
-  const viewId = location.getViewId();
+  const activeViewId = location.getViewId();
 
   const onClick = (e) => router.pushPage(e.currentTarget.dataset.story);
   const onBack = () => router.popPage();
 
   return (
     <Epic
-      activeStory={viewId}
+      activeStory={activeViewId}
       tabbar={(
         <Tabbar
           role="navigation"
         >
           <TabbarItem
             onClick={onClick}
-            selected={viewId === views.MAIN}
+            selected={activeViewId === views.MAIN}
             data-story={routes.MAIN}
             text={t('nav.home')}
             role="button"
@@ -55,7 +44,7 @@ const Main = ({ appIsLoaded = false, userLng }) => {
           </TabbarItem>
           <TabbarItem
             onClick={onClick}
-            selected={viewId === views.KITTY}
+            selected={activeViewId === views.KITTY}
             data-story={routes.KITTY}
             text={t('nav.kitty')}
             role="button"
@@ -64,7 +53,7 @@ const Main = ({ appIsLoaded = false, userLng }) => {
           </TabbarItem>
           <TabbarItem
             onClick={onClick}
-            selected={viewId === views.WORLD}
+            selected={activeViewId === views.WORLD}
             data-story={routes.WORLD}
             text={t('nav.world')}
             role="button"

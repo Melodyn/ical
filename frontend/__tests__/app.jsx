@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-  screen, render, within, waitFor,
+  screen, render, within, act, waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import generateConfig from '../libs/generateConfig.js';
+import getVkBridge from '../libs/getVkBridge.js';
 
 import App from '../src/App.jsx';
 
@@ -15,9 +16,14 @@ const getItem = {
 
 const env = process.env.NODE_ENV || 'test';
 const config = generateConfig(env);
+const bridge = getVkBridge(config);
 
 describe('Positive cases', () => {
-  beforeEach(() => render(<App config={config} />));
+  beforeEach(async () => {
+    await act(async () => {
+      await render(<App config={config} bridge={bridge} />);
+    });
+  });
 
   test('Init app', async () => {
     await waitFor(() => expect(screen.getByText('Main')).toBeInTheDocument(), {

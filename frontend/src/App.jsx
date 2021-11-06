@@ -11,32 +11,33 @@ import {
   AppRoot,
   SplitLayout,
   SplitCol,
-  usePlatform,
 } from '@vkontakte/vkui';
 import Rollbar from 'rollbar';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { RouterContext } from '@happysanta/router';
 import i18next from 'i18next';
 import eruda from 'eruda';
+import pino from 'pino';
 // modules
-import { resources, translationContext } from '../resources';
+import resources from '../resources';
 import { router } from './router.js';
+import LoadingView from './components/LoadingView.jsx';
 import Main from './Main.jsx';
 
-export const appearanceCtx = React.createContext('light');
-
-const App = ({ config }) => {
-  const appearance = React.useContext(appearanceCtx);
-  console.log(config, { appearance });
-  const whiteListOfLng = Object.keys(resources);
+const App = ({ config, bridge }) => {
   const defaultLng = 'en';
+  const whiteListOfLng = Object.keys(resources);
   const vkLng = config.VK_PARAMS.language || defaultLng;
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
 
-  const platform = usePlatform();
   const [appIsLoaded, setAppIsLoaded] = useState(false);
   const [i18n, setTranslation] = useState(null);
   const [lng, setLng] = useState(appLng);
+
+  const logger = pino({
+    enabled: !config.IS_TEST_ENV,
+    level: config.LOG_LEVEL,
+  });
 
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(defaultTheme);
@@ -45,6 +46,21 @@ const App = ({ config }) => {
     light: 'bright_light',
     dark: 'space_gray',
   }[theme];
+  bridge.subscribe((event) => {
+    if (!event.detail) return;
+
+    const { type, data } = event.detail;
+    if (type && data) logger.info('bridge event', { type, data });
+
+    switch (type) {
+      case 'VKWebAppUpdateConfig': {
+        changeTheme(data.appearance || defaultTheme);
+        break;
+      }
+      default:
+        break;
+    }
+  });
 
   const rollbarConfig = {
     accessToken: config.ROLLBAR_TOKEN,
@@ -74,26 +90,32 @@ const App = ({ config }) => {
     }
   });
 
+  if (!appIsLoaded) {
+    logger.debug('config', config, { lng, theme, vkLng });
+  }
+
+  const ViewComponent = () => (appIsLoaded
+    ? (<Main />)
+    : (<LoadingView userLng={i18n ? i18n.language : appLng} />));
+
   return (
     <RollbarProvider instance={rollbar} config={rollbarConfig}>
       <ErrorBoundary>
         <RouterContext.Provider value={router}>
           <ConfigProvider
             isWebView
-            platform={platform}
+            i18n={i18n}
+            bridge={bridge}
             scheme={scheme}
+            config={config}
+            logger={logger}
             changeScheme={changeScheme}
           >
             <AdaptivityProvider>
               <AppRoot>
                 <SplitLayout>
                   <SplitCol>
-                    <translationContext.Provider value={i18n}>
-                      <Main
-                        appIsLoaded={appIsLoaded}
-                        userLng={i18n ? i18n.language : appLng}
-                      />
-                    </translationContext.Provider>
+                    <ViewComponent />
                   </SplitCol>
                 </SplitLayout>
               </AppRoot>
