@@ -2,20 +2,15 @@ import React from 'react';
 import {
   Group, Panel, PanelHeader, SimpleCell, View,
 } from '@vkontakte/vkui';
-import { useLocation } from '@happysanta/router';
-import { views, panels } from '../../../libs/router.js';
 import { useTranslations } from '../../../hooks';
 
-const SettingsView = () => {
-  const location = useLocation();
+const SettingsView = (props) => {
   const [t] = useTranslations();
+  const { id, activePanel, history } = props;
 
   return (
-    <View
-      activePanel={location.getViewActivePanel(views.SETTINGS)}
-      history={location.hasOverlay() ? [] : location.getViewHistory(views.SETTINGS)}
-    >
-      <Panel id={panels.SETTINGS}>
+    <View {...{ id, activePanel, history }}>
+      <Panel id={activePanel}>
         <PanelHeader>{t('page.settings.title')}</PanelHeader>
         <Group>
           <SimpleCell>{'World '.repeat(10)}</SimpleCell>

@@ -2,20 +2,15 @@ import React from 'react';
 import {
   Group, Panel, PanelHeader, SimpleCell, View,
 } from '@vkontakte/vkui';
-import { useLocation } from '@happysanta/router';
-import { views, panels } from '../../../libs/router.js';
 import { useTranslations } from '../../../hooks';
 
-const InstallView = () => {
-  const location = useLocation();
+const InstallView = (props) => {
   const [t] = useTranslations();
+  const { id, activePanel, history } = props;
 
   return (
-    <View
-      activePanel={location.getViewActivePanel(views.INSTALL)}
-      history={location.hasOverlay() ? [] : location.getViewHistory(views.INSTALL)}
-    >
-      <Panel id={panels.INSTALL}>
+    <View {...{ id, activePanel, history }}>
+      <Panel id={activePanel}>
         <PanelHeader role="heading">{t('page.install.title')}</PanelHeader>
         <Group>
           <SimpleCell>Kitty</SimpleCell>
