@@ -1,6 +1,8 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import '@vkontakte/vkui/dist/vkui.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '@vkontakte/vkui/dist/vkui.css';
 import getVkBridge from '../libs/getVkBridge.js';
 import paramsParser from '../libs/vk.js';
 import generateConfig from '../libs/generateConfig.js';

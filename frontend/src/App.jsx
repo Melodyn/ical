@@ -43,10 +43,12 @@ const App = ({ config, bridge }) => {
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(defaultTheme);
   const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
-  const scheme = {
+  const schemeMap = {
     light: 'bright_light',
     dark: 'space_gray',
-  }[theme];
+  };
+  const scheme = schemeMap[theme];
+  const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
   bridge.subscribe((event) => {
     if (!event.detail) return;
 
@@ -71,7 +73,6 @@ const App = ({ config, bridge }) => {
   const rollbar = new Rollbar(rollbarConfig);
 
   const queryPlatform = config.VK_PARAMS.platform || '';
-  const hookPlatform = usePlatform();
   const isMobile = queryPlatform.includes('mobile');
   if (config.IS_PROD_ENV && isMobile) {
     eruda.init();
@@ -100,8 +101,6 @@ const App = ({ config, bridge }) => {
       theme,
       vkLng,
       isMobile,
-      queryPlatform,
-      hookPlatform,
       query: config.VK_PARAMS,
     });
   }
@@ -118,9 +117,10 @@ const App = ({ config, bridge }) => {
             isWebView
             i18n={i18n}
             bridge={bridge}
-            scheme={scheme}
+            scheme={appIsLoaded ? scheme : defaultScheme}
             config={config}
             logger={logger}
+            platform={usePlatform()}
             changeScheme={changeScheme}
           >
             <AdaptivityProvider>
