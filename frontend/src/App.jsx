@@ -58,7 +58,7 @@ const App = ({ config, bridge }) => {
         break;
       }
       case 'VKWebAppCreateHashResult': {
-        logger.info('Check string (ts request_id hash): ', `${data.hash} ${data.ts} ${data.request_id}`);
+        logger.info('Check string (ts request_id hash): ', `${data.hash};${data.ts};${data.request_id}`);
         break;
       }
       default:
@@ -96,7 +96,7 @@ const App = ({ config, bridge }) => {
 
   if (!appIsLoaded) {
     logger.debug('config', config, { lng, theme, vkLng });
-    bridge.send('VKWebAppCreateHash', { request_id: JSON.stringify({ user_id: 1, data: 'Hello World' }) });
+    bridge.send('VKWebAppCreateHash', { request_id: 'user_id:1,data:"Hello World"' });
   }
 
   const ViewComponent = () => (appIsLoaded
