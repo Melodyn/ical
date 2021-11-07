@@ -11,7 +11,7 @@ const SettingsView = (props) => {
   return (
     <View {...{ id, activePanel, history }}>
       <Panel id={activePanel}>
-        <PanelHeader>{t('page.settings.title')}</PanelHeader>
+        <PanelHeader>{t('page.settings.header')}</PanelHeader>
         <Group>
           <SimpleCell>{'World '.repeat(10)}</SimpleCell>
         </Group>

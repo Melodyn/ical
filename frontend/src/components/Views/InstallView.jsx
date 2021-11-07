@@ -11,7 +11,7 @@ const InstallView = (props) => {
   return (
     <View {...{ id, activePanel, history }}>
       <Panel id={activePanel}>
-        <PanelHeader role="heading">{t('page.install.title')}</PanelHeader>
+        <PanelHeader role="heading">{t('page.install.header')}</PanelHeader>
         <Group>
           <SimpleCell>Kitty</SimpleCell>
           <SimpleCell>World</SimpleCell>

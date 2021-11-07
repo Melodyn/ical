@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Group, Panel, PanelHeader, Header, View, SimpleCell, useAppearance,
+  Group, Panel, PanelHeader, Header, View, SimpleCell, useAppearance, Gradient,
 } from '@vkontakte/vkui';
 import { DateTime, Info } from 'luxon';
 import uniqueId from 'lodash/uniqueId.js';
@@ -74,10 +74,19 @@ const CalendarView = (props) => {
   return (
     <View {...{ id, activePanel, history }}>
       <Panel id={activePanel}>
-        <PanelHeader role="heading">{t('title')}</PanelHeader>
+        <PanelHeader role="heading">{t('header')}</PanelHeader>
         <Group>
-          <div className="px-3">
-            <Header className="px-0" mode="primary" multiline>
+          <Gradient style={{
+            margin: '-7px -7px 0 -7px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            padding: 32,
+          }}
+          >
+            <Header className="px-0 mb-2" mode="primary" multiline>
               {t('group.calendar.header', {
                 daysCount: daysRangeCount,
                 timezone: DateTime.now().zoneName,
@@ -85,13 +94,13 @@ const CalendarView = (props) => {
               })}
             </Header>
             <Table />
-          </div>
-        </Group>
-        <Group>
-          <Header mode="primary">{t('group.action.header')}</Header>
-          <SimpleCell>{t('group.action.open')}</SimpleCell>
-          <SimpleCell>{t('group.action.subscribe')}</SimpleCell>
-          <SimpleCell>{t('group.action.help')}</SimpleCell>
+          </Gradient>
+          <Group mode="plain">
+            <Header mode="primary">{t('group.action.header')}</Header>
+            <SimpleCell>{t('group.action.open')}</SimpleCell>
+            <SimpleCell>{t('group.action.subscribe')}</SimpleCell>
+            <SimpleCell>{t('group.action.help')}</SimpleCell>
+          </Group>
         </Group>
       </Panel>
     </View>
