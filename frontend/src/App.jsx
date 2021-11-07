@@ -6,12 +6,13 @@ import React, {
 } from 'react';
 // third
 import {
+  usePlatform,
   AdaptivityProvider,
   ConfigProvider,
   AppRoot,
   SplitLayout,
   SplitCol,
-  usePlatform,
+  PanelHeader,
 } from '@vkontakte/vkui';
 import Rollbar from 'rollbar';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
@@ -125,7 +126,7 @@ const App = ({ config, bridge }) => {
           >
             <AdaptivityProvider>
               <AppRoot>
-                <SplitLayout>
+                <SplitLayout header={<PanelHeader separator={false} />}>
                   <SplitCol>
                     <ViewComponent />
                   </SplitCol>

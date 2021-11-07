@@ -1,19 +1,24 @@
 import React from 'react';
 import {
-  Group, Panel, PanelHeader, Header, View,
+  Group, Panel, PanelHeader, Header, View, SimpleCell, useAppearance,
 } from '@vkontakte/vkui';
-import { DateTime } from 'luxon';
+import { DateTime, Info } from 'luxon';
 import uniqueId from 'lodash/uniqueId.js';
 import { useTranslations } from '../../../hooks';
 import rangeDates from '../../../libs/rangeDates.js';
 
 const CalendarView = (props) => {
-  const [t] = useTranslations();
+  const [translation, { language }] = useTranslations();
+  const t = (name, options) => translation(`page.calendar.${name}`, options);
   const { id, activePanel, history } = props;
+
   const daysRangeCount = 30;
-  const datesRange = rangeDates(daysRangeCount);
-  const nowWeekday = DateTime.now().weekday;
+  const datesRange = rangeDates(daysRangeCount, DateTime.now());
+  const [startDay] = datesRange;
+  const startWeekday = startDay.weekday;
   const weeks = [];
+  const weekdays = Info.weekdays('short', { locale: language })
+    .map((name) => name.substring(0, 2));
 
   let weekDayCounter = 1;
   let weekCounter = 1;
@@ -26,7 +31,7 @@ const CalendarView = (props) => {
     if (!weeks[weekIndex]) weeks.push([]);
     const week = weeks[weekIndex];
 
-    if (weekDayCounter >= nowWeekday) {
+    if (weekDayCounter >= startWeekday) {
       const value = rangeCounter >= daysRangeCount ? '' : datesRange[rangeCounter].day;
       week.push(value);
       rangeCounter += 1;
@@ -34,27 +39,22 @@ const CalendarView = (props) => {
       week.push('');
     }
 
-    weekDayCounter += 1;
-    const weekdayIndex = weekDayCounter - 1;
-    isLastDayOfWeek = (weekdayIndex > 0) && (weekdayIndex % 7 === 0);
+    isLastDayOfWeek = (weekDayCounter > 0) && (weekDayCounter % 7 === 0);
     if (isLastDayOfWeek) {
       weekCounter += 1;
     }
+    weekDayCounter += 1;
 
     rangeIsCompleted = rangeCounter >= daysRangeCount;
   } while (!(rangeIsCompleted && isLastDayOfWeek));
 
+  const appearance = useAppearance();
+  const tableAppearance = appearance === 'dark' ? 'secondary' : 'default';
   const Table = () => (
-    <table className="table table-bordered user-select-none" id="calendar">
+    <table className={`table table-${tableAppearance} table-bordered user-select-none`} id="calendar">
       <thead className="table-dark text-center">
         <tr className="align-middle">
-          <th scope="col">пн</th>
-          <th scope="col">вт</th>
-          <th scope="col">ср</th>
-          <th scope="col">чт</th>
-          <th scope="col">пт</th>
-          <th scope="col">сб</th>
-          <th scope="col">вс</th>
+          {weekdays.map((name) => <th key={uniqueId()} scope="col">{name}</th>)}
         </tr>
       </thead>
       <tbody className="text-end">
@@ -74,10 +74,24 @@ const CalendarView = (props) => {
   return (
     <View {...{ id, activePanel, history }}>
       <Panel id={activePanel}>
-        <PanelHeader role="heading">{t('page.calendar.title')}</PanelHeader>
+        <PanelHeader role="heading">{t('title')}</PanelHeader>
         <Group>
-          <Header mode="primary">Кто может писать мне личные сообщения</Header>
-          <Table />
+          <div className="px-3">
+            <Header className="px-0" mode="primary" multiline>
+              {t('group.calendar.header', {
+                daysCount: daysRangeCount,
+                timezone: DateTime.now().zoneName,
+                interpolation: { escapeValue: false },
+              })}
+            </Header>
+            <Table />
+          </div>
+        </Group>
+        <Group>
+          <Header mode="primary">{t('group.action.header')}</Header>
+          <SimpleCell>{t('group.action.open')}</SimpleCell>
+          <SimpleCell>{t('group.action.subscribe')}</SimpleCell>
+          <SimpleCell>{t('group.action.help')}</SimpleCell>
         </Group>
       </Panel>
     </View>
