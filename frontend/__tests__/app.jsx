@@ -29,7 +29,7 @@ describe('Positive cases', () => {
   });
 
   test('Init app', async () => {
-    await waitFor(() => expect(screen.getByText('Events calendar')).toBeInTheDocument(), {
+    await waitFor(() => expect(screen.getByText('Community calendar')).toBeInTheDocument(), {
       timeout: 5000,
     });
     expect(getItem.nav()).toBeInTheDocument();
@@ -52,13 +52,13 @@ describe('Positive cases', () => {
     expect(calendarButton).toHaveClass('vkuiTabbarItem--selected');
 
     userEvent.click(installButton);
-    expect(getItem.nonExistingByTitle('Events calendar')).not.toBeInTheDocument();
-    expect(getItem.existingByTitle('Install to your community')).toBeInTheDocument();
+    expect(getItem.nonExistingByTitle('Community calendar')).not.toBeInTheDocument();
+    expect(getItem.existingByTitle('Get app')).toBeInTheDocument();
     expect(calendarButton).not.toHaveClass('vkuiTabbarItem--selected');
     expect(installButton).toHaveClass('vkuiTabbarItem--selected');
 
     userEvent.click(calendarButton);
-    expect(getItem.existingByTitle('Events calendar')).toBeInTheDocument();
+    expect(getItem.existingByTitle('Community calendar')).toBeInTheDocument();
     expect(calendarButton).toHaveClass('vkuiTabbarItem--selected');
     expect(settingsButton).not.toHaveClass('vkuiTabbarItem--selected');
     expect(installButton).not.toHaveClass('vkuiTabbarItem--selected');

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Group, Panel, PanelHeader, View,
+  Group, Panel, PanelHeader, View, Div,
 } from '@vkontakte/vkui';
 import uniqueId from 'lodash/uniqueId.js';
 import { useTranslations } from '../../../hooks';
@@ -23,13 +23,13 @@ const HelpView = (props) => {
 
     return (
       <Group key={uniqueId()}>
-        <div className="p-3">
+        <Div>
           {headerEl}
           {descriptionEl}
           <Group className="ps-2" mode="plain">
             {qaEls}
           </Group>
-        </div>
+        </Div>
       </Group>
     );
   });

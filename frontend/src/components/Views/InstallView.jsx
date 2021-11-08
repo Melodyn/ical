@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Group, Panel, PanelHeader, Button, View,
+  Group, Panel, PanelHeader, Button, View, Div,
 } from '@vkontakte/vkui';
 import { useTranslations } from '../../../hooks';
 
@@ -13,9 +13,9 @@ const InstallView = (props) => {
       <Panel id={activePanel}>
         <PanelHeader role="heading">{t('page.install.header')}</PanelHeader>
         <Group>
-          <div className="p-3">
+          <Div>
             <Group mode="plain">
-              <h3 className="text-center">{t('page.install.appName')}</h3>
+              <p className="h3 text-center">{t('page.install.appName')}</p>
               <p className="text-start">{t('page.install.description')}</p>
             </Group>
             <Group className="text-center py-5" mode="plain">
@@ -24,7 +24,7 @@ const InstallView = (props) => {
                 {t('page.install.group.select.button')}
               </Button>
             </Group>
-          </div>
+          </Div>
         </Group>
       </Panel>
     </View>

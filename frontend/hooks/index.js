@@ -1,6 +1,11 @@
 import React from 'react';
 import { ConfigProviderContext } from '@vkontakte/vkui';
 
+export const useScheme = () => {
+  const { appearance, changeScheme } = React.useContext(ConfigProviderContext);
+  return [appearance, changeScheme];
+};
+
 export const useConfig = () => {
   const { config } = React.useContext(ConfigProviderContext);
   return config;

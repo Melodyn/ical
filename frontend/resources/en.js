@@ -9,7 +9,7 @@ export default {
     },
     page: {
       calendar: {
-        header: 'Events calendar',
+        header: 'Community calendar',
         group: {
           calendar: {
             header: 'Events for {{daysCount}} days. Time\u00A0zone:\u00A0{{timezone}}',
@@ -23,10 +23,23 @@ export default {
         },
       },
       settings: {
-        header: 'App settings',
+        header: 'Settings',
+        group: {
+          calendar: {
+          },
+          app: {
+            header: 'App',
+            changeScheme: 'Go to the {{scheme}} side!',
+            changeLanguage: 'Go to the "{{lng}}" language!',
+            button: {
+              changeScheme: 'Change scheme',
+              changeLanguage: 'Change language',
+            },
+          },
+        },
       },
       install: {
-        header: 'Install to your community',
+        header: 'Get app',
         appName: 'Google Calendar & community\u00A0widget',
         description: 'The application works with a public Google calendar, which is set by the community administrator. Calendar events are automatically displayed on the community home page if the widget is enabled.',
         group: {
