@@ -27,6 +27,14 @@ export default {
       },
       install: {
         header: 'Install to your community',
+        appName: 'Google Calendar & community\u00A0widget',
+        description: 'The application works with a public Google calendar, which is set by the community administrator. Calendar events are automatically displayed on the community home page if the widget is enabled.',
+        group: {
+          select: {
+            description: 'You must select a community to\u00A0use\u00A0the\u00A0application:',
+            button: 'Select community',
+          },
+        },
       },
       help: {
         header: 'Questions & answers',
