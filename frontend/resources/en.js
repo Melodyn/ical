@@ -26,9 +26,18 @@ export default {
         header: 'Settings',
         group: {
           calendar: {
+            header: 'Calendar',
           },
           app: {
             header: 'App',
+            invertedScheme: {
+              light: 'dark',
+              dark: 'light',
+            },
+            invertedLanguage: {
+              ru: 'en',
+              en: 'ru',
+            },
             changeScheme: 'Go to the {{scheme}} side!',
             changeLanguage: 'Go to the "{{lng}}" language!',
             button: {
