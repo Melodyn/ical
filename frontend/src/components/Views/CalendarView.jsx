@@ -12,11 +12,18 @@ const CalendarView = (props) => {
   const t = (name, options) => translation(`page.calendar.${name}`, options);
   const { id, activePanel, history } = props;
 
+  const tableEl = React.useRef(null);
+  const eventListContainerEl = React.useRef(null);
+  React.useLayoutEffect(() => {
+    eventListContainerEl.current.style.minHeight = `${tableEl.current.clientHeight}px`;
+  });
+
   const daysRangeCount = 30;
   const datesRange = rangeDates(daysRangeCount, DateTime.now());
   const [startDay] = datesRange;
   const startWeekday = startDay.weekday;
   const weeks = [];
+  const days = [];
   const weekdays = Info.weekdays('short', { locale: language })
     .map((name) => name.substring(0, 2));
 
@@ -32,14 +39,15 @@ const CalendarView = (props) => {
     const week = weeks[weekIndex];
 
     if (weekDayCounter >= startWeekday) {
-      const value = rangeCounter >= daysRangeCount ? '' : datesRange[rangeCounter].day;
-      week.push(value);
+      const day = rangeCounter >= daysRangeCount ? null : datesRange[rangeCounter];
+      week.push(day);
+      if (day) days.push(day);
       rangeCounter += 1;
     } else {
       week.push('');
     }
 
-    isLastDayOfWeek = (weekDayCounter > 0) && (weekDayCounter % 7 === 0);
+    isLastDayOfWeek = (weekDayCounter % 7 === 0);
     if (isLastDayOfWeek) {
       weekCounter += 1;
     }
@@ -51,17 +59,29 @@ const CalendarView = (props) => {
   const appearance = useAppearance();
   const tableAppearance = appearance === 'dark' ? 'secondary' : 'default';
   const Table = () => (
-    <table className={`table table-${tableAppearance} table-bordered user-select-none`} id="calendar">
+    <table
+      ref={tableEl}
+      className={`table table-${tableAppearance} table-bordered user-select-none`}
+      id="calendar"
+    >
       <thead className="table-dark text-center">
         <tr className="align-middle">
-          {weekdays.map((name) => <th key={uniqueId()} scope="col">{name}</th>)}
+          {weekdays.map((name) => (
+            <th
+              key={uniqueId()}
+              className="px-0 font-monospace"
+              scope="col"
+            >
+              {name}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody className="text-end">
-        {weeks.map((days) => {
-          const cells = days.map((value) => (
+        {weeks.map((dates) => {
+          const cells = dates.map((date) => (
             <th key={uniqueId()} scope="col" className="fw-normal">
-              {value}
+              {date ? date.day.toString().padStart(2, '0') : ''}
             </th>
           ));
           const row = <tr key={uniqueId()} className="align-middle">{cells}</tr>;
@@ -71,29 +91,58 @@ const CalendarView = (props) => {
     </table>
   );
 
+  const EventsList = () => (
+    <dl className="list-group rounded-0">
+      {days.map((day, i) => (
+        <React.Fragment key={uniqueId()}>
+          <dt className="list-group-item sticky-top bg-dark fw-bold font-monospace text-light text-end pe-4 m-0">
+            {day.toFormat('dd-LL-y')}
+          </dt>
+          <dd className="list-group-item clearfix">{i + 1}</dd>
+        </React.Fragment>
+      ))}
+    </dl>
+  );
+
   return (
     <View {...{ id, activePanel, history }}>
       <Panel id={activePanel}>
-        <PanelHeader role="heading">{t('header')}</PanelHeader>
+        <PanelHeader role="heading" shadow style={{ zIndex: 1025 }}>
+          {t('header')}
+        </PanelHeader>
         <Group>
-          <Gradient style={{
-            margin: '-7px -7px 0 -7px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-            padding: 32,
-          }}
+          <Gradient
+            className="p-2"
+            style={{
+              margin: '-7px -7px 0 -7px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}
           >
-            <Header className="px-0 mb-2" mode="primary" multiline>
+            <Header className="mb-2" mode="primary" multiline>
               {t('group.calendar.header', {
                 daysCount: daysRangeCount,
                 timezone: DateTime.now().zoneName,
                 interpolation: { escapeValue: false },
               })}
             </Header>
-            <Table />
+            <div className="container-fluid">
+              <div className="row g-2">
+                <div className="col-sm">
+                  <Table />
+                </div>
+                <div
+                  ref={eventListContainerEl}
+                  className="col-sm overflow-auto"
+                  id="container-calendar-events"
+                >
+                  <EventsList />
+                </div>
+              </div>
+            </div>
           </Gradient>
           <Group mode="plain">
             <Header mode="primary">{t('group.action.header')}</Header>
