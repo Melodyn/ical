@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Group, Panel, PanelHeader, Header, View, SimpleCell, useAppearance, Gradient,
+  Group, Panel, PanelHeader, Header, View, SimpleCell, Gradient,
 } from '@vkontakte/vkui';
 import { DateTime, Info } from 'luxon';
 import uniqueId from 'lodash/uniqueId.js';
@@ -56,12 +56,10 @@ const CalendarView = (props) => {
     rangeIsCompleted = rangeCounter >= daysRangeCount;
   } while (!(rangeIsCompleted && isLastDayOfWeek));
 
-  const appearance = useAppearance();
-  const tableAppearance = appearance === 'dark' ? 'secondary' : 'default';
   const Table = () => (
     <table
       ref={tableEl}
-      className={`table table-${tableAppearance} table-bordered user-select-none`}
+      className="table table-default table-bordered user-select-none"
       id="calendar"
     >
       <thead className="table-dark text-center">
@@ -80,7 +78,7 @@ const CalendarView = (props) => {
       <tbody className="text-end">
         {weeks.map((dates) => {
           const cells = dates.map((date) => (
-            <th key={uniqueId()} scope="col" className="fw-normal">
+            <th key={uniqueId()} scope="col" className="fw-normal bg-light">
               {date ? date.day.toString().padStart(2, '0') : ''}
             </th>
           ));
@@ -98,7 +96,7 @@ const CalendarView = (props) => {
           <dt className="list-group-item sticky-top bg-dark fw-bold font-monospace text-light text-end pe-4 m-0">
             {day.toFormat('dd-LL-y')}
           </dt>
-          <dd className="list-group-item clearfix">{i + 1}</dd>
+          <dd className="list-group-item bg-light">{i + 1}</dd>
         </React.Fragment>
       ))}
     </dl>
