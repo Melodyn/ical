@@ -59,24 +59,24 @@ const App = ({ config, bridge }) => {
 
   localStorage.setItem('config.lng', lng);
   localStorage.setItem('config.theme', theme);
-  bridge.subscribe((event) => {
-    if (!event.detail) return;
-
-    const { type, data } = event.detail;
-    // if (type && data) logger.info('bridge event', { type, data });
-
-    switch (type) {
-      case 'VKWebAppUpdateConfig': {
-        if (!userConfig.systemThemeWasChecked) {
-          localStorage.setItem('config.systemThemeWasChecked', 'true');
-          changeTheme(data.appearance || defaultTheme);
-        }
-        break;
-      }
-      default:
-        break;
-    }
-  });
+  // bridge.subscribe((event) => {
+  //   if (!event.detail) return;
+  //
+  //   const { type, data } = event.detail;
+  //   // if (type && data) logger.info('bridge event', { type, data });
+  //
+  //   switch (type) {
+  //     case 'VKWebAppUpdateConfig': {
+  //       if (!userConfig.systemThemeWasChecked) {
+  //         localStorage.setItem('config.systemThemeWasChecked', 'true');
+  //         changeTheme(data.appearance || defaultTheme);
+  //       }
+  //       break;
+  //     }
+  //     default:
+  //       break;
+  //   }
+  // });
 
   const rollbarConfig = {
     accessToken: config.ROLLBAR_TOKEN,
