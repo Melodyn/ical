@@ -50,6 +50,7 @@ const App = ({ config, bridge }) => {
 
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
+  logger.debug('theme', { theme });
   const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
   const schemeMap = {
     light: 'bright_light',
@@ -68,8 +69,8 @@ const App = ({ config, bridge }) => {
 
     switch (type) {
       case 'VKWebAppUpdateConfig': {
+        logger.debug('VKWebAppUpdateConfig', { systemThemeWasChecked });
         if (!systemThemeWasChecked) {
-          logger.debug({ systemThemeWasChecked });
           localStorage.setItem('config.systemThemeWasChecked', 'true');
           setSystemStatusFlag(true);
           changeTheme(data.appearance || defaultTheme);
