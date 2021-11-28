@@ -27,9 +27,15 @@ import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
 const App = ({ config, bridge }) => {
+  const userConfig = {
+    lng: localStorage.getItem('config.lng') || '',
+    theme: localStorage.getItem('config.theme') || '',
+    systemThemeWasChecked: localStorage.getItem('config.systemThemeWasChecked') === 'true',
+  };
+
   const defaultLng = 'en';
   const whiteListOfLng = Object.keys(resources);
-  const vkLng = config.VK_PARAMS.language || defaultLng;
+  const vkLng = userConfig.lng || config.VK_PARAMS.language || defaultLng;
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
 
   const [appIsLoaded, setAppIsLoaded] = useState(false);
@@ -40,9 +46,11 @@ const App = ({ config, bridge }) => {
     enabled: !config.IS_TEST_ENV,
     level: config.LOG_LEVEL,
   });
+  logger.debug('1 userConfig', userConfig);
+  userConfig.lng = lng;
 
   const defaultTheme = 'light';
-  const [theme, changeTheme] = useState(defaultTheme);
+  const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
   const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
   const schemeMap = {
     light: 'bright_light',
@@ -50,6 +58,11 @@ const App = ({ config, bridge }) => {
   };
   const scheme = schemeMap[theme];
   const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
+  userConfig.theme = theme;
+
+  localStorage.setItem('config.lng', lng);
+  localStorage.setItem('config.theme', theme);
+  logger.debug('2 userConfig', userConfig);
   bridge.subscribe((event) => {
     if (!event.detail) return;
 
@@ -58,7 +71,11 @@ const App = ({ config, bridge }) => {
 
     switch (type) {
       case 'VKWebAppUpdateConfig': {
-        changeTheme(data.appearance || defaultTheme);
+        if (!userConfig.systemThemeWasChecked) {
+          logger.debug('3 userConfig', userConfig);
+          localStorage.setItem('config.systemThemeWasChecked', 'true');
+          changeTheme(data.appearance || defaultTheme);
+        }
         break;
       }
       default:
