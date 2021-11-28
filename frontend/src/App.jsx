@@ -50,7 +50,6 @@ const App = ({ config, bridge }) => {
 
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
-  logger.debug({ stateTheme: theme, storageTheme: userConfig.theme });
   localStorage.setItem('config.theme', theme);
   const changeScheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -64,29 +63,16 @@ const App = ({ config, bridge }) => {
   const scheme = schemeMap[theme];
   const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
 
-  // setTimeout(() => {
-  //   logger.debug('systemThemeWasChecked', 1);
-  //   if (!userConfig.systemThemeWasChecked) {
-  //     logger.debug('systemThemeWasChecked', 2, userConfig);
-  //     const systemTheme = 'dark';
-  //     localStorage.setItem('config.theme', systemTheme);
-  //     localStorage.setItem('config.systemThemeWasChecked', 'true');
-  //     changeTheme(systemTheme);
-  //   }
-  // }, 5000);
-
   bridge.subscribe((event) => {
     if (!event.detail) return;
-
     const { type, data } = event.detail;
-    // if (type && data) logger.info('bridge event', { type, data });
-
     switch (type) {
       case 'VKWebAppUpdateConfig': {
         if (!userConfig.systemThemeWasChecked) {
           logger.debug('!systemThemeWasChecked', userConfig);
           const systemTheme = data.appearance || defaultTheme;
           localStorage.setItem('config.theme', systemTheme);
+          localStorage.setItem('config.lng', defaultLng);
           localStorage.setItem('config.systemThemeWasChecked', 'true');
           changeTheme(systemTheme);
         }
