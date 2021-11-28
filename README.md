@@ -34,7 +34,7 @@
 
 Ещё команды:
 * `make test` - запустить тесты;
-* `make lint` - запустить линтер;
+* `make lint` - запустить линтер; Настройка линтера под IDEA с Docker: https://youtrack.jetbrains.com/issue/WEB-20824#focus=Comments-27-5106498.0-0
 * `container-setup` - установка и запуск в docker-контейнере.
 * `container-run` - запуск docker-контейнера с приложением. Далее - `make run` внутри контейнера или другие команды.
 
