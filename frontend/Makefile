@@ -24,3 +24,12 @@ dep-update:
 ci-build:
 	NODE_ENV=development CI=false make install-dependencies
 	NODE_ENV=production CI=true make build
+
+# docker
+container-setup: container-build container-dependencies container-run
+container-build:
+	docker-compose build
+container-dependencies:
+	docker-compose run --rm frontend make install-dependencies
+container-run:
+	docker-compose run --rm -p 8080:8080 frontend /bin/bash
