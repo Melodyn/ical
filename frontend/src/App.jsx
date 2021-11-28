@@ -39,6 +39,7 @@ const App = ({ config, bridge }) => {
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
 
   const [appIsLoaded, setAppIsLoaded] = useState(false);
+  const [systemThemeWasChecked, setSystemStatusFlag] = useState(userConfig.systemThemeWasChecked);
   const [i18n, setTranslation] = useState(null);
   const [lng, setLng] = useState(appLng);
 
@@ -59,24 +60,26 @@ const App = ({ config, bridge }) => {
 
   localStorage.setItem('config.lng', lng);
   localStorage.setItem('config.theme', theme);
-  // bridge.subscribe((event) => {
-  //   if (!event.detail) return;
-  //
-  //   const { type, data } = event.detail;
-  //   // if (type && data) logger.info('bridge event', { type, data });
-  //
-  //   switch (type) {
-  //     case 'VKWebAppUpdateConfig': {
-  //       if (!userConfig.systemThemeWasChecked) {
-  //         localStorage.setItem('config.systemThemeWasChecked', 'true');
-  //         changeTheme(data.appearance || defaultTheme);
-  //       }
-  //       break;
-  //     }
-  //     default:
-  //       break;
-  //   }
-  // });
+  bridge.subscribe((event) => {
+    if (!event.detail) return;
+
+    const { type, data } = event.detail;
+    // if (type && data) logger.info('bridge event', { type, data });
+
+    switch (type) {
+      case 'VKWebAppUpdateConfig': {
+        if (!systemThemeWasChecked) {
+          logger.debug({ systemThemeWasChecked });
+          localStorage.setItem('config.systemThemeWasChecked', 'true');
+          setSystemStatusFlag(true);
+          changeTheme(data.appearance || defaultTheme);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  });
 
   const rollbarConfig = {
     accessToken: config.ROLLBAR_TOKEN,
