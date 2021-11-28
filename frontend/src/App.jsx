@@ -27,11 +27,17 @@ import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
 const App = ({ config, bridge }) => {
+  const logger = pino({
+    enabled: !config.IS_TEST_ENV,
+    level: config.LOG_LEVEL,
+  });
+
   const userConfig = {
     lng: localStorage.getItem('config.lng') || '',
     theme: localStorage.getItem('config.theme') || '',
     systemThemeWasChecked: localStorage.getItem('config.systemThemeWasChecked') === 'true',
   };
+  logger.debug('userConfig', userConfig);
 
   const defaultLng = 'en';
   const whiteListOfLng = Object.keys(resources);
@@ -39,19 +45,17 @@ const App = ({ config, bridge }) => {
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
 
   const [appIsLoaded, setAppIsLoaded] = useState(false);
-  const [systemThemeWasChecked, setSystemStatusFlag] = useState(userConfig.systemThemeWasChecked);
   const [i18n, setTranslation] = useState(null);
   const [lng, setLng] = useState(appLng);
 
-  const logger = pino({
-    enabled: !config.IS_TEST_ENV,
-    level: config.LOG_LEVEL,
-  });
-
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
-  logger.debug('theme', { theme });
-  const changeScheme = () => changeTheme(theme === 'light' ? 'dark' : 'light');
+  localStorage.setItem('config.theme', theme);
+  const changeScheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('config.theme', newTheme);
+    changeTheme(newTheme);
+  };
   const schemeMap = {
     light: 'bright_light',
     dark: 'space_gray',
@@ -59,8 +63,6 @@ const App = ({ config, bridge }) => {
   const scheme = schemeMap[theme];
   const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
 
-  localStorage.setItem('config.lng', lng);
-  localStorage.setItem('config.theme', theme);
   bridge.subscribe((event) => {
     if (!event.detail) return;
 
@@ -69,11 +71,11 @@ const App = ({ config, bridge }) => {
 
     switch (type) {
       case 'VKWebAppUpdateConfig': {
-        logger.debug('VKWebAppUpdateConfig', { systemThemeWasChecked });
-        if (!systemThemeWasChecked) {
+        if (!userConfig.systemThemeWasChecked) {
+          const systemTheme = data.appearance || defaultTheme;
+          localStorage.setItem('config.theme', systemTheme);
           localStorage.setItem('config.systemThemeWasChecked', 'true');
-          setSystemStatusFlag(true);
-          changeTheme(data.appearance || defaultTheme);
+          changeTheme(systemTheme);
         }
         break;
       }
@@ -98,7 +100,10 @@ const App = ({ config, bridge }) => {
   useEffect(async () => {
     if (i18n === null) {
       const i18nInstance = i18next.createInstance();
-      i18nInstance.on('languageChanged', (newLng) => setLng(newLng));
+      i18nInstance.on('languageChanged', (newLng) => {
+        localStorage.setItem('config.lng', newLng);
+        setLng(newLng);
+      });
       await i18nInstance
         .init({
           lng,
