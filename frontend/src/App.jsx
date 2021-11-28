@@ -46,8 +46,6 @@ const App = ({ config, bridge }) => {
     enabled: !config.IS_TEST_ENV,
     level: config.LOG_LEVEL,
   });
-  logger.debug('1 userConfig', userConfig);
-  userConfig.lng = lng;
 
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
@@ -58,21 +56,18 @@ const App = ({ config, bridge }) => {
   };
   const scheme = schemeMap[theme];
   const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
-  userConfig.theme = theme;
 
   localStorage.setItem('config.lng', lng);
   localStorage.setItem('config.theme', theme);
-  logger.debug('2 userConfig', userConfig);
   bridge.subscribe((event) => {
     if (!event.detail) return;
 
     const { type, data } = event.detail;
-    if (type && data) logger.info('bridge event', { type, data });
+    // if (type && data) logger.info('bridge event', { type, data });
 
     switch (type) {
       case 'VKWebAppUpdateConfig': {
         if (!userConfig.systemThemeWasChecked) {
-          logger.debug('3 userConfig', userConfig);
           localStorage.setItem('config.systemThemeWasChecked', 'true');
           changeTheme(data.appearance || defaultTheme);
         }

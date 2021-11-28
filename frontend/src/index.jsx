@@ -4,6 +4,7 @@ import '../public/index.css';
 import '@vkontakte/vkui/dist/vkui.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import cloneDeep from 'lodash/cloneDeep.js';
 import getVkBridge from '../libs/getVkBridge.js';
 import paramsParser from '../libs/vk.js';
 import generateConfig from '../libs/generateConfig.js';
@@ -13,7 +14,7 @@ const vkParams = paramsParser(new URL(window.location.href));
 const env = process.env.NODE_ENV || 'production';
 const config = generateConfig(env, vkParams);
 // eslint-disable-next-line no-undef
-getConfig = () => config;
+getConfig = () => cloneDeep(config);
 
 const bridge = getVkBridge(config);
 
