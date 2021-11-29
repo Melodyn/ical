@@ -36,11 +36,12 @@ const App = ({ config, bridge }) => {
   });
 
   logger.debug('localStorage', JSON.stringify(localStorage));
-  const userConfig = {
+  const getUserConfig = () => ({
     lng: localStorage.getItem('config.lng') || '',
     theme: localStorage.getItem('config.theme') || '',
     systemThemeWasChecked: localStorage.getItem('config.systemThemeWasChecked') === 'true',
-  };
+  });
+  const userConfig = getUserConfig();
   if (!systemThemeWasChecked) {
     systemThemeWasChecked = userConfig.systemThemeWasChecked;
   }
@@ -82,9 +83,9 @@ const App = ({ config, bridge }) => {
     const { type, data } = event.detail;
     switch (type) {
       case 'VKWebAppUpdateConfig': {
-        if (!userConfig.systemThemeWasChecked) {
+        if (!getUserConfig().systemThemeWasChecked) {
         // if (!systemThemeWasChecked) {
-          rollbar.debug(`VKWebAppUpdateConfig ${JSON.stringify(userConfig)}`);
+          rollbar.debug(`VKWebAppUpdateConfig ${JSON.stringify(getUserConfig())}`);
           const systemTheme = data.appearance || defaultTheme;
           localStorage.setItem('config.theme', systemTheme);
           localStorage.setItem('config.systemThemeWasChecked', 'true');
