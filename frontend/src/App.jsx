@@ -20,6 +20,7 @@ import { RouterContext } from '@happysanta/router';
 import i18next from 'i18next';
 import eruda from 'eruda';
 import pino from 'pino';
+import upperFirst from 'lodash/upperFirst.js';
 // modules
 import resources from '../resources';
 import { router } from '../libs/router.js';
@@ -68,16 +69,23 @@ const App = ({ config, bridge }) => {
   const scheme = schemeMap[theme];
   const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
 
+  const rollbarConfig = {
+    accessToken: config.ROLLBAR_TOKEN,
+    environment: `${config.NODE_ENV}-front`,
+    enabled: config.IS_PROD_ENV || config.IS_DEV_ENV,
+  };
+  const rollbar = new Rollbar(rollbarConfig);
+
   bridge.subscribe((event) => {
     if (!event.detail) return;
     const { type, data } = event.detail;
     switch (type) {
       case 'VKWebAppUpdateConfig': {
-        if (!systemThemeWasChecked) {
-          logger.debug('!systemThemeWasChecked', userConfig);
+        if (!userConfig.systemThemeWasChecked) {
+        // if (!systemThemeWasChecked) {
+          rollbar.debug(`VKWebAppUpdateConfig ${JSON.stringify(userConfig)}`);
           const systemTheme = data.appearance || defaultTheme;
           localStorage.setItem('config.theme', systemTheme);
-          localStorage.setItem('config.lng', defaultLng);
           localStorage.setItem('config.systemThemeWasChecked', 'true');
           changeTheme(systemTheme);
         }
@@ -88,17 +96,15 @@ const App = ({ config, bridge }) => {
     }
   });
 
-  const rollbarConfig = {
-    accessToken: config.ROLLBAR_TOKEN,
-    environment: `${config.NODE_ENV}-front`,
-    enabled: config.IS_PROD_ENV || config.IS_DEV_ENV,
-  };
-  const rollbar = new Rollbar(rollbarConfig);
-
   const queryPlatform = config.VK_PARAMS.platform || '';
   const isMobile = queryPlatform.includes('mobile');
   if (config.IS_PROD_ENV && isMobile) {
-    eruda.init();
+    eruda.init({
+      defaults: {
+        displaySize: 40,
+        theme: upperFirst(theme),
+      },
+    });
   }
 
   useEffect(async () => {
