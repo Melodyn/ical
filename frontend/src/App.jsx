@@ -26,6 +26,8 @@ import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
+let systemThemeWasChecked = false;
+
 const App = ({ config, bridge }) => {
   const logger = pino({
     enabled: !config.IS_TEST_ENV,
@@ -37,6 +39,9 @@ const App = ({ config, bridge }) => {
     theme: localStorage.getItem('config.theme') || '',
     systemThemeWasChecked: localStorage.getItem('config.systemThemeWasChecked') === 'true',
   };
+  if (!systemThemeWasChecked) {
+    systemThemeWasChecked = userConfig.systemThemeWasChecked;
+  }
   logger.debug('userConfig', userConfig);
 
   const defaultLng = 'en';
@@ -68,7 +73,7 @@ const App = ({ config, bridge }) => {
     const { type, data } = event.detail;
     switch (type) {
       case 'VKWebAppUpdateConfig': {
-        if (!userConfig.systemThemeWasChecked) {
+        if (!systemThemeWasChecked) {
           logger.debug('!systemThemeWasChecked', userConfig);
           const systemTheme = data.appearance || defaultTheme;
           localStorage.setItem('config.theme', systemTheme);
