@@ -109,10 +109,15 @@ const App = ({ config, bridge }) => {
       },
     });
     const snippets = eruda.get('snippets');
+    const erudaConsole = eruda.get('console');
+    const log = (...msgs) => {
+      erudaConsole.log(...msgs);
+      logger.debug(...msgs);
+    };
     snippets.add(
       'Get config',
       // eslint-disable-next-line no-undef
-      () => logger.debug('config', getConfig()),
+      () => log('config', getConfig()),
       'Show ical config object',
     );
     setErudaWasInit(true);
