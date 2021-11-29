@@ -35,6 +35,7 @@ const App = ({ config, bridge }) => {
     level: config.LOG_LEVEL,
   });
 
+  logger.debug('localStorage', JSON.stringify(localStorage));
   const userConfig = {
     lng: localStorage.getItem('config.lng') || '',
     theme: localStorage.getItem('config.theme') || '',
