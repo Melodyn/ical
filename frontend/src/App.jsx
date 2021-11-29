@@ -27,25 +27,18 @@ import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
-let systemThemeWasChecked = false;
-
 const App = ({ config, bridge }) => {
   const logger = pino({
     enabled: !config.IS_TEST_ENV,
     level: config.LOG_LEVEL,
   });
 
-  logger.debug('localStorage', JSON.stringify(localStorage));
   const getUserConfig = () => ({
-    lng: localStorage.getItem('config.lng') || '',
-    theme: localStorage.getItem('config.theme') || '',
-    systemThemeWasChecked: localStorage.getItem('config.systemThemeWasChecked') === 'true',
+    lng: localStorage.getItem('ical.config.lng') || '',
+    theme: localStorage.getItem('ical.config.theme') || '',
+    systemThemeWasChecked: localStorage.getItem('ical.config.systemThemeWasChecked') === 'true',
   });
   const userConfig = getUserConfig();
-  if (!systemThemeWasChecked) {
-    systemThemeWasChecked = userConfig.systemThemeWasChecked;
-  }
-  logger.debug('userConfig', userConfig);
 
   const defaultLng = 'en';
   const whiteListOfLng = Object.keys(resources);
@@ -53,15 +46,20 @@ const App = ({ config, bridge }) => {
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
 
   const [appIsLoaded, setAppIsLoaded] = useState(false);
+  const [erudaWasInit, setErudaWasInit] = useState(false);
+  const [bridgeWasSubscribed, setBridgeWasSubscribed] = useState(false);
+
+  const [rollbar, setRollbar] = useState(null);
   const [i18n, setTranslation] = useState(null);
   const [lng, setLng] = useState(appLng);
+  localStorage.setItem('ical.config.lng', lng);
 
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
-  localStorage.setItem('config.theme', theme);
+  localStorage.setItem('ical.config.theme', theme);
   const changeScheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
-    localStorage.setItem('config.theme', newTheme);
+    localStorage.setItem('ical.config.theme', newTheme);
     changeTheme(newTheme);
   };
   const schemeMap = {
@@ -76,44 +74,55 @@ const App = ({ config, bridge }) => {
     environment: `${config.NODE_ENV}-front`,
     enabled: config.IS_PROD_ENV || config.IS_DEV_ENV,
   };
-  const rollbar = new Rollbar(rollbarConfig);
+  if (rollbar === null) {
+    setRollbar(new Rollbar(rollbarConfig));
+  }
 
-  bridge.subscribe((event) => {
-    if (!event.detail) return;
-    const { type, data } = event.detail;
-    switch (type) {
-      case 'VKWebAppUpdateConfig': {
-        if (!getUserConfig().systemThemeWasChecked) {
-        // if (!systemThemeWasChecked) {
-          rollbar.debug(`VKWebAppUpdateConfig ${JSON.stringify(getUserConfig())}`);
-          const systemTheme = data.appearance || defaultTheme;
-          localStorage.setItem('config.theme', systemTheme);
-          localStorage.setItem('config.systemThemeWasChecked', 'true');
-          changeTheme(systemTheme);
+  if (!bridgeWasSubscribed) {
+    bridge.subscribe((event) => {
+      if (!event.detail) return;
+      const { type, data } = event.detail;
+      switch (type) {
+        case 'VKWebAppUpdateConfig': {
+          if (!getUserConfig().systemThemeWasChecked) {
+            const systemTheme = data.appearance || defaultTheme;
+            localStorage.setItem('ical.config.theme', systemTheme);
+            localStorage.setItem('ical.config.systemThemeWasChecked', 'true');
+            changeTheme(systemTheme);
+          }
+          break;
         }
-        break;
+        default:
+          break;
       }
-      default:
-        break;
-    }
-  });
+    });
+    setBridgeWasSubscribed(true);
+  }
 
   const queryPlatform = config.VK_PARAMS.platform || '';
   const isMobile = queryPlatform.includes('mobile');
-  if (config.IS_PROD_ENV && isMobile) {
+  if (config.IS_PROD_ENV && isMobile && !erudaWasInit) {
     eruda.init({
       defaults: {
         displaySize: 40,
         theme: upperFirst(theme),
       },
     });
+    const snippets = eruda.get('snippets');
+    snippets.add(
+      'Get config',
+      // eslint-disable-next-line no-undef
+      () => logger.debug('config', getConfig()),
+      'Show ical config object',
+    );
+    setErudaWasInit(true);
   }
 
   useEffect(async () => {
     if (i18n === null) {
       const i18nInstance = i18next.createInstance();
       i18nInstance.on('languageChanged', (newLng) => {
-        localStorage.setItem('config.lng', newLng);
+        localStorage.setItem('ical.config.lng', newLng);
         setLng(newLng);
       });
       await i18nInstance
@@ -129,7 +138,7 @@ const App = ({ config, bridge }) => {
     }
   });
 
-  if (!appIsLoaded) {
+  if (appIsLoaded) {
     logger.debug('params', {
       lng,
       theme,
