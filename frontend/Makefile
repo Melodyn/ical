@@ -13,6 +13,7 @@ test-coverage:
 lint:
 	npx eslint . --ext .jsx --ext .js
 run:
+	@echo "Open: http://localhost:8080/?vk_language=en&vk_platform=desktop_web&vk_user_id=1#/"
 	npm run dev
 build:
 	npm run build
