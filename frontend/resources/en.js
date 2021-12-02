@@ -27,6 +27,14 @@ export default {
         group: {
           calendar: {
             header: 'Calendar',
+            form: {
+              calendarIdField: 'Calendar identifier',
+              calendarIdError: 'Should not be empty',
+              timezoneField: 'Timezone',
+              timezonePlaceholder: 'Affects your users',
+              timezoneError: 'Should not be empty',
+              send: 'Send',
+            },
           },
           app: {
             header: 'App',
