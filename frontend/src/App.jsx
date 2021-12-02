@@ -28,10 +28,22 @@ import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
 const App = ({ config, bridge }) => {
-  const logger = pino({
-    enabled: !config.IS_TEST_ENV,
-    level: config.LOG_LEVEL,
-  });
+  const [appIsLoaded, setAppIsLoaded] = useState(false);
+  const [loggerWasInit, setLoggerWasInit] = useState(false);
+  const [rollbarWasInit, setRollbarWasInit] = useState(false);
+  const [i18nWasInit, setI18nWasInit] = useState(false);
+  const [erudaWasInit, setErudaWasInit] = useState(false);
+  const [bridgeWasSubscribed, setBridgeWasSubscribed] = useState(false);
+
+  const [logger, setLogger] = useState(null);
+  if (logger === null) {
+    const log = pino({
+      enabled: !config.IS_TEST_ENV,
+      level: config.LOG_LEVEL,
+    });
+    setLogger(log);
+    setLoggerWasInit(true);
+  }
 
   const getUserConfig = () => ({
     lng: localStorage.getItem('ical.config.lng') || '',
@@ -44,10 +56,6 @@ const App = ({ config, bridge }) => {
   const whiteListOfLng = Object.keys(resources);
   const vkLng = userConfig.lng || config.VK_PARAMS.language || defaultLng;
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
-
-  const [appIsLoaded, setAppIsLoaded] = useState(false);
-  const [erudaWasInit, setErudaWasInit] = useState(false);
-  const [bridgeWasSubscribed, setBridgeWasSubscribed] = useState(false);
 
   const [rollbar, setRollbar] = useState(null);
   const [i18n, setTranslation] = useState(null);
@@ -76,6 +84,7 @@ const App = ({ config, bridge }) => {
   };
   if (rollbar === null) {
     setRollbar(new Rollbar(rollbarConfig));
+    setRollbarWasInit(true);
   }
 
   if (!bridgeWasSubscribed) {
@@ -101,7 +110,8 @@ const App = ({ config, bridge }) => {
 
   const queryPlatform = config.VK_PARAMS.platform || '';
   const isMobile = queryPlatform.includes('mobile');
-  if (config.IS_PROD_ENV && isMobile && !erudaWasInit) {
+  const isErudaEnv = config.IS_PROD_ENV && isMobile;
+  if (isErudaEnv && !erudaWasInit) {
     eruda.init({
       defaults: {
         displaySize: 40,
@@ -136,20 +146,38 @@ const App = ({ config, bridge }) => {
           resources,
           fallbackLng: defaultLng,
           debug: config.IS_DEV_ENV,
-        })
-        .then(() => setTranslation(i18nInstance));
-
-      setAppIsLoaded(true);
+        });
+      setTranslation(i18nInstance);
+      setI18nWasInit(true);
     }
-  });
+  }, []);
+
+  const allServicesWasInit = loggerWasInit && rollbarWasInit
+    && i18nWasInit && bridgeWasSubscribed
+    && (erudaWasInit || !isErudaEnv);
+  if (allServicesWasInit && !appIsLoaded) {
+    setAppIsLoaded(true);
+  }
 
   if (appIsLoaded) {
+    logger.debug('loading process', 'App loaded');
     logger.debug('params', {
       lng,
       theme,
       vkLng,
       isMobile,
       query: config.VK_PARAMS,
+    });
+  }
+  if (loggerWasInit && !appIsLoaded) {
+    logger.debug('loading process', {
+      allServicesWasInit,
+      loggerWasInit,
+      rollbarWasInit,
+      i18nWasInit,
+      bridgeWasSubscribed,
+      erudaWasInit,
+      isErudaEnv,
     });
   }
 
