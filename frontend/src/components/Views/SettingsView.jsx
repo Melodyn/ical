@@ -19,6 +19,7 @@ const SettingsView = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
   const [calendarId, setCalendarId] = useState('');
   const [timezone, setTimezone] = useState('');
+
   // eslint-disable-next-line no-alert
   const onClick = () => alert(`${calendarId} ${timezone}`);
   const onChangeInput = (e) => setCalendarId(e.target.value);
