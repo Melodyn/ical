@@ -56,6 +56,7 @@ const CalendarView = (props) => {
     rangeIsCompleted = rangeCounter >= daysRangeCount;
   } while (!(rangeIsCompleted && isLastDayOfWeek));
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const Table = () => (
     <table
       ref={tableEl}
@@ -89,6 +90,7 @@ const CalendarView = (props) => {
     </table>
   );
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const EventsList = () => (
     <dl className="list-group rounded-0">
       {days.map((day, i) => (

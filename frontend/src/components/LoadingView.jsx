@@ -3,10 +3,12 @@ import {
 } from '@vkontakte/vkui';
 import React from 'react';
 
-export default ({ userLng }) => (
+const LoadingView = ({ userLng }) => (
   <View popout={<ScreenSpinner />} activePanel="loading">
     <Panel id="loading">
       <PanelHeader>{`${(userLng === 'ru') ? 'Загрузка' : 'Loading'}...`}</PanelHeader>
     </Panel>
   </View>
 );
+
+export default LoadingView;

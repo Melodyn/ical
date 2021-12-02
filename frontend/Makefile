@@ -34,3 +34,8 @@ container-dependencies:
 	docker-compose run --rm frontend make install-dependencies
 container-run:
 	docker-compose run --rm -p 8080:8080 frontend /bin/bash
+container-test:
+	docker-compose run frontend make test lint
+chmod: # восстановить права на файлы из контейнера
+	sudo chown -R $USER:$USER .
+	sudo chmod 664 -R .

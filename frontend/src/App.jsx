@@ -27,6 +27,10 @@ import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
+const ViewComponent = ({ appIsLoaded, appLng }) => (appIsLoaded
+  ? (<Main />)
+  : (<LoadingView userLng={appLng} />));
+
 const App = ({ config, bridge }) => {
   const [appIsLoaded, setAppIsLoaded] = useState(false);
   const [loggerWasInit, setLoggerWasInit] = useState(false);
@@ -62,6 +66,35 @@ const App = ({ config, bridge }) => {
   const [lng, setLng] = useState(appLng);
   localStorage.setItem('ical.config.lng', lng);
 
+  useEffect(async () => {
+    if (i18n === null) {
+      const i18nInstance = i18next.createInstance();
+      i18nInstance.on('languageChanged', (newLng) => {
+        localStorage.setItem('ical.config.lng', newLng);
+        setLng(newLng);
+      });
+      await i18nInstance
+        .init({
+          lng,
+          resources,
+          fallbackLng: defaultLng,
+          debug: config.IS_DEV_ENV,
+        });
+      setTranslation(i18nInstance);
+      setI18nWasInit(true);
+    }
+  }, []);
+
+  const rollbarConfig = {
+    accessToken: config.ROLLBAR_TOKEN,
+    environment: `${config.NODE_ENV}-front`,
+    enabled: config.IS_PROD_ENV || config.IS_DEV_ENV,
+  };
+  if (rollbar === null) {
+    setRollbar(new Rollbar(rollbarConfig));
+    setRollbarWasInit(true);
+  }
+
   const defaultTheme = 'light';
   const [theme, changeTheme] = useState(userConfig.theme || defaultTheme);
   localStorage.setItem('ical.config.theme', theme);
@@ -75,17 +108,7 @@ const App = ({ config, bridge }) => {
     dark: 'space_gray',
   };
   const scheme = schemeMap[theme];
-  const defaultScheme = schemeMap.dark; // пока приложение грузится, чтобы не светилось в темноте
-
-  const rollbarConfig = {
-    accessToken: config.ROLLBAR_TOKEN,
-    environment: `${config.NODE_ENV}-front`,
-    enabled: config.IS_PROD_ENV || config.IS_DEV_ENV,
-  };
-  if (rollbar === null) {
-    setRollbar(new Rollbar(rollbarConfig));
-    setRollbarWasInit(true);
-  }
+  const defaultScheme = schemeMap.dark; // пока приложение грузится, что��ы не светилось в темноте
 
   if (!bridgeWasSubscribed) {
     bridge.subscribe((event) => {
@@ -133,25 +156,6 @@ const App = ({ config, bridge }) => {
     setErudaWasInit(true);
   }
 
-  useEffect(async () => {
-    if (i18n === null) {
-      const i18nInstance = i18next.createInstance();
-      i18nInstance.on('languageChanged', (newLng) => {
-        localStorage.setItem('ical.config.lng', newLng);
-        setLng(newLng);
-      });
-      await i18nInstance
-        .init({
-          lng,
-          resources,
-          fallbackLng: defaultLng,
-          debug: config.IS_DEV_ENV,
-        });
-      setTranslation(i18nInstance);
-      setI18nWasInit(true);
-    }
-  }, []);
-
   const allServicesWasInit = loggerWasInit && rollbarWasInit
     && i18nWasInit && bridgeWasSubscribed
     && (erudaWasInit || !isErudaEnv);
@@ -181,10 +185,6 @@ const App = ({ config, bridge }) => {
     });
   }
 
-  const ViewComponent = () => (appIsLoaded
-    ? (<Main />)
-    : (<LoadingView userLng={i18n ? i18n.language : appLng} />));
-
   return (
     <RollbarProvider instance={rollbar} config={rollbarConfig}>
       <ErrorBoundary>
@@ -203,7 +203,10 @@ const App = ({ config, bridge }) => {
               <AppRoot>
                 <SplitLayout header={<PanelHeader separator={false} />}>
                   <SplitCol>
-                    <ViewComponent />
+                    <ViewComponent
+                      appIsLoaded={appIsLoaded}
+                      appLng={i18nWasInit ? i18n.language : appLng}
+                    />
                   </SplitCol>
                 </SplitLayout>
               </AppRoot>
