@@ -3,7 +3,7 @@
 |![логотип](logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
 |[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)|Frontend: [![Frontend Test Coverage](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/test_coverage)](https://codeclimate.com/github/Melodyn/iCal/test_coverage)
-|[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend production](../../workflows/Frontend%20CI/badge.svg)](../../actions?query=workflow%3A"Frontend+CI")
+|[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend Production](../../actions/workflows/frontend.yml/badge.svg?branch=frontend)](../../actions/workflows/frontend.yml?query=workflow%3A"Frontend+Production")
 |[Backend](https://github.com/Melodyn/ical/tree/backend)|[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI") [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
 
@@ -21,9 +21,9 @@
 * npm >= 6.14;
 * (опционально) make >= 4;
 * (опционально) docker >= 20;
-* (опционально) heroku >= 7.47.
+* (опционально) docker compose >= 1.29;
 
-Разворачивание:
+Развёртывание (без докера):
 * Клонировать этот репозиторий;
 * Перейти в нужную ветку (frontend / backend)
 * `make setup` для установки первый раз.
@@ -34,9 +34,9 @@
 
 Ещё команды:
 * `make test` - запустить тесты;
-* `make lint` - запустить линтер;
+* `make lint` - запустить линтер; Настройка линтера под IDEA с Docker: https://youtrack.jetbrains.com/issue/WEB-20824#focus=Comments-27-5106498.0-0
 * `container-setup` - установка и запуск в docker-контейнере.
-* `container-run` - запуск docker-контейнера с приложением. Далее - `make run` внутри контейнера.
+* `container-run` - запуск docker-контейнера с приложением. Далее - `make run` внутри контейнера или другие команды.
 
 
 ### Как это работает
