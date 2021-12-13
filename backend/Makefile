@@ -22,21 +22,19 @@ test:
 	NODE_ENV=test npm test -s
 test-dev:
 	NODE_ENV=test npm test -s -- --watchAll
-static:
-	npm run build-static
-static-dev:
-	npm run build-watch
 version:
 	npm version ${V} && git push --tags
+dep-update:
+	npx npm-check-updates -u
 
 # usage with docker
 container-setup: container-build container-dependency container-run
 container-build:
 	docker-compose build
 container-dependency:
-	docker-compose run --rm ical make install-dependencies
+	docker-compose run --rm -u $(USER_UID):$(USER_GID) backend make install-dependencies
 container-run: create-config
-	docker-compose run --rm -p 8080:8080 ical /bin/bash
+	docker-compose run --rm -u $(USER_UID):$(USER_GID) -p 5000:5000 backend /bin/bash
 
 # database
 postgres:

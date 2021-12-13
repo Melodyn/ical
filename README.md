@@ -1,14 +1,14 @@
 # ical
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/ical/maintainability)
-[![Frontend production](../../workflows/Frontend%20CI/badge.svg)](../../actions?query=workflow%3A"Frontend+CI")
-[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI")
-[![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
-
-|![логотип](./backend/logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
+|![логотип](logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
+|[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)|Frontend: [![Frontend Test Coverage](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/test_coverage)](https://codeclimate.com/github/Melodyn/iCal/test_coverage)
+|[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend Production](../../actions/workflows/frontend.yml/badge.svg?branch=frontend)](../../actions/workflows/frontend.yml?query=workflow%3A"Frontend+Production")
+|[Backend](https://github.com/Melodyn/ical/tree/backend)|[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI") [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
+
 
 Ссылки:
+* **доска задач**: https://github.com/users/Melodyn/projects/1
 * стримы с разработкой: https://www.youtube.com/playlist?list=PLxqZB2PTPdc7RSb5QpFR1lJ27NEmHtaYa
 * фронтенд приложения: https://melodyn.github.io/ical/
 * бэкенд приложения: https://melodyn-ical.herokuapp.com/
@@ -21,9 +21,9 @@
 * npm >= 6.14;
 * (опционально) make >= 4;
 * (опционально) docker >= 20;
-* (опционально) heroku >= 7.47.
+* (опционально) docker compose >= 1.29;
 
-Разворачивание:
+Развёртывание (без докера):
 * Клонировать этот репозиторий;
 * Перейти в нужную ветку (frontend / backend)
 * `make setup` для установки первый раз.
@@ -34,9 +34,9 @@
 
 Ещё команды:
 * `make test` - запустить тесты;
-* `make lint` - запустить линтер;
+* `make lint` - запустить линтер; Настройка линтера под IDEA с Docker: https://youtrack.jetbrains.com/issue/WEB-20824#focus=Comments-27-5106498.0-0
 * `container-setup` - установка и запуск в docker-контейнере.
-* `container-run` - запуск docker-контейнера с приложением. Далее - `make run` внутри контейнера.
+* `container-run` - запуск docker-контейнера с приложением. Далее - `make run` внутри контейнера или другие команды.
 
 
 ### Как это работает
@@ -48,4 +48,4 @@
 
 ## Права
 
-Исходный код и стримы с разработкой приложения являются частью демонстрации экосистемы JavaScript, её сложностей, особенностей и возможных подходов к разработке. Исходный код распространяется под лицензией [GNU GPLv3](LICENSE.txt). Использование кода без согласования с автором запрещено. 
+Исходный код и стримы с разработкой приложения являются частью демонстрации экосистемы JavaScript, её сложностей, особенностей и возможных подходов к разработке. Исходный код распространяется под лицензией [GNU GPLv3](./LICENSE.txt). Использование кода без согласования с автором запрещено. 

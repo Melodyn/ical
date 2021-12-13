@@ -26,10 +26,6 @@ overrides:
   - files: '*.test.js'
     rules:
       no-param-reassign: off
-  - files: 'src/*.js'
-    rules:
-     no-undef: off
-     no-alert: off
   - files: 'libs/cron/CronService.js'
     rules:
       no-await-in-loop: off
