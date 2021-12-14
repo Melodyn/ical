@@ -37,7 +37,7 @@
   "dependencies": {
     "@vkontakte/vk-bridge": "^2.4.1",
     "@vkontakte/vk-bridge-mock": "^2.0.3",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bootstrap": "^5.0.0-beta2",
     "core-js": "^3.9.1",
     "countries-and-timezones": "^2.3.1",
