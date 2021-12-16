@@ -6,16 +6,13 @@ import qs from 'querystring';
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
 import fastifyForm from 'fastify-formbody';
-import fastifyStatic from 'fastify-static';
 // libs
 import Rollbar from 'rollbar';
-import pointOfView from 'point-of-view';
-import pug from 'pug';
 import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
-import routes from '../routes/calendar.js';
+// import routes from '../routes/calendar.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
@@ -35,53 +32,53 @@ const initServer = (config) => {
     },
   });
 
-  routes.forEach((route) => server.route(route));
+  // routes.forEach((route) => server.route(route));
 
   return server;
 };
 
-const setAuth = (config, server) => {
-  server.decorateRequest('user', null);
-  server.decorateRequest('isAuthenticated', false);
-
-  const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
-
-  server.decorate('vkUserAuth', (req, res, done) => {
-    const { isValid, user, error } = vkUserValidator(req.query);
-    if (!isValid) {
-      req.user = null;
-      req.isAuthenticated = false;
-      return done(error);
-    }
-    if (!user.groupId) {
-      req.user = user;
-      req.isAuthenticated = false;
-      return done();
-    }
-
-    req.user = user;
-    req.isAuthenticated = true;
-    return done();
-  });
-
-  server.decorate('vkAdminAuth', (req, res, done) => {
-    if (!req.isAuthenticated) {
-      const { isValid, user, error } = vkUserValidator(req.query);
-      if (!isValid) {
-        return done(error);
-      }
-
-      req.isAuthenticated = true;
-      req.user = user;
-    }
-
-    return req.user.isAdmin
-      ? done()
-      : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
-  });
-
-  server.register(fastifyAuth);
-};
+// const setAuth = (config, server) => {
+//   server.decorateRequest('user', null);
+//   server.decorateRequest('isAuthenticated', false);
+//
+//   const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
+//
+//   server.decorate('vkUserAuth', (req, res, done) => {
+//     const { isValid, user, error } = vkUserValidator(req.query);
+//     if (!isValid) {
+//       req.user = null;
+//       req.isAuthenticated = false;
+//       return done(error);
+//     }
+//     if (!user.groupId) {
+//       req.user = user;
+//       req.isAuthenticated = false;
+//       return done();
+//     }
+//
+//     req.user = user;
+//     req.isAuthenticated = true;
+//     return done();
+//   });
+//
+//   server.decorate('vkAdminAuth', (req, res, done) => {
+//     if (!req.isAuthenticated) {
+//       const { isValid, user, error } = vkUserValidator(req.query);
+//       if (!isValid) {
+//         return done(error);
+//       }
+//
+//       req.isAuthenticated = true;
+//       req.user = user;
+//     }
+//
+//     return req.user.isAdmin
+//       ? done()
+//       : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
+//   });
+//
+//   server.register(fastifyAuth);
+// };
 
 const setStatic = (config, server) => {
   server.decorate('container', new Map());
@@ -109,50 +106,6 @@ const setStatic = (config, server) => {
   });
 
   server.register(fastifyForm);
-  server.register(fastifyStatic, {
-    root: path.resolve(config.STATIC_DIR),
-  });
-  server.register(pointOfView, {
-    engine: {
-      pug,
-    },
-    includeViewExtension: true,
-    templates: path.resolve(config.STATIC_DIR, 'templates'),
-  });
-  server.decorateReply('render', function render(template, values = {}) {
-    const { user, query } = this.request;
-    const errorsContainer = this.errors();
-    const flashContainer = this.flash();
-    const flashMessages = flashContainer.map(([level, text]) => ({ level, text }));
-    const invalidValues = Object.fromEntries(
-      errorsContainer.map(([key, { value }]) => [key, value]),
-    );
-    const errorMessages = Object.fromEntries(
-      errorsContainer.map(([key, { message }]) => [key, message]),
-    );
-
-    this.view(template, {
-      user,
-      values,
-      ...invalidValues,
-      flash: flashMessages,
-      errors: errorMessages,
-      gon: {
-        user: {
-          ...user,
-        },
-        app: {
-          isProd: config.IS_PROD_ENV || config.IS_STAGE_ENV,
-          appId: config.VK_APP_ID,
-          env: config.NODE_ENV,
-          rollbarToken: config.ROLLBAR_CLIENT_TOKEN,
-          page: template,
-          isAction: values.isAction === true,
-          query: qs.stringify(query),
-        },
-      },
-    });
-  });
 };
 
 const setServices = (config, server, reporter) => {
@@ -214,7 +167,7 @@ const app = async (envName) => {
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
   setServices(config, server, reporter);
-  setAuth(config, server);
+  // setAuth(config, server);
   setStatic(config, server);
 
   await db.runMigrations();

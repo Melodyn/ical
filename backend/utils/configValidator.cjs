@@ -56,7 +56,6 @@ const configSchema = yup.object({
   SYNC_ICAL_TIME: yup.mixed().transform((value) => ms(value)),
   CRON_SYNC_PERIOD: yup.mixed().transform((value) => ms(value)),
   CRON_SYNC_DELAY: yup.mixed().transform((value) => ms(value)),
-  COUNT_DAYS_ON_VIEW: yup.number().positive().required(),
 }).required();
 
 const configValidator = (envName) => {
