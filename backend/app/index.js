@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { constants } from 'http2';
 import path from 'path';
-import qs from 'querystring';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
@@ -12,7 +13,6 @@ import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
-// import routes from '../routes/calendar.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
@@ -23,6 +23,7 @@ import VKService from '../libs/vk/VKService.js';
 const { createConnection } = typeorm;
 const { configValidator } = utils;
 const { ICalAppError, AuthError } = errors;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initServer = (config) => {
   const server = fastify({
@@ -32,80 +33,85 @@ const initServer = (config) => {
     },
   });
 
-  // routes.forEach((route) => server.route(route));
+  const openapi = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'openapi-v1.json'), 'utf-8'));
+  Object.entries(openapi.paths).forEach(([url, methods]) => {
+    Object.entries(methods).forEach(([method, params]) => {
+      const methodParams = {
+        tags: [],
+        security: openapi.security,
+        ...params,
+      };
+      const { tags, security } = methodParams;
+
+      const route = {
+        method: method.toUpperCase(),
+        url,
+        preHandler(req, res, done) {
+          if (security.length > 0) {
+            this.auth([this.jwtAuth])(req, res, done);
+          } else {
+            done();
+          }
+        },
+        handler(req, res) {
+          res.code(200).send(`${method}\t${url}\ttags is: ${tags.join() || 'empty'}`);
+        },
+      };
+
+      server.route(route);
+    });
+  });
+
+  server.register(fastifyForm);
+  server.register(fastifyAuth);
 
   return server;
 };
 
-// const setAuth = (config, server) => {
-//   server.decorateRequest('user', null);
-//   server.decorateRequest('isAuthenticated', false);
-//
-//   const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
-//
-//   server.decorate('vkUserAuth', (req, res, done) => {
-//     const { isValid, user, error } = vkUserValidator(req.query);
-//     if (!isValid) {
-//       req.user = null;
-//       req.isAuthenticated = false;
-//       return done(error);
-//     }
-//     if (!user.groupId) {
-//       req.user = user;
-//       req.isAuthenticated = false;
-//       return done();
-//     }
-//
-//     req.user = user;
-//     req.isAuthenticated = true;
-//     return done();
-//   });
-//
-//   server.decorate('vkAdminAuth', (req, res, done) => {
-//     if (!req.isAuthenticated) {
-//       const { isValid, user, error } = vkUserValidator(req.query);
-//       if (!isValid) {
-//         return done(error);
-//       }
-//
-//       req.isAuthenticated = true;
-//       req.user = user;
-//     }
-//
-//     return req.user.isAdmin
-//       ? done()
-//       : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
-//   });
-//
-//   server.register(fastifyAuth);
-// };
+const setAuth = (config, server) => {
+  server.decorateRequest('user', null);
+  server.decorateRequest('isAuthenticated', false);
 
-const setStatic = (config, server) => {
-  server.decorate('container', new Map());
-
-  server.decorateRequest('flash', (data = []) => {
-    server.container.set('flash', data);
-  });
-  server.decorateReply('flash', () => {
-    const data = server.container.has('flash')
-      ? server.container.get('flash')
-      : [];
-    server.container.set('flash', []);
-    return data;
+  server.decorate('jwtAuth', (req, res, done) => {
+    console.log('jwtAuth', req.url);
+    done(new AuthError(`Access denied for user with role "${req.user}"`, req.query));
   });
 
-  server.decorateRequest('errors', (data = []) => {
-    server.container.set('errors', data);
-  });
-  server.decorateReply('errors', () => {
-    const data = server.container.has('errors')
-      ? server.container.get('errors')
-      : [];
-    server.container.set('errors', []);
-    return data;
-  });
-
-  server.register(fastifyForm);
+  // const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
+  //
+  // server.decorate('vkUserAuth', (req, res, done) => {
+  //   const { isValid, user, error } = vkUserValidator(req.query);
+  //   if (!isValid) {
+  //     req.user = null;
+  //     req.isAuthenticated = false;
+  //     return done(error);
+  //   }
+  //   if (!user.groupId) {
+  //     req.user = user;
+  //     req.isAuthenticated = false;
+  //     return done();
+  //   }
+  //
+  //   req.user = user;
+  //   req.isAuthenticated = true;
+  //   return done();
+  // });
+  //
+  // server.decorate('vkAdminAuth', (req, res, done) => {
+  //   if (!req.isAuthenticated) {
+  //     const { isValid, user, error } = vkUserValidator(req.query);
+  //     if (!isValid) {
+  //       return done(error);
+  //     }
+  //
+  //     req.isAuthenticated = true;
+  //     req.user = user;
+  //   }
+  //
+  //   return req.user.isAdmin
+  //     ? done()
+  //     : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
+  // });
 };
 
 const setServices = (config, server, reporter) => {
@@ -167,8 +173,7 @@ const app = async (envName) => {
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
   setServices(config, server, reporter);
-  // setAuth(config, server);
-  setStatic(config, server);
+  setAuth(config, server);
 
   await db.runMigrations();
   server.decorate('db', db);
