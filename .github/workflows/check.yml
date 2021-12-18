@@ -1,0 +1,42 @@
+name: Production CI
+
+on:
+  push:
+    branches:
+      - backend
+
+jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: library/postgres:12
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: ical_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: make install-dependencies
+    - run: make test-cov
+    - run: make lint
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2

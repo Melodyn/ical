@@ -24,6 +24,8 @@ test:
 	NODE_ENV=test npm test -s
 test-dev:
 	NODE_ENV=test npm test -s -- --watchAll
+test-cov:
+	NODE_ENV=test npm run test-cov
 version:
 	npm version ${V} && git push --tags
 dep-update:
@@ -37,6 +39,8 @@ container-dependency:
 	docker-compose run --rm -u $(USER_UID):$(USER_GID) backend make install-dependencies
 container-run: create-config
 	docker-compose run --rm -u $(USER_UID):$(USER_GID) -p 5000:5000 backend /bin/bash
+container-test:
+	docker-compose run --rm -u $(USER_UID):$(USER_GID) backend make test
 
 # database
 postgres:

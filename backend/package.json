@@ -19,7 +19,8 @@
     "ical": "bin/index.js"
   },
   "scripts": {
-    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles"
+    "test": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles",
+    "test-cov": "npx -n '--experimental-vm-modules --no-warnings' jest --colors --detectOpenHandles --coverage"
   },
   "repository": {
     "type": "git",
