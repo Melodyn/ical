@@ -21,6 +21,14 @@ rules:
   class-methods-use-this: off
   no-underscore-dangle: [1, { allow: ['__dirname'] }]
   max-classes-per-file: off
+  max-len: ["error", {
+    "code": 120,
+    "ignoreComments": true,
+    "ignoreTrailingComments": true,
+    "ignoreUrls": true,
+    "ignoreStrings": true,
+    "ignoreTemplateLiterals": true
+  }]
 
 overrides:
   - files: '*.test.js'
