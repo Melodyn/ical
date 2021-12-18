@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { constants } from 'http2';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
@@ -13,6 +13,7 @@ import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
+import * as appMethods from '../methods/index.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
@@ -20,6 +21,7 @@ import errors from '../utils/errors.cjs';
 import ICALService from '../libs/ical/ICALService.js';
 import VKService from '../libs/vk/VKService.js';
 
+const { methodActionMap } = appMethods;
 const { createConnection } = typeorm;
 const { configValidator } = utils;
 const { ICalAppError, AuthError } = errors;
@@ -33,40 +35,67 @@ const initServer = (config) => {
     },
   });
 
-  const openapi = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'openapi-v1.json'), 'utf-8'));
-  Object.entries(openapi.paths).forEach(([url, methods]) => {
-    Object.entries(methods).forEach(([method, params]) => {
-      const methodParams = {
-        tags: [],
-        security: openapi.security,
-        ...params,
-      };
-      const { tags, security } = methodParams;
-
-      const route = {
-        method: method.toUpperCase(),
-        url,
-        preHandler(req, res, done) {
-          if (security.length > 0) {
-            this.auth([this.jwtAuth])(req, res, done);
-          } else {
-            done();
-          }
-        },
-        handler(req, res) {
-          res.code(200).send(`${method}\t${url}\ttags is: ${tags.join() || 'empty'}`);
-        },
-      };
-
-      server.route(route);
-    });
-  });
-
   server.register(fastifyForm);
   server.register(fastifyAuth);
 
   return server;
 };
+
+const setRoutes = (server) => fs.readFile(path.resolve(__dirname, '..', 'openapi-v1.json'), 'utf-8')
+  .then((data) => JSON.parse(data))
+  .then((openapi) => Object.entries(openapi.paths)
+    .forEach(([url, apiMethods]) => {
+      const [, appMethodName] = url.split('/');
+      if (!_.has(appMethods, appMethodName)) {
+        throw new ICalAppError(`App does not contain "${appMethodName}" method for url "${url}"`);
+      }
+      const appActions = appMethods[appMethodName];
+
+      Object.entries(apiMethods).forEach(([apiMethod, params]) => {
+        const methodParams = {
+          security: openapi.security,
+          method: apiMethod.toUpperCase(),
+          ...params,
+        };
+        const { security, method } = methodParams;
+
+        if (!_.has(methodActionMap, method)) {
+          throw new ICalAppError(`App does not contain action matches for HTTP method "${method}"`);
+        }
+        const methodAction = methodActionMap[method];
+
+        if (!_.has(appActions, methodAction)) {
+          throw new ICalAppError(`App does not contain action "${methodAction}" for method "${method}" on url "${url}"`);
+        }
+        const action = appActions[methodAction];
+
+        const route = {
+          method,
+          url,
+          preHandler(req, res, done) {
+            if (security.length > 0) {
+              this.auth([this.jwtAuth])(req, res, done);
+            } else {
+              done();
+            }
+          },
+          handler(req, res) {
+            const { body: data, user } = req;
+            const { services } = this;
+
+            try {
+              const result = action({ data, user, services });
+              // res.code(200).send(`${method}\t${url}\ttags is: ${tags.join() || 'empty'}`);
+              res.code(200).send(result);
+            } catch (err) {
+              res.code(400).send(err.message);
+            }
+          },
+        };
+
+        server.route(route);
+      });
+    }));
 
 const setAuth = (config, server) => {
   server.decorateRequest('user', null);
@@ -172,6 +201,7 @@ const app = async (envName) => {
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
+  await setRoutes(server);
   setServices(config, server, reporter);
   setAuth(config, server);
 

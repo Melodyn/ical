@@ -13,7 +13,7 @@
     "last 2 versions"
   ],
   "engines": {
-    "node": "14.x"
+    "node": ">=16.x"
   },
   "bin": {
     "ical": "bin/index.js"
@@ -41,6 +41,7 @@
     "fastify-auth": "^1.1.0",
     "fastify-formbody": "^5.2.0",
     "form-data": "^4.0.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "luxon": "^2.2.0",
     "ms": "^2.1.3",

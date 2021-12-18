@@ -1,4 +1,3 @@
-import qs from 'querystring';
 import crypto from 'crypto';
 import _ from 'lodash';
 
@@ -25,7 +24,7 @@ export const buildSign = (query, secret) => {
 
   return crypto
     .createHmac('sha256', secret)
-    .update(qs.stringify(vkQueryParams))
+    .update(new URLSearchParams(vkQueryParams).toString())
     .digest()
     .toString('base64')
     .replace(/\+/g, '-')

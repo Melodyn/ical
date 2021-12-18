@@ -1,4 +1,6 @@
 V?=patch
+USER_UID=$(shell id -u)
+USER_GID=$(shell id -g)
 
 setup: install-dependencies create-config run
 install-dependencies:
