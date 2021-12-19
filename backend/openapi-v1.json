@@ -63,7 +63,7 @@
         "summary": "Получить JWT",
         "description": "Принимает в теле запроса объект из query-строки с [параметрами от VK](https://vk.com/dev/vk_apps_docs3?f=6.%2B%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B%2B%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA%D0%B0).\n\nВозвращает JWT с ограниченным сроком жизни. При его истечении необходима повторная аутентификация.\n",
         "requestBody": {
-          "description": "Должен содержать все параметры с перфиксом `vk_` и подпись. Порядок не важен. Допустимы лишние свойства, они будут проигнорированы.",
+          "description": "Должен содержать все параметры с перфиксом `vk_` и подпись. Порядок не важен. Допустимы лишние свойства, они будут проигнорированы.\n\nВ примере подпись создана с ключом `appSecretKey`\n",
           "content": {
             "application/json": {
               "schema": {
@@ -73,14 +73,16 @@
                 "vk_access_token_settings": "",
                 "vk_app_id": "7966403",
                 "vk_are_notifications_enabled": "0",
+                "vk_group_id": "101295953",
                 "vk_is_app_user": "1",
                 "vk_is_favorite": "0",
                 "vk_language": "ru",
                 "vk_platform": "desktop_web",
-                "vk_ref": "catalog_recent",
+                "vk_ref": "other",
                 "vk_ts": "1000000000",
-                "vk_user_id": "123",
-                "sign": "32tSvaHTQyskzTS5Yb-OrUH1cOKrzWdKt-CrcOC2EVk"
+                "vk_user_id": "0",
+                "vk_viewer_group_role": "admin",
+                "sign": "B_07QeUbmuPRzrJnF5_sEh_6O-x6M5NYmR471Ztpv4E"
               }
             }
           },
@@ -97,18 +99,15 @@
               }
             }
           },
-          "400": {
-            "description": "Ошибка в запросе. Ответ описывает код ошибки и сообщение",
+          "401": {
+            "description": "Ошибка в запросе или при выполнении обработки корректных данных",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/inline_response_400"
+                  "$ref": "#/components/schemas/400"
                 }
               }
             }
-          },
-          "401": {
-            "description": "Подпись VK не прошла проверку на корректность"
           }
         },
         "security": []
@@ -125,23 +124,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/200"
                 }
               }
             }
           },
           "400": {
-            "description": "Ошибка в запросе. Ответ описывает код ошибки и сообщение",
+            "description": "Ошибка в запросе или при выполнении обработки корректных данных",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/inline_response_400"
+                  "$ref": "#/components/schemas/400"
                 }
               }
             }
           },
           "401": {
-            "description": "Токен отсутствует, просрочен или некорректен"
+            "description": "Любая ошибка авторизации:\n* Недостаточно прав (нужно быть админом);\n* Не удалось проверить подпись ВК;\n* Токен отсутствует, просрочен или некорректен;\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
           }
         }
       },
@@ -155,81 +161,125 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/200"
                 }
               }
             }
           },
           "400": {
-            "description": "Ошибка в запросе. Ответ описывает код ошибки и сообщение",
+            "description": "Ошибка в запросе или при выполнении обработки корректных данных",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/inline_response_400"
+                  "$ref": "#/components/schemas/400"
                 }
               }
             }
           },
           "401": {
-            "description": "Токен отсутствует, просрочен или некорректен"
+            "description": "Любая ошибка авторизации:\n* Недостаточно прав (нужно быть админом);\n* Не удалось проверить подпись ВК;\n* Токен отсутствует, просрочен или некорректен;\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": [
+              "vk:admin"
+            ]
+          }
+        ]
       }
     }
   },
   "components": {
     "schemas": {
-      "auth_body": {
-        "required": [
-          "sign"
-        ],
+      "200": {
         "type": "object",
-        "properties": {
-          "sign": {
-            "type": "string"
-          }
-        }
+        "description": "Объект с данными"
       },
-      "inline_response_200": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string"
-          }
-        }
-      },
-      "inline_response_400": {
+      "400": {
         "type": "object",
         "properties": {
           "code": {
-            "type": "number"
+            "type": "number",
+            "description": "* 100-199 Ошибка авторизации или уровня прав\n* 200-299 Ошибка при обработке данных\n"
           },
           "message": {
             "type": "string"
+          },
+          "params": {
+            "type": "object"
           }
-        }
+        },
+        "description": "Ответ описывает код ошибки, текстовое описание и параметры при которых ошибка возникла"
+      },
+      "auth_body": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/200"
+          },
+          {
+            "required": [
+              "sign"
+            ]
+          },
+          {
+            "properties": {
+              "sign": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "inline_response_200": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/200"
+          },
+          {
+            "properties": {
+              "token": {
+                "type": "string"
+              }
+            }
+          }
+        ]
       }
     },
     "responses": {
       "400": {
-        "description": "Ошибка в запросе. Ответ описывает код ошибки и сообщение",
+        "description": "Ошибка в запросе или при выполнении обработки корректных данных",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/inline_response_400"
+              "$ref": "#/components/schemas/400"
             }
           }
         }
       },
       "401": {
-        "description": "Токен отсутствует, просрочен или некорректен"
+        "description": "Любая ошибка авторизации:\n* Недостаточно прав (нужно быть админом);\n* Не удалось проверить подпись ВК;\n* Токен отсутствует, просрочен или некорректен;\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/400"
+            }
+          }
+        }
       },
       "object": {
         "description": "Объект с данными",
         "content": {
           "application/json": {
             "schema": {
-              "type": "object"
+              "$ref": "#/components/schemas/200"
             }
           }
         }

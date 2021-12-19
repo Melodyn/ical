@@ -20,6 +20,7 @@ import ormconfig from '../ormconfig.cjs';
 import errors from '../utils/errors.cjs';
 import ICALService from '../libs/ical/ICALService.js';
 import VKService from '../libs/vk/VKService.js';
+import jwtService from '../libs/jwt/index.js';
 
 const { methodActionMap } = appMethods;
 const { createConnection } = typeorm;
@@ -41,13 +42,26 @@ const initServer = (config) => {
   return server;
 };
 
-const setRoutes = (server) => fs.readFile(path.resolve(__dirname, '..', 'openapi-v1.json'), 'utf-8')
-  .then((data) => JSON.parse(data))
-  .then((openapi) => Object.entries(openapi.paths)
-    .forEach(([url, apiMethods]) => {
-      const [, appMethodName] = url.split('/');
+const setRoutes = async (config, server) => {
+  const fileStats = await fs.readdir(path.resolve(__dirname, '..'))
+    .then((filenames) => filenames
+      .filter((filename) => filename.startsWith('openapi-') && filename.endsWith('.json'))
+      .map((filename) => ({
+        filename,
+        filepath: path.resolve(__dirname, '..', filename),
+        version: filename.match(/v\d+/)[0],
+      })));
+
+  const readFilePromises = fileStats.map(({ filepath, version }) => fs.readFile(filepath, 'utf-8')
+    .then((data) => JSON.parse(data))
+    .then((openapi) => ({ openapi, version })));
+  const files = await Promise.all(readFilePromises);
+
+  files.forEach(({ openapi, version }) => Object.entries(openapi.paths)
+    .forEach(([apiUrl, apiMethods]) => {
+      const [, appMethodName] = apiUrl.split('/');
       if (!_.has(appMethods, appMethodName)) {
-        throw new ICalAppError(`App does not contain "${appMethodName}" method for url "${url}"`);
+        throw new ICalAppError(`App ${version} does not contain "${appMethodName}" method for url "${apiUrl}"`);
       }
       const appActions = appMethods[appMethodName];
 
@@ -55,17 +69,18 @@ const setRoutes = (server) => fs.readFile(path.resolve(__dirname, '..', 'openapi
         const methodParams = {
           security: openapi.security,
           method: apiMethod.toUpperCase(),
+          url: `${config.API_PREFIX}${version}${apiUrl}`,
           ...params,
         };
-        const { security, method } = methodParams;
+        const { security, method, url } = methodParams;
 
         if (!_.has(methodActionMap, method)) {
-          throw new ICalAppError(`App does not contain action matches for HTTP method "${method}"`);
+          throw new ICalAppError(`App ${version} does not contain action matches for HTTP method "${method}"`);
         }
         const methodAction = methodActionMap[method];
 
         if (!_.has(appActions, methodAction)) {
-          throw new ICalAppError(`App does not contain action "${methodAction}" for method "${method}" on url "${url}"`);
+          throw new ICalAppError(`App ${version} does not contain action "${methodAction}" for method "${method}" on url "${url}"`);
         }
         const action = appActions[methodAction];
 
@@ -73,82 +88,94 @@ const setRoutes = (server) => fs.readFile(path.resolve(__dirname, '..', 'openapi
           method,
           url,
           preHandler(req, res, done) {
-            if (security.length > 0) {
-              this.auth([this.jwtAuth])(req, res, done);
-            } else {
+            if (security.length === 0) {
               done();
+              return;
             }
+
+            const requiredRoles = security.flatMap((currentSecurity) => Object.values(currentSecurity).flat());
+            const authHandlers = [this.jwtAuth];
+            if (requiredRoles.length > 0) {
+              req.requiredRoles = requiredRoles;
+              authHandlers.push(this.rolesAuth);
+            }
+
+            this.auth(authHandlers, { relation: 'and' })(req, res, done);
           },
           handler(req, res) {
             const { body: data, user } = req;
-            const { services } = this;
+            const app = {
+              services: this.services,
+              db: this.db,
+              timezones: this.timezones,
+              config: this.config,
+            };
 
-            try {
-              const result = action({ data, user, services });
-              // res.code(200).send(`${method}\t${url}\ttags is: ${tags.join() || 'empty'}`);
-              res.code(200).send(result);
-            } catch (err) {
-              res.code(400).send(err.message);
-            }
+            return new Promise((resolve) => {
+              resolve(action({ data, user, app }));
+            }).then((result) => res.code(200).send(result));
           },
         };
 
         server.route(route);
       });
     }));
+};
 
 const setAuth = (config, server) => {
   server.decorateRequest('user', null);
-  server.decorateRequest('isAuthenticated', false);
+  server.decorateRequest('requiredRoles', null);
 
   server.decorate('jwtAuth', (req, res, done) => {
-    console.log('jwtAuth', req.url);
-    done(new AuthError(`Access denied for user with role "${req.user}"`, req.query));
+    const token = req.headers.authorization.replace(/bearer\s*/i, '');
+    server.services.jwt.verify(token)
+      .then((user) => {
+        req.user = user;
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        done(new AuthError(`Access denied for user with role "${req.user}"`, req.query));
+      });
   });
-
-  // const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
-  //
-  // server.decorate('vkUserAuth', (req, res, done) => {
-  //   const { isValid, user, error } = vkUserValidator(req.query);
-  //   if (!isValid) {
-  //     req.user = null;
-  //     req.isAuthenticated = false;
-  //     return done(error);
-  //   }
-  //   if (!user.groupId) {
-  //     req.user = user;
-  //     req.isAuthenticated = false;
-  //     return done();
-  //   }
-  //
-  //   req.user = user;
-  //   req.isAuthenticated = true;
-  //   return done();
-  // });
-  //
-  // server.decorate('vkAdminAuth', (req, res, done) => {
-  //   if (!req.isAuthenticated) {
-  //     const { isValid, user, error } = vkUserValidator(req.query);
-  //     if (!isValid) {
-  //       return done(error);
-  //     }
-  //
-  //     req.isAuthenticated = true;
-  //     req.user = user;
-  //   }
-  //
-  //   return req.user.isAdmin
-  //     ? done()
-  //     : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
-  // });
+  server.decorate('rolesAuth', (req, res, done) => {
+    if (req.user === null) {
+      done(new AuthError('User unauthorized'));
+    }
+    if (!_.has(req.user, 'viewerGroupRole')) {
+      done(new AuthError('User is not group member'));
+    }
+    const isPermittedRole = req.requiredRoles.some((role) => `vk:${req.user.viewerGroupRole}` === role);
+    if (!isPermittedRole) {
+      done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`));
+    }
+    done();
+  });
 };
 
 const setServices = (config, server, reporter) => {
   const services = {
-    vkService: new VKService(config),
-    icalService: new ICALService(config),
+    vk: new VKService(config),
+    ical: new ICALService(config),
+    jwt: jwtService(config),
     reporter,
   };
+
+  console.log(JSON.stringify({
+    vk_access_token_settings: '',
+    vk_app_id: '7966403',
+    vk_are_notifications_enabled: '0',
+    vk_group_id: '101295953',
+    vk_is_app_user: '1',
+    vk_is_favorite: '0',
+    vk_language: 'ru',
+    vk_platform: 'desktop_web',
+    vk_ref: 'other',
+    vk_ts: '1000000000',
+    vk_user_id: '0',
+    vk_viewer_group_role: 'admin',
+    sign: 'B_07QeUbmuPRzrJnF5_sEh_6O-x6M5NYmR471Ztpv4E',
+  }));
 
   server.decorate('services', services);
 };
@@ -170,8 +197,12 @@ const initReporter = (config, server) => {
         return res.code(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send(`error: ${error.message}`);
       }
 
-      const message = [error.message, `params: ${JSON.stringify(error.params, null, 2)}`].join('\n');
-      return res.code(error.statusCode).send(`error: ${message}`);
+      const params = _.isEmpty(error.params) ? '' : `params: ${JSON.stringify(error.params, null, 2)}`;
+      const message = [error.message, params].filter((x) => x).join('\n');
+      return res.code(error.statusCode).send({
+        code: error.code,
+        message,
+      });
     });
   });
 
@@ -201,7 +232,7 @@ const app = async (envName) => {
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
-  await setRoutes(server);
+  await setRoutes(config, server);
   setServices(config, server, reporter);
   setAuth(config, server);
 

@@ -16,7 +16,19 @@ class AuthError extends ICalAppError {
     this.name = 'Authorization error';
     this.message = message;
     this.params = params;
+    this.code = constants.HTTP_STATUS_UNAUTHORIZED;
     this.statusCode = constants.HTTP_STATUS_UNAUTHORIZED;
+  }
+}
+
+class ProcessingError extends ICalAppError {
+  constructor(message, code = 0, params = {}) {
+    super();
+    this.name = 'Processing error';
+    this.message = message;
+    this.params = params;
+    this.code = code;
+    this.statusCode = constants.HTTP_STATUS_BAD_REQUEST;
   }
 }
 

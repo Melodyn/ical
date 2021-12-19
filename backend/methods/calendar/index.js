@@ -1,3 +1,3 @@
-export const read = (params) => console.log('read calendar', params);
+export const read = ({ user }) => user;
 
-export const create = (params) => console.log('create calendar', params);
+export const create = ({ user }) => user;
