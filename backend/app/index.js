@@ -6,14 +6,13 @@ import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
-import fastifyForm from 'fastify-formbody';
 // libs
 import Rollbar from 'rollbar';
 import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
-import * as appMethods from '../methods/index.js';
+import * as appControllers from '../controllers/index.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
@@ -22,7 +21,7 @@ import ICALService from '../libs/ical/ICALService.js';
 import VKService from '../libs/vk/VKService.js';
 import jwtService from '../libs/jwt/index.js';
 
-const { methodActionMap } = appMethods;
+const { methodActionMap } = appControllers;
 const { createConnection } = typeorm;
 const { configValidator } = utils;
 const { ICalAppError, AuthError } = errors;
@@ -36,7 +35,6 @@ const initServer = (config) => {
     },
   });
 
-  server.register(fastifyForm);
   server.register(fastifyAuth);
 
   return server;
@@ -59,11 +57,11 @@ const setRoutes = async (config, server) => {
 
   files.forEach(({ openapi, version }) => Object.entries(openapi.paths)
     .forEach(([apiUrl, apiMethods]) => {
-      const [, appMethodName] = apiUrl.split('/');
-      if (!_.has(appMethods, appMethodName)) {
-        throw new ICalAppError(`App ${version} does not contain "${appMethodName}" method for url "${apiUrl}"`);
+      const [, apiControllerName] = apiUrl.split('/');
+      if (!_.has(appControllers, apiControllerName)) {
+        throw new ICalAppError(`App ${version} does not contain "${apiControllerName}" controller for url "${apiUrl}"`);
       }
-      const appActions = appMethods[appMethodName];
+      const appActions = appControllers[apiControllerName];
 
       Object.entries(apiMethods).forEach(([apiMethod, params]) => {
         const methodParams = {
