@@ -125,15 +125,18 @@ const setAuth = (config, server) => {
   server.decorateRequest('requiredRoles', null);
 
   server.decorate('jwtAuth', (req, res, done) => {
+    if (!req.headers.authorization) {
+      done(new AuthError('Should be a header "Authorization: Bearer <JWT>"'));
+    }
+
     const token = req.headers.authorization.replace(/bearer\s*/i, '');
     server.services.jwt.verify(token)
       .then((user) => {
         req.user = user;
         done();
       })
-      .catch((err) => {
-        console.error(err);
-        done(new AuthError(`Access denied for user with role "${req.user}"`, req.query));
+      .catch(() => {
+        done(new AuthError('Incorrect token'));
       });
   });
   server.decorate('rolesAuth', (req, res, done) => {
@@ -158,22 +161,6 @@ const setServices = (config, server, reporter) => {
     jwt: jwtService(config),
     reporter,
   };
-
-  console.log(JSON.stringify({
-    vk_access_token_settings: '',
-    vk_app_id: '7966403',
-    vk_are_notifications_enabled: '0',
-    vk_group_id: '101295953',
-    vk_is_app_user: '1',
-    vk_is_favorite: '0',
-    vk_language: 'ru',
-    vk_platform: 'desktop_web',
-    vk_ref: 'other',
-    vk_ts: '1000000000',
-    vk_user_id: '0',
-    vk_viewer_group_role: 'admin',
-    sign: 'B_07QeUbmuPRzrJnF5_sEh_6O-x6M5NYmR471Ztpv4E',
-  }));
 
   server.decorate('services', services);
 };

@@ -48,6 +48,7 @@ export const createValidator = (secret, appAdminId) => (query = {}) => {
 
   const user = {
     ...userParams,
+    sign: vkSign,
     platform: userParams.platform || '',
     isAdmin: (userParams.viewerGroupRole === 'admin'),
     isAppAdmin: (userParams.userId === appAdminId),
