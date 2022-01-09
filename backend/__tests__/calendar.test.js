@@ -96,7 +96,7 @@ describe('Negative cases', () => {
     }));
   });
 
-  test('Create calendar without incorrect body', async () => {
+  test('Create calendar with incorrect body', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
       path: buildPath('calendar'),
@@ -113,6 +113,7 @@ describe('Negative cases', () => {
     expect(payload).not.toBeFalsy();
 
     const body = JSON.parse(payload);
+    console.log(body);
     expect(body).toEqual(expect.objectContaining({
       name: expect.any(String),
       message: expect.any(String),

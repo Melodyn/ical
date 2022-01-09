@@ -211,10 +211,10 @@ const initReporter = (config, server) => {
 
       if (isValidationError) {
         const paramsMap = error.validation.map(({
-          dataPath,
+          dataPath = '',
           params: { missingProperty },
           message,
-        }) => [dataPath || missingProperty, message]);
+        }) => [dataPath.replace(/^\./, '') || missingProperty, message]);
 
         return res.code(constants.HTTP_STATUS_BAD_REQUEST).send({
           name: `validation.${error.validationContext}`,
