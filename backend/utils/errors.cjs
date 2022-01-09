@@ -11,18 +11,18 @@ class ConfigValidationError extends ICalAppError {
 }
 
 class AuthError extends ICalAppError {
-  constructor(message, params = {}) {
+  constructor(message, code = '', params = {}) {
     super();
     this.name = 'Authorization error';
     this.message = message;
     this.params = params;
-    this.code = constants.HTTP_STATUS_UNAUTHORIZED;
+    this.code = ['auth', code].filter(x => x).join('.');
     this.statusCode = constants.HTTP_STATUS_UNAUTHORIZED;
   }
 }
 
 class ProcessingError extends ICalAppError {
-  constructor(message, code = 0, params = {}) {
+  constructor(message, code = 'app', params = {}) {
     super();
     this.name = 'Processing error';
     this.message = message;

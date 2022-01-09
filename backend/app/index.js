@@ -33,6 +33,11 @@ const initServer = (config) => {
       prettyPrint: config.IS_DEV_ENV,
       level: config.LOG_LEVEL,
     },
+    ajv: {
+      customOptions: {
+        allErrors: true,
+      },
+    },
   });
 
   server.register(fastifyAuth);
@@ -41,7 +46,7 @@ const initServer = (config) => {
 };
 
 const setRoutes = async (config, server) => {
-  const fileStats = await fs.readdir(path.resolve(__dirname, '..'))
+  const openapiFileStats = await fs.readdir(path.resolve(__dirname, '..'))
     .then((filenames) => filenames
       .filter((filename) => filename.startsWith('openapi-') && filename.endsWith('.json'))
       .map((filename) => ({
@@ -50,74 +55,94 @@ const setRoutes = async (config, server) => {
         version: filename.match(/v\d+/)[0],
       })));
 
-  const readFilePromises = fileStats.map(({ filepath, version }) => fs.readFile(filepath, 'utf-8')
+  const readFilePromises = openapiFileStats.map(({ filepath, version }) => fs.readFile(filepath, 'utf-8')
     .then((data) => JSON.parse(data))
     .then((openapi) => ({ openapi, version })));
-  const files = await Promise.all(readFilePromises);
+  const openapiFiles = await Promise.all(readFilePromises);
 
-  files.forEach(({ openapi, version }) => Object.entries(openapi.paths)
-    .forEach(([apiUrl, apiMethods]) => {
-      const [, apiControllerName] = apiUrl.split('/');
-      if (!_.has(appControllers, apiControllerName)) {
-        throw new ICalAppError(`App ${version} does not contain "${apiControllerName}" controller for url "${apiUrl}"`);
-      }
-      const appActions = appControllers[apiControllerName];
-
-      Object.entries(apiMethods).forEach(([apiMethod, params]) => {
-        const methodParams = {
-          security: openapi.security,
-          method: apiMethod.toUpperCase(),
-          url: `${config.API_PREFIX}${version}${apiUrl}`,
-          ...params,
-        };
-        const { security, method, url } = methodParams;
-
-        if (!_.has(methodActionMap, method)) {
-          throw new ICalAppError(`App ${version} does not contain action matches for HTTP method "${method}"`);
-        }
-        const methodAction = methodActionMap[method];
-
-        if (!_.has(appActions, methodAction)) {
-          throw new ICalAppError(`App ${version} does not contain action "${methodAction}" for method "${method}" on url "${url}"`);
-        }
-        const action = appActions[methodAction];
-
-        const route = {
-          method,
-          url,
-          preHandler(req, res, done) {
-            if (security.length === 0) {
-              done();
-              return;
-            }
-
-            const requiredRoles = security.flatMap((currentSecurity) => Object.values(currentSecurity).flat());
-            const authHandlers = [this.jwtAuth];
-            if (requiredRoles.length > 0) {
-              req.requiredRoles = requiredRoles;
-              authHandlers.push(this.rolesAuth);
-            }
-
-            this.auth(authHandlers, { relation: 'and' })(req, res, done);
-          },
-          handler(req, res) {
-            const { body: data, user } = req;
-            const app = {
-              services: this.services,
-              db: this.db,
-              timezones: this.timezones,
-              config: this.config,
-            };
-
-            return new Promise((resolve) => {
-              resolve(action({ data, user, app }));
-            }).then((result) => res.code(200).send(result));
-          },
-        };
-
-        server.route(route);
-      });
+  openapiFiles.forEach(({ openapi, version }) => {
+    Object.entries(openapi.components.schemas).forEach(([componentName, component]) => server.addSchema({
+      $id: `${version}-${componentName}`,
+      ...component,
     }));
+
+    return Object.entries(openapi.paths)
+      .forEach(([apiUrl, apiMethods]) => {
+        const [, apiControllerName] = apiUrl.split('/');
+        if (!_.has(appControllers, apiControllerName)) {
+          throw new ICalAppError(`App "${version}" does not contain "${apiControllerName}" controller for url "${apiUrl}"`);
+        }
+        const appActions = appControllers[apiControllerName];
+
+        Object.entries(apiMethods).forEach(([apiMethod, params]) => {
+          const methodParams = {
+            security: openapi.security,
+            method: apiMethod.toUpperCase(),
+            url: `${config.API_PREFIX}${version}${apiUrl}`,
+            ...params,
+          };
+          const { security, method, url } = methodParams;
+
+          if (!_.has(methodActionMap, method)) {
+            throw new ICalAppError(`App "${version}" does not contain action matches for HTTP method "${method}"`);
+          }
+          const methodAction = methodActionMap[method];
+
+          if (!_.has(appActions, methodAction)) {
+            throw new ICalAppError(`App "${version}" does not contain action "${methodAction}" for method "${method}" on url "${url}"`);
+          }
+          const action = appActions[methodAction];
+
+          const route = {
+            method,
+            url,
+            preValidation(req, res, done) {
+              if (security.length === 0) {
+                done();
+                return;
+              }
+
+              const requiredRoles = security.flatMap((currentSecurity) => Object.values(currentSecurity).flat());
+              const authHandlers = [this.jwtAuth];
+              if (requiredRoles.length > 0) {
+                req.requiredRoles = requiredRoles;
+                authHandlers.push(this.rolesAuth);
+              }
+
+              this.auth(authHandlers, { relation: 'and' })(req, res, done);
+            },
+            handler(req, res) {
+              const { body: data, user } = req;
+              const app = {
+                services: this.services,
+                db: this.db,
+                timezones: this.timezones,
+                config: this.config,
+              };
+
+              return new Promise((resolve) => {
+                resolve(action({ data, user, app }));
+              }).then((result) => res.code(200).send(result));
+            },
+          };
+
+          if (method === 'POST') {
+            if (!_.has(params, 'requestBody')) {
+              throw new ICalAppError(`App "${version}" does not contain body validator for action "${methodAction}" on url "${method} ${url}"`);
+            }
+
+            const refs = params.requestBody.$ref.split('/');
+            const componentName = refs[refs.length - 1];
+            const schema = { $ref: `${version}-${componentName}` };
+            route.schema = {
+              body: schema,
+            };
+          }
+
+          server.route(route);
+        });
+      });
+  });
 };
 
 const setAuth = (config, server) => {
@@ -178,15 +203,30 @@ const initReporter = (config, server) => {
   server.setErrorHandler((err, req, res) => {
     server.log.debug(err);
     rollbar.errorHandler()(err, req, res, (error) => {
-      if (!(error instanceof ICalAppError)) {
+      const isAppError = (error instanceof ICalAppError);
+      const isValidationError = _.has(err, 'validation') && _.has(err, 'validationContext');
+      if (!isAppError && !isValidationError) {
         return res.code(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send(`error: ${error.message}`);
       }
 
-      const params = _.isEmpty(error.params) ? '' : `params: ${JSON.stringify(error.params, null, 2)}`;
-      const message = [error.message, params].filter((x) => x).join('\n');
+      if (isValidationError) {
+        const paramsMap = error.validation.map(({
+          dataPath,
+          params: { missingProperty },
+          message,
+        }) => [dataPath || missingProperty, message]);
+
+        return res.code(constants.HTTP_STATUS_BAD_REQUEST).send({
+          name: `validation.${error.validationContext}`,
+          message: error.message,
+          params: Object.fromEntries(paramsMap),
+        });
+      }
+
       return res.code(error.statusCode).send({
-        code: error.code,
-        message,
+        name: error.code,
+        message: error.message,
+        params: error.params,
       });
     });
   });

@@ -1,3 +1,3 @@
-export const read = ({ user }) => user;
+export const read = ({ user }) => ({ action: 'read', user });
 
-export const create = ({ user }) => user;
+export const create = ({ user }) => ({ action: 'create', user });

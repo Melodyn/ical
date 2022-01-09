@@ -63,34 +63,11 @@
         "summary": "Получить JWT",
         "description": "Принимает в теле запроса объект из query-строки с [параметрами от VK](https://vk.com/dev/vk_apps_docs3?f=6.%2B%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B%2B%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA%D0%B0).\n\nВозвращает JWT с ограниченным сроком жизни. При его истечении необходима повторная аутентификация.\n",
         "requestBody": {
-          "description": "Должен содержать все параметры с перфиксом `vk_` и подпись. Порядок не важен. Допустимы лишние свойства, они будут проигнорированы.\n\nВ примере подпись создана с ключом `appSecretKey`\n",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/auth_body"
-              },
-              "example": {
-                "vk_access_token_settings": "",
-                "vk_app_id": "7966403",
-                "vk_are_notifications_enabled": "0",
-                "vk_group_id": "101295953",
-                "vk_is_app_user": "1",
-                "vk_is_favorite": "0",
-                "vk_language": "ru",
-                "vk_platform": "desktop_web",
-                "vk_ref": "other",
-                "vk_ts": "1000000000",
-                "vk_user_id": "0",
-                "vk_viewer_group_role": "admin",
-                "sign": "B_07QeUbmuPRzrJnF5_sEh_6O-x6M5NYmR471Ztpv4E"
-              }
-            }
-          },
-          "required": true
+          "$ref": "#/components/requestBodies/vkParams"
         },
         "responses": {
           "200": {
-            "description": "Аутентификация прошла успешно, возращается JWT",
+            "description": "Аутентификация прошла успешно, возвращается JWT",
             "content": {
               "application/json": {
                 "schema": {
@@ -155,6 +132,9 @@
         "tags": [
           "calendar"
         ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/calendar"
+        },
         "responses": {
           "200": {
             "description": "Объект с данными",
@@ -206,9 +186,9 @@
       "400": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "number",
-            "description": "* 100-199 Ошибка авторизации или уровня прав\n* 200-299 Ошибка при обработке данных\n"
+          "name": {
+            "type": "string",
+            "description": "Имена ошибок записываются через точку для поиска в словаре i18n. Примеры:\n* auth.vk.emptySign Отсутствует подпись параметров ВК\n* calendar.create.notFound При подключении нового календаря не удалось его найти по индентификатору\n"
           },
           "message": {
             "type": "string"
@@ -217,26 +197,59 @@
             "type": "object"
           }
         },
-        "description": "Ответ описывает код ошибки, текстовое описание и параметры при которых ошибка возникла"
+        "description": "Ответ описывает имя ошибки, текстовое описание на английском и параметры при которых ошибка возникла"
       },
-      "auth_body": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/200"
+      "calendar": {
+        "required": [
+          "calendarId",
+          "timezone"
+        ],
+        "type": "object",
+        "properties": {
+          "calendarId": {
+            "minLength": 5,
+            "pattern": "^.+@.+\\..+$",
+            "type": "string",
+            "description": "Идентификатор календаря"
           },
-          {
-            "required": [
-              "sign"
-            ]
-          },
-          {
-            "properties": {
-              "sign": {
-                "type": "string"
-              }
-            }
+          "timezone": {
+            "minLength": 5,
+            "type": "string",
+            "description": "Часовой пояс"
           }
-        ]
+        },
+        "description": "Объект календаря",
+        "example": {
+          "calendarId": "ob1gcsbo877671s4295f693nv0@group.calendar.google.com",
+          "timezone": "Europe/Moscow"
+        }
+      },
+      "vkParams": {
+        "required": [
+          "sign"
+        ],
+        "type": "object",
+        "properties": {
+          "sign": {
+            "type": "string"
+          }
+        },
+        "description": "Объект с параметрами от ВКонтакте из query string. Всё, что начинается с префикса `vk_` и подпись из параметра `sign`.\n",
+        "example": {
+          "vk_access_token_settings": "",
+          "vk_app_id": "7966403",
+          "vk_are_notifications_enabled": "0",
+          "vk_group_id": "101295953",
+          "vk_is_app_user": "1",
+          "vk_is_favorite": "0",
+          "vk_language": "ru",
+          "vk_platform": "desktop_web",
+          "vk_ref": "other",
+          "vk_ts": "1000000000",
+          "vk_user_id": "0",
+          "vk_viewer_group_role": "admin",
+          "sign": "B_07QeUbmuPRzrJnF5_sEh_6O-x6M5NYmR471Ztpv4E"
+        }
       },
       "inline_response_200": {
         "allOf": [
@@ -283,6 +296,30 @@
             }
           }
         }
+      }
+    },
+    "requestBodies": {
+      "calendar": {
+        "description": "Объект календаря:\n* Идентификатор обычно похож на адрес почты или им является.\n* Часовой пояс из базы [IANA](https://www.iana.org/time-zones)\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/calendar"
+            }
+          }
+        },
+        "required": true
+      },
+      "vkParams": {
+        "description": "Должен содержать все параметры с перфиксом `vk_` и подпись. Порядок не важен. Допустимы лишние свойства, они будут проигнорированы.\n\nВ примере подпись создана с ключом `appSecretKey`\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/vkParams"
+            }
+          }
+        },
+        "required": true
       }
     },
     "securitySchemes": {

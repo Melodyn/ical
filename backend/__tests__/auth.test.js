@@ -43,7 +43,7 @@ describe('Positive cases', () => {
     expect(() => jwt.verify(users[role].token, app.config.VK_PROTECTED_KEY)).not.toThrow();
   });
 
-  test('Update calendar as admin', async () => {
+  test('Create calendar as admin', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
       path: buildPath('calendar'),
@@ -55,8 +55,14 @@ describe('Positive cases', () => {
       },
     });
 
-    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(statusCode).toEqual(constants.HTTP_STATUS_BAD_REQUEST);
     expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      name: expect.any(String),
+      message: expect.any(String),
+    }));
   });
 
   test('Get calendar as member', async () => {
@@ -88,7 +94,7 @@ describe('Negative cases', () => {
 
     const body = JSON.parse(payload);
     expect(body).toEqual(expect.objectContaining({
-      code: expect.any(Number),
+      name: expect.any(String),
       message: expect.any(String),
     }));
   });
@@ -110,7 +116,7 @@ describe('Negative cases', () => {
 
     const body = JSON.parse(payload);
     expect(body).toEqual(expect.objectContaining({
-      code: expect.any(Number),
+      name: expect.any(String),
       message: expect.any(String),
     }));
   });
@@ -129,12 +135,12 @@ describe('Negative cases', () => {
 
     const body = JSON.parse(payload);
     expect(body).toEqual(expect.objectContaining({
-      code: expect.any(Number),
+      name: expect.any(String),
       message: expect.any(String),
     }));
   });
 
-  test('Update calendar as not admin', async () => {
+  test('Create calendar as not admin', async () => {
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
       path: buildPath('calendar'),
@@ -151,7 +157,7 @@ describe('Negative cases', () => {
 
     const body = JSON.parse(payload);
     expect(body).toEqual(expect.objectContaining({
-      code: expect.any(Number),
+      name: expect.any(String),
       message: expect.any(String),
     }));
   });
