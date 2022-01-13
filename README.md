@@ -1,10 +1,9 @@
 # ical
 
-|![логотип](logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
+|![логотип](logo.png)|<center>Google-календарь и виджет в сообщество ВКонтакте.<br/><br/> [![Maintainability](https://img.shields.io/badge/vk%20mini%20app-open-blue)](https://vk.com/app7703913) [![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability) </center>
 |---|---|
-|[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)|Frontend: [![Frontend Test Coverage](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/test_coverage)](https://codeclimate.com/github/Melodyn/iCal/test_coverage)
-|[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend Production](../../actions/workflows/frontend.yml/badge.svg?branch=frontend)](../../actions/workflows/frontend.yml?query=workflow%3A"Frontend+Production")
-|[Backend](https://github.com/Melodyn/ical/tree/backend)|[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI") [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
+|[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend Test Coverage](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/test_coverage)](https://codeclimate.com/github/Melodyn/iCal/test_coverage) [![Frontend Production](../../actions/workflows/frontend.yml/badge.svg?branch=frontend)](../../actions/workflows/frontend.yml?query=workflow%3A"Frontend+Production")
+|[Backend](https://github.com/Melodyn/ical/tree/backend)|[![Backend Test Coverage](https://codecov.io/gh/Melodyn/ical/branch/main/graph/badge.svg?token=XVWH9NL1PW)](https://codecov.io/gh/Melodyn/ical) [![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI") [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
 
 Ссылки:

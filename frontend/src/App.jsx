@@ -22,7 +22,7 @@ import eruda from 'eruda';
 import pino from 'pino';
 import upperFirst from 'lodash/upperFirst.js';
 // modules
-import resources from '../resources';
+import resources from '../../common/resources';
 import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
