@@ -1,5 +1,21 @@
 export default {
   translation: {
+    error: {
+      auth: {
+        vk: {
+          sign: {
+            empty: 'Missing in request body parameter "sign" for authentication',
+            invalid: 'Failed to verify the VK signature, it may have been forged'
+          }
+        },
+        token: {
+          header: 'Should be a header "Authorization: Bearer <JWT>"',
+          role: 'Access denied for user with role "{{viewerGroupRole}}"',
+          invalid: 'Failed to verify the JWT signature, it may have been forged',
+          expired: 'JWT expired, re-authentication required'
+        }
+      }
+    },
     nav: {
       install: 'Install',
       help: 'Help',

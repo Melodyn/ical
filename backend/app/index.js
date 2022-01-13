@@ -46,7 +46,7 @@ const initServer = (config) => {
 };
 
 const setRoutes = async (config, server) => {
-  const openapiFileStats = await fs.readdir(path.resolve(__dirname, '..'))
+  const openapiFileStats = await fs.readdir(path.resolve(__dirname, '..', '..', 'common'))
     .then((filenames) => filenames
       .filter((filename) => filename.startsWith('openapi-') && filename.endsWith('.json'))
       .map((filename) => ({
