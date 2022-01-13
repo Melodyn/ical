@@ -21,15 +21,19 @@ rules:
   class-methods-use-this: off
   no-underscore-dangle: [1, { allow: ['__dirname'] }]
   max-classes-per-file: off
+  max-len: ["error", {
+    "code": 120,
+    "ignoreComments": true,
+    "ignoreTrailingComments": true,
+    "ignoreUrls": true,
+    "ignoreStrings": true,
+    "ignoreTemplateLiterals": true
+  }]
 
 overrides:
   - files: '*.test.js'
     rules:
       no-param-reassign: off
-  - files: 'src/*.js'
-    rules:
-     no-undef: off
-     no-alert: off
   - files: 'libs/cron/CronService.js'
     rules:
       no-await-in-loop: off

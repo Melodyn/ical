@@ -7,7 +7,7 @@ describe('Positive cases', () => {
   test('Run app', async () => {
     app = await createApp(process.env.NODE_ENV).catch((e) => e);
     expect(app).not.toBeInstanceOf(Error);
-  });
+  }, 10000);
 
   test('App is exists', async () => {
     expect(app).not.toBeFalsy();

@@ -1,109 +1,164 @@
 import { constants } from 'http2';
+import jwt from 'jsonwebtoken';
 import users from '../__fixtures__/users.js';
-import calendars from '../__fixtures__/calendars.js';
 import { buildSign } from '../libs/vk/common/userValidator.js';
 import createApp from '../index.js';
 
 let app;
-let database;
+let buildPath;
 
 beforeAll(async () => {
   app = await createApp(process.env.NODE_ENV);
-  database = app.db.entityMetadatas.map(
-    ({ name, tableName }) => [tableName, app.db.getRepository(name)],
-  );
   Object.values(users).forEach((user) => {
     user.sign = buildSign(user, app.config.VK_PROTECTED_KEY);
   });
+  buildPath = (...paths) => `${app.config.API_PREFIX}v1/${paths.join('/')}`;
 });
 
 afterAll(async () => {
   if (app) {
-    const rollbackPromises = database.map(([tableName, repo]) => repo
-      .query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY;`));
-
-    await Promise.all(rollbackPromises);
     await app.stop();
   }
 });
 
 describe('Positive cases', () => {
-  test('Route for all roles, user role "member"', async () => {
+  test.each(Object.keys(users))('Get token for %s', async (role) => {
     const { statusCode, payload } = await app.server.inject({
-      method: 'GET',
-      path: '/calendar',
-      query: users.member,
-    });
-
-    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).not.toBeFalsy();
-  });
-
-  test('Route for all roles, user role "admin"', async () => {
-    const { statusCode, payload } = await app.server.inject({
-      method: 'GET',
-      path: '/calendar',
-      query: users.admin,
-    });
-
-    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
-    expect(payload).not.toBeFalsy();
-  });
-
-  test('Route for role "admin"', async () => {
-    const { statusCode, headers } = await app.server.inject({
       method: 'POST',
-      path: '/calendar',
-      query: users.admin,
+      path: buildPath('auth'),
+      payload: users[role],
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      token: expect.any(String),
+    }));
+    users[role].token = body.token;
+  });
+
+  test.each(Object.keys(users))('Is correct JWT for %s', (role) => {
+    expect(() => jwt.verify(users[role].token, app.config.VK_PROTECTED_KEY)).not.toThrow();
+  });
+
+  test('Create calendar as admin', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'POST',
+      path: buildPath('calendar'),
+      headers: {
+        Authorization: `bearer ${users.admin.token}`,
+      },
       payload: {
-        calendarId: calendars.world.calendarId,
-        timezone: calendars.world.timezone,
+        hello: 'world',
       },
     });
 
-    expect(statusCode).toEqual(constants.HTTP_STATUS_FOUND);
-    expect(headers.location).toMatch(/\/calendar\?/gim);
+    expect(statusCode).toEqual(constants.HTTP_STATUS_BAD_REQUEST);
+    expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      name: expect.any(String),
+      message: expect.any(String),
+    }));
+  });
+
+  test('Get calendar as member', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'GET',
+      path: buildPath('calendar'),
+      headers: {
+        Authorization: `bearer ${users.member.token}`,
+      },
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_OK);
+    expect(payload).not.toBeFalsy();
   });
 });
 
 describe('Negative cases', () => {
-  test('Route for all roles, without query', async () => {
-    const { statusCode, payload } = await app.server.inject({
-      method: 'GET',
-      path: '/calendar',
-      query: {},
-    });
-
-    expect(statusCode).toEqual(constants.HTTP_STATUS_UNAUTHORIZED);
-    expect(payload).toMatch(/"sign" is missing/gim);
-  });
-
-  test('Route for all roles, incorrect sign', async () => {
-    const { statusCode, payload } = await app.server.inject({
-      method: 'GET',
-      path: '/calendar',
-      query: {
-        ...users.member,
-        sign: users.admin,
-      },
-    });
-
-    expect(statusCode).toEqual(constants.HTTP_STATUS_UNAUTHORIZED);
-    expect(payload).toMatch(/Incorrect sign/gim);
-  });
-
-  test('Route for role "admin", user role "member"', async () => {
+  test('Get token with incorrect sign', async () => {
+    const { member: { token, ...userFields } } = users;
+    userFields.sign = 'hello world';
     const { statusCode, payload } = await app.server.inject({
       method: 'POST',
-      path: '/calendar',
-      query: users.member,
+      path: buildPath('auth'),
+      payload: userFields,
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_UNAUTHORIZED);
+    expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      name: expect.any(String),
+      message: expect.any(String),
+    }));
+  });
+
+  test('Get calendar with random string as token', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'POST',
+      path: buildPath('calendar'),
+      headers: {
+        Authorization: 'bearer hello-world',
+      },
       payload: {
-        calendarId: calendars.world.calendarId,
-        timezone: calendars.world.timezone,
+        hello: 'world',
       },
     });
 
     expect(statusCode).toEqual(constants.HTTP_STATUS_UNAUTHORIZED);
-    expect(payload).toMatch(/Access denied/gim);
+    expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      name: expect.any(String),
+      message: expect.any(String),
+    }));
+  });
+
+  test('Get calendar without header "Authorization"', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'POST',
+      path: buildPath('calendar'),
+      payload: {
+        hello: 'world',
+      },
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_UNAUTHORIZED);
+    expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      name: expect.any(String),
+      message: expect.any(String),
+    }));
+  });
+
+  test('Create calendar as not admin', async () => {
+    const { statusCode, payload } = await app.server.inject({
+      method: 'POST',
+      path: buildPath('calendar'),
+      headers: {
+        Authorization: `bearer ${users.member.token}`,
+      },
+      payload: {
+        hello: 'world',
+      },
+    });
+
+    expect(statusCode).toEqual(constants.HTTP_STATUS_UNAUTHORIZED);
+    expect(payload).not.toBeFalsy();
+
+    const body = JSON.parse(payload);
+    expect(body).toEqual(expect.objectContaining({
+      name: expect.any(String),
+      message: expect.any(String),
+    }));
   });
 });

@@ -1,13 +1,12 @@
-version: "3.8"
 services:
-  ical:
+  backend:
     build: .
     volumes:
       - .:/usr/src/app
     image: app:ical
     container_name: app_ical
     ports:
-      - 8080:8080
+      - 5000:5000
   postgres-dev:
     image: library/postgres:12
     environment:

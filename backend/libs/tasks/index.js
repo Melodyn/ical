@@ -9,13 +9,13 @@ const { envsMap } = configValidator;
 const prodService = (config, server, reporter) => {
   const icalTask = syncIcal(
     QueueService,
-    server.services.icalService,
+    server.services.ical,
     reporter,
   );
   const widgetTask = syncWidget(
     QueueService,
-    server.services.icalService,
-    server.services.vkService,
+    server.services.ical,
+    server.services.vk,
     reporter,
   );
 

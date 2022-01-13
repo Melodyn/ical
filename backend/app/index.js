@@ -1,31 +1,31 @@
 import 'reflect-metadata';
 import { constants } from 'http2';
 import path from 'path';
-import qs from 'querystring';
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
-import fastifyForm from 'fastify-formbody';
-import fastifyStatic from 'fastify-static';
 // libs
 import Rollbar from 'rollbar';
-import pointOfView from 'point-of-view';
-import pug from 'pug';
 import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
-import routes from '../routes/calendar.js';
+import * as appControllers from '../controllers/index.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
 import ormconfig from '../ormconfig.cjs';
 import errors from '../utils/errors.cjs';
 import ICALService from '../libs/ical/ICALService.js';
 import VKService from '../libs/vk/VKService.js';
+import jwtService from '../libs/jwt/index.js';
 
+const { methodActionMap } = appControllers;
 const { createConnection } = typeorm;
 const { configValidator } = utils;
 const { ICalAppError, AuthError } = errors;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initServer = (config) => {
   const server = fastify({
@@ -33,132 +33,157 @@ const initServer = (config) => {
       prettyPrint: config.IS_DEV_ENV,
       level: config.LOG_LEVEL,
     },
+    ajv: {
+      customOptions: {
+        allErrors: true,
+      },
+    },
   });
 
-  routes.forEach((route) => server.route(route));
+  server.register(fastifyAuth);
 
   return server;
 };
 
-const setAuth = (config, server) => {
-  server.decorateRequest('user', null);
-  server.decorateRequest('isAuthenticated', false);
+const setRoutes = async (config, server) => {
+  const openapiFileStats = await fs.readdir(path.resolve(__dirname, '..'))
+    .then((filenames) => filenames
+      .filter((filename) => filename.startsWith('openapi-') && filename.endsWith('.json'))
+      .map((filename) => ({
+        filename,
+        filepath: path.resolve(__dirname, '..', filename),
+        version: filename.match(/v\d+/)[0],
+      })));
 
-  const vkUserValidator = server.services.vkService.validateUser.bind(server.services.vkService);
+  const readFilePromises = openapiFileStats.map(({ filepath, version }) => fs.readFile(filepath, 'utf-8')
+    .then((data) => JSON.parse(data))
+    .then((openapi) => ({ openapi, version })));
+  const openapiFiles = await Promise.all(readFilePromises);
 
-  server.decorate('vkUserAuth', (req, res, done) => {
-    const { isValid, user, error } = vkUserValidator(req.query);
-    if (!isValid) {
-      req.user = null;
-      req.isAuthenticated = false;
-      return done(error);
-    }
-    if (!user.groupId) {
-      req.user = user;
-      req.isAuthenticated = false;
-      return done();
-    }
+  openapiFiles.forEach(({ openapi, version }) => {
+    Object.entries(openapi.components.schemas).forEach(([componentName, component]) => server.addSchema({
+      $id: `${version}-${componentName}`,
+      ...component,
+    }));
 
-    req.user = user;
-    req.isAuthenticated = true;
-    return done();
+    return Object.entries(openapi.paths)
+      .forEach(([apiUrl, apiMethods]) => {
+        const [, apiControllerName] = apiUrl.split('/');
+        if (!_.has(appControllers, apiControllerName)) {
+          throw new ICalAppError(`App "${version}" does not contain "${apiControllerName}" controller for url "${apiUrl}"`);
+        }
+        const appActions = appControllers[apiControllerName];
+
+        Object.entries(apiMethods).forEach(([apiMethod, params]) => {
+          const methodParams = {
+            security: openapi.security,
+            method: apiMethod.toUpperCase(),
+            url: `${config.API_PREFIX}${version}${apiUrl}`,
+            ...params,
+          };
+          const { security, method, url } = methodParams;
+
+          if (!_.has(methodActionMap, method)) {
+            throw new ICalAppError(`App "${version}" does not contain action matches for HTTP method "${method}"`);
+          }
+          const methodAction = methodActionMap[method];
+
+          if (!_.has(appActions, methodAction)) {
+            throw new ICalAppError(`App "${version}" does not contain action "${methodAction}" for method "${method}" on url "${url}"`);
+          }
+          const action = appActions[methodAction];
+
+          const route = {
+            method,
+            url,
+            preValidation(req, res, done) {
+              if (security.length === 0) {
+                done();
+                return;
+              }
+
+              const requiredRoles = security.flatMap((currentSecurity) => Object.values(currentSecurity).flat());
+              const authHandlers = [this.jwtAuth];
+              if (requiredRoles.length > 0) {
+                req.requiredRoles = requiredRoles;
+                authHandlers.push(this.rolesAuth);
+              }
+
+              this.auth(authHandlers, { relation: 'and' })(req, res, done);
+            },
+            handler(req, res) {
+              const { body: data, user } = req;
+              const app = {
+                services: this.services,
+                db: this.db,
+                timezones: this.timezones,
+                config: this.config,
+              };
+
+              return new Promise((resolve) => {
+                resolve(action({ data, user, app }));
+              }).then((result) => res.code(200).send(result));
+            },
+          };
+
+          if (method === 'POST') {
+            if (!_.has(params, 'requestBody')) {
+              throw new ICalAppError(`App "${version}" does not contain body validator for action "${methodAction}" on url "${method} ${url}"`);
+            }
+
+            const refs = params.requestBody.$ref.split('/');
+            const componentName = refs[refs.length - 1];
+            const schema = { $ref: `${version}-${componentName}` };
+            route.schema = {
+              body: schema,
+            };
+          }
+
+          server.route(route);
+        });
+      });
   });
-
-  server.decorate('vkAdminAuth', (req, res, done) => {
-    if (!req.isAuthenticated) {
-      const { isValid, user, error } = vkUserValidator(req.query);
-      if (!isValid) {
-        return done(error);
-      }
-
-      req.isAuthenticated = true;
-      req.user = user;
-    }
-
-    return req.user.isAdmin
-      ? done()
-      : done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`, req.query));
-  });
-
-  server.register(fastifyAuth);
 };
 
-const setStatic = (config, server) => {
-  server.decorate('container', new Map());
+const setAuth = (config, server) => {
+  server.decorateRequest('user', null);
+  server.decorateRequest('requiredRoles', null);
 
-  server.decorateRequest('flash', (data = []) => {
-    server.container.set('flash', data);
-  });
-  server.decorateReply('flash', () => {
-    const data = server.container.has('flash')
-      ? server.container.get('flash')
-      : [];
-    server.container.set('flash', []);
-    return data;
-  });
+  server.decorate('jwtAuth', (req, res, done) => {
+    if (!req.headers.authorization) {
+      done(new AuthError('Should be a header "Authorization: Bearer <JWT>"'));
+    }
 
-  server.decorateRequest('errors', (data = []) => {
-    server.container.set('errors', data);
+    const token = req.headers.authorization.replace(/bearer\s*/i, '');
+    server.services.jwt.verify(token)
+      .then((user) => {
+        req.user = user;
+        done();
+      })
+      .catch(() => {
+        done(new AuthError('Incorrect token'));
+      });
   });
-  server.decorateReply('errors', () => {
-    const data = server.container.has('errors')
-      ? server.container.get('errors')
-      : [];
-    server.container.set('errors', []);
-    return data;
-  });
-
-  server.register(fastifyForm);
-  server.register(fastifyStatic, {
-    root: path.resolve(config.STATIC_DIR),
-  });
-  server.register(pointOfView, {
-    engine: {
-      pug,
-    },
-    includeViewExtension: true,
-    templates: path.resolve(config.STATIC_DIR, 'templates'),
-  });
-  server.decorateReply('render', function render(template, values = {}) {
-    const { user, query } = this.request;
-    const errorsContainer = this.errors();
-    const flashContainer = this.flash();
-    const flashMessages = flashContainer.map(([level, text]) => ({ level, text }));
-    const invalidValues = Object.fromEntries(
-      errorsContainer.map(([key, { value }]) => [key, value]),
-    );
-    const errorMessages = Object.fromEntries(
-      errorsContainer.map(([key, { message }]) => [key, message]),
-    );
-
-    this.view(template, {
-      user,
-      values,
-      ...invalidValues,
-      flash: flashMessages,
-      errors: errorMessages,
-      gon: {
-        user: {
-          ...user,
-        },
-        app: {
-          isProd: config.IS_PROD_ENV || config.IS_STAGE_ENV,
-          appId: config.VK_APP_ID,
-          env: config.NODE_ENV,
-          rollbarToken: config.ROLLBAR_CLIENT_TOKEN,
-          page: template,
-          isAction: values.isAction === true,
-          query: qs.stringify(query),
-        },
-      },
-    });
+  server.decorate('rolesAuth', (req, res, done) => {
+    if (req.user === null) {
+      done(new AuthError('User unauthorized'));
+    }
+    if (!_.has(req.user, 'viewerGroupRole')) {
+      done(new AuthError('User is not group member'));
+    }
+    const isPermittedRole = req.requiredRoles.some((role) => `vk:${req.user.viewerGroupRole}` === role);
+    if (!isPermittedRole) {
+      done(new AuthError(`Access denied for user with role "${req.user.viewerGroupRole}"`));
+    }
+    done();
   });
 };
 
 const setServices = (config, server, reporter) => {
   const services = {
-    vkService: new VKService(config),
-    icalService: new ICALService(config),
+    vk: new VKService(config),
+    ical: new ICALService(config),
+    jwt: jwtService(config),
     reporter,
   };
 
@@ -178,12 +203,31 @@ const initReporter = (config, server) => {
   server.setErrorHandler((err, req, res) => {
     server.log.debug(err);
     rollbar.errorHandler()(err, req, res, (error) => {
-      if (!(error instanceof ICalAppError)) {
+      const isAppError = (error instanceof ICalAppError);
+      const isValidationError = _.has(err, 'validation') && _.has(err, 'validationContext');
+      if (!isAppError && !isValidationError) {
         return res.code(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send(`error: ${error.message}`);
       }
 
-      const message = [error.message, `params: ${JSON.stringify(error.params, null, 2)}`].join('\n');
-      return res.code(error.statusCode).send(`error: ${message}`);
+      if (isValidationError) {
+        const paramsMap = error.validation.map(({
+          dataPath = '',
+          params: { missingProperty },
+          message,
+        }) => [dataPath.replace(/^\./, '') || missingProperty, message]);
+
+        return res.code(constants.HTTP_STATUS_BAD_REQUEST).send({
+          name: `validation.${error.validationContext}`,
+          message: error.message,
+          params: Object.fromEntries(paramsMap),
+        });
+      }
+
+      return res.code(error.statusCode).send({
+        name: error.code,
+        message: error.message,
+        params: error.params,
+      });
     });
   });
 
@@ -213,9 +257,9 @@ const app = async (envName) => {
   const timezones = prepareTimezones(config);
   const server = initServer(config, db);
   const reporter = initReporter(config, server);
+  await setRoutes(config, server);
   setServices(config, server, reporter);
   setAuth(config, server);
-  setStatic(config, server);
 
   await db.runMigrations();
   server.decorate('db', db);

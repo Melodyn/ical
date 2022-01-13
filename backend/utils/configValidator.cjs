@@ -42,8 +42,9 @@ const configSchema = yup.object({
   DB_USER: yup.string().required(),
   DB_PASS: yup.string().required(),
   DB_NAME: yup.string().required(),
+  API_PREFIX: yup.string().required(),
+  JWT_LIFETIME: yup.string().required(),
   ROLLBAR_TOKEN: yup.string().required(),
-  ROLLBAR_CLIENT_TOKEN: yup.string().required(),
   VK_APP_ID: yup.number().required(),
   VK_APP_ADMIN_ID: yup.number().required(),
   VK_PROTECTED_KEY: yup.string().required(),
@@ -56,7 +57,6 @@ const configSchema = yup.object({
   SYNC_ICAL_TIME: yup.mixed().transform((value) => ms(value)),
   CRON_SYNC_PERIOD: yup.mixed().transform((value) => ms(value)),
   CRON_SYNC_DELAY: yup.mixed().transform((value) => ms(value)),
-  COUNT_DAYS_ON_VIEW: yup.number().positive().required(),
 }).required();
 
 const configValidator = (envName) => {

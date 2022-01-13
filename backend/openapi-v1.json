@@ -1,0 +1,334 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ical-vkma API",
+    "description": "Документация к API мини-приложения для ВКонтакте [ical](https://github.com/Melodyn/ical).\n",
+    "contact": {
+      "name": "Сергей Мелодин",
+      "url": "https://melodyn.ru",
+      "email": "samelodyn@gmail.com"
+    },
+    "license": {
+      "name": "GNU GPLv3",
+      "url": "https://github.com/Melodyn/ical/blob/main/LICENSE.txt"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/Melodyn/ical-api/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    },
+    {
+      "url": "https://petstore.swagger.io/v2"
+    },
+    {
+      "url": "https://melodyn-ical.herokuapp.com/api/{version}",
+      "description": "App backend",
+      "variables": {
+        "version": {
+          "default": "v1",
+          "enum": [
+            "v1"
+          ]
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "JWT": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Аутентификация",
+      "externalDocs": {
+        "description": "Документация JWT",
+        "url": "https://jwt.io/"
+      }
+    },
+    {
+      "name": "calendar",
+      "description": "Работать с календарём сообщества. Авторизация по JWT"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Получить JWT",
+        "description": "Принимает в теле запроса объект из query-строки с [параметрами от VK](https://vk.com/dev/vk_apps_docs3?f=6.%2B%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B%2B%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA%D0%B0).\n\nВозвращает JWT с ограниченным сроком жизни. При его истечении необходима повторная аутентификация.\n",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/vkParams"
+        },
+        "responses": {
+          "200": {
+            "description": "Аутентификация прошла успешно, возвращается JWT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Ошибка в запросе или при выполнении обработки корректных данных",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/calendar": {
+      "get": {
+        "tags": [
+          "calendar"
+        ],
+        "responses": {
+          "200": {
+            "description": "Объект с данными",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка в запросе или при выполнении обработки корректных данных",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Любая ошибка авторизации:\n* Недостаточно прав (нужно быть админом);\n* Не удалось проверить подпись ВК;\n* Токен отсутствует, просрочен или некорректен;\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "calendar"
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/calendar"
+        },
+        "responses": {
+          "200": {
+            "description": "Объект с данными",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка в запросе или при выполнении обработки корректных данных",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Любая ошибка авторизации:\n* Недостаточно прав (нужно быть админом);\n* Не удалось проверить подпись ВК;\n* Токен отсутствует, просрочен или некорректен;\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "vk:admin"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "200": {
+        "type": "object",
+        "description": "Объект с данными"
+      },
+      "400": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Имена ошибок записываются через точку для поиска в словаре i18n. Примеры:\n* auth.vk.emptySign Отсутствует подпись параметров ВК\n* calendar.create.notFound При подключении нового календаря не удалось его найти по индентификатору\n"
+          },
+          "message": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object"
+          }
+        },
+        "description": "Ответ описывает имя ошибки, текстовое описание на английском и параметры при которых ошибка возникла"
+      },
+      "calendar": {
+        "required": [
+          "calendarId",
+          "timezone"
+        ],
+        "type": "object",
+        "properties": {
+          "calendarId": {
+            "minLength": 5,
+            "pattern": "^.+@.+\\..+$",
+            "type": "string",
+            "description": "Идентификатор календаря"
+          },
+          "timezone": {
+            "minLength": 5,
+            "type": "string",
+            "description": "Часовой пояс"
+          }
+        },
+        "description": "Объект календаря",
+        "example": {
+          "calendarId": "ob1gcsbo877671s4295f693nv0@group.calendar.google.com",
+          "timezone": "Europe/Moscow"
+        }
+      },
+      "vkParams": {
+        "required": [
+          "sign"
+        ],
+        "type": "object",
+        "properties": {
+          "sign": {
+            "type": "string"
+          }
+        },
+        "description": "Объект с параметрами от ВКонтакте из query string. Всё, что начинается с префикса `vk_` и подпись из параметра `sign`.\n",
+        "example": {
+          "vk_access_token_settings": "",
+          "vk_app_id": "7966403",
+          "vk_are_notifications_enabled": "0",
+          "vk_group_id": "101295953",
+          "vk_is_app_user": "1",
+          "vk_is_favorite": "0",
+          "vk_language": "ru",
+          "vk_platform": "desktop_web",
+          "vk_ref": "other",
+          "vk_ts": "1000000000",
+          "vk_user_id": "0",
+          "vk_viewer_group_role": "admin",
+          "sign": "B_07QeUbmuPRzrJnF5_sEh_6O-x6M5NYmR471Ztpv4E"
+        }
+      },
+      "inline_response_200": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/200"
+          },
+          {
+            "properties": {
+              "token": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "Ошибка в запросе или при выполнении обработки корректных данных",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/400"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Любая ошибка авторизации:\n* Недостаточно прав (нужно быть админом);\n* Не удалось проверить подпись ВК;\n* Токен отсутствует, просрочен или некорректен;\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/400"
+            }
+          }
+        }
+      },
+      "object": {
+        "description": "Объект с данными",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/200"
+            }
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "calendar": {
+        "description": "Объект календаря:\n* Идентификатор обычно похож на адрес почты или им является.\n* Часовой пояс из базы [IANA](https://www.iana.org/time-zones)\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/calendar"
+            }
+          }
+        },
+        "required": true
+      },
+      "vkParams": {
+        "description": "Должен содержать все параметры с перфиксом `vk_` и подпись. Порядок не важен. Допустимы лишние свойства, они будут проигнорированы.\n\nВ примере подпись создана с ключом `appSecretKey`\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/vkParams"
+            }
+          }
+        },
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "JWT": {
+        "type": "http",
+        "description": "Документация JWT: [https://jwt.io/](https://jwt.io/)\n",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

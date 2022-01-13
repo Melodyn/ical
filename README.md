@@ -2,7 +2,7 @@
 
 |![логотип](logo.png)|Google-календарь и виджет в сообщество ВКонтакте.
 |---|---|
-|[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)|Frontend: [![Frontend Test Coverage](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/test_coverage)](https://codeclimate.com/github/Melodyn/iCal/test_coverage)
+|[![Maintainability](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/maintainability)](https://codeclimate.com/github/Melodyn/iCal/maintainability)|Frontend: [![Frontend Test Coverage](https://api.codeclimate.com/v1/badges/e23f92e76fd6a091df61/test_coverage)](https://codeclimate.com/github/Melodyn/iCal/test_coverage) <br/>Backend: [![codecov](https://codecov.io/gh/Melodyn/ical/branch/main/graph/badge.svg?token=XVWH9NL1PW)](https://codecov.io/gh/Melodyn/ical)
 |[Frontend](https://github.com/Melodyn/ical/tree/frontend)|[![Frontend Production](../../actions/workflows/frontend.yml/badge.svg?branch=frontend)](../../actions/workflows/frontend.yml?query=workflow%3A"Frontend+Production")
 |[Backend](https://github.com/Melodyn/ical/tree/backend)|[![Backend production](../../workflows/Production%20CI/badge.svg)](../../actions?query=workflow%3A"Production+CI") [![Backend staging](../../workflows/Staging%20CI/badge.svg)](../../actions?query=workflow%3A"Staging+CI")
 
