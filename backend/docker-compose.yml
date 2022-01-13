@@ -2,7 +2,8 @@ services:
   backend:
     build: .
     volumes:
-      - .:/usr/src/app
+      - ../common:/usr/src/app/common
+      - .:/usr/src/app/backend
     image: app:ical
     container_name: app_ical
     ports:

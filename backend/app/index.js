@@ -46,12 +46,13 @@ const initServer = (config) => {
 };
 
 const setRoutes = async (config, server) => {
-  const openapiFileStats = await fs.readdir(path.resolve(__dirname, '..', '..', 'common'))
+  const openapiDirPath = path.resolve(__dirname, '..', '..', 'common');
+  const openapiFileStats = await fs.readdir(openapiDirPath)
     .then((filenames) => filenames
       .filter((filename) => filename.startsWith('openapi-') && filename.endsWith('.json'))
       .map((filename) => ({
         filename,
-        filepath: path.resolve(__dirname, '..', filename),
+        filepath: path.resolve(openapiDirPath, filename),
         version: filename.match(/v\d+/)[0],
       })));
 
