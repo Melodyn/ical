@@ -3,7 +3,6 @@
   "version": "1.3.4",
   "description": "Google-календарь и виджет в сообщество ВКонтакте",
   "main": "src/index.jsx",
-  "type": "module",
   "private": true,
   "scripts": {
     "test": "jest --colors",
@@ -12,10 +11,6 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
-    "transform": {
-      "\\.jsx$": "babel-jest",
-      "\\.js$": "babel-jest"
-    },
     "extensionsToTreatAsEsm": [
       ".jsx"
     ],
