@@ -22,7 +22,7 @@ import eruda from 'eruda';
 import pino from 'pino';
 import upperFirst from 'lodash/upperFirst.js';
 // modules
-import resources from '../../common/resources';
+import common from '@melodyn/common';
 import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
@@ -32,6 +32,7 @@ const ViewComponent = ({ appIsLoaded, appLng }) => (appIsLoaded
   : (<LoadingView userLng={appLng} />));
 
 const App = ({ config, bridge }) => {
+  const { resources } = common;
   const [appIsLoaded, setAppIsLoaded] = useState(false);
   const [loggerWasInit, setLoggerWasInit] = useState(false);
   const [rollbarWasInit, setRollbarWasInit] = useState(false);

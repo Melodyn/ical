@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "@happysanta/router": "^0.3.0",
+    "@melodyn/common": "file:../common",
     "@rollbar/react": "^0.8.0",
     "@vkontakte/icons": "^1.137.0",
     "@vkontakte/vk-bridge": "^2.4.8",
