@@ -12,7 +12,7 @@ import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
-// import common from '@melodyn/common';
+// import common from '@ical/common';
 import * as appControllers from '../controllers/index.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';

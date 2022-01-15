@@ -1,5 +1,5 @@
 {
-  "name": "@melodyn/common",
+  "name": "@ical/common",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",

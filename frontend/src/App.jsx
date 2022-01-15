@@ -22,7 +22,7 @@ import eruda from 'eruda';
 import pino from 'pino';
 import upperFirst from 'lodash/upperFirst.js';
 // modules
-import common from '@melodyn/common';
+import common from '@ical/common';
 import { router } from '../libs/router.js';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
