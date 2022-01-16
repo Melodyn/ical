@@ -113,7 +113,6 @@ describe('Negative cases', () => {
     expect(payload).not.toBeFalsy();
 
     const body = JSON.parse(payload);
-    console.log(body);
     expect(body).toEqual(expect.objectContaining({
       name: expect.any(String),
       message: expect.any(String),

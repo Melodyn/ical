@@ -1,5 +1,5 @@
-backend/node_modules
 .idea
 .vercel
-backend/*.env
-backend/utils/vkWidget.js
+*/node_modules
+*/*.env
+*/utils/vkWidget.js

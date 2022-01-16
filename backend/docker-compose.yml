@@ -2,9 +2,10 @@ services:
   backend:
     build: .
     volumes:
-      - .:/usr/src/app
-    image: app:ical
-    container_name: app_ical
+      - ../common:/usr/src/app/common
+      - .:/usr/src/app/backend
+    image: ical:backend
+    container_name: ical-backend
     ports:
       - 5000:5000
   postgres-dev:

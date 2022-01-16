@@ -12,6 +12,7 @@ import typeorm from 'typeorm';
 import tz from 'countries-and-timezones';
 import _ from 'lodash';
 // app
+// import common from '@ical/common';
 import * as appControllers from '../controllers/index.js';
 import setTasks from '../libs/tasks/index.js';
 import utils from '../utils/configValidator.cjs';
@@ -46,12 +47,13 @@ const initServer = (config) => {
 };
 
 const setRoutes = async (config, server) => {
-  const openapiFileStats = await fs.readdir(path.resolve(__dirname, '..', '..', 'common'))
+  const openapiDirPath = path.resolve(__dirname, '..', '..', 'common');
+  const openapiFileStats = await fs.readdir(openapiDirPath)
     .then((filenames) => filenames
       .filter((filename) => filename.startsWith('openapi-') && filename.endsWith('.json'))
       .map((filename) => ({
         filename,
-        filepath: path.resolve(__dirname, '..', filename),
+        filepath: path.resolve(openapiDirPath, filename),
         version: filename.match(/v\d+/)[0],
       })));
 

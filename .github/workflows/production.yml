@@ -3,7 +3,7 @@ name: Production CI
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   pre-deploy:
@@ -28,14 +28,14 @@ jobs:
           - 5432:5432
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: make install-dependencies
-    - run: make test
-    - run: make lint
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: make install-dependencies
+      - run: make test
+      - run: make lint
 
   deploy:
     needs: pre-deploy

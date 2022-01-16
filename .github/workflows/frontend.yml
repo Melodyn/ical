@@ -1,0 +1,46 @@
+name: Frontend Production
+on:
+  push:
+    branches: [frontend]
+
+jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: make install-dependencies test lint
+
+  deploy:
+    needs: pre-deploy
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '--no-deploy') }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and deploy
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          git config --global user.name 'Sergei Melodyn'
+          git config --global user.email 'samelodyn@gmail.com'
+          git checkout --orphan gh-pages
+          git merge frontend
+      - run: |
+          cd frontend
+          make ci-build
+          cp -r ./public/* ../
+          cd ..
+          rm -rf ./frontend
+          git add .
+          git commit -am "Release"
+          git push --force --set-upstream origin gh-pages
