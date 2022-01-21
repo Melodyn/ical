@@ -1,9 +1,0 @@
-services:
-  frontend:
-    build: .
-    image: ical:frontend
-    container_name: ical-frontend
-    ports:
-      - 8080:8080
-    volumes:
-      - .:/usr/src/app
