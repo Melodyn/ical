@@ -1,9 +1,9 @@
-import { STATUS_CODES } from 'http';
+import statusCodes from './statusCodes.js';
 
 export default {
   translation: {
     error: {
-      api: STATUS_CODES,
+      api: statusCodes,
       auth: {
         vk: {
           sign: {
