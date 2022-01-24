@@ -1,6 +1,9 @@
+import { STATUS_CODES } from 'http';
+
 export default {
   translation: {
     error: {
+      api: STATUS_CODES,
       auth: {
         vk: {
           sign: {
@@ -12,7 +15,8 @@ export default {
           header: 'Should be a header "Authorization: Bearer <JWT>"',
           role: 'Access denied for user with role "{{viewerGroupRole}}"',
           invalid: 'Failed to verify the JWT signature, it may have been forged',
-          expired: 'JWT expired, re-authentication required'
+          expired: 'JWT expired, re-authentication required',
+          parsing: 'JWT parsing error, check the token for correctness'
         }
       }
     },

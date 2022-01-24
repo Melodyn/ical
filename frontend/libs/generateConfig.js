@@ -27,12 +27,26 @@ const getLogLevelByEnv = (env) => {
   }
 };
 
-export default (NODE_ENV, VK_PARAMS = {}) => ({
+const getIcalApiParamsByEnv = (env) => {
+  switch (env) {
+    case envsMap.dev:
+      return 'debug';
+    case envsMap.prod:
+      return 'debug';
+    default:
+      return 'silent';
+  }
+};
+
+const generateConfig = (NODE_ENV, VK_PARAMS = {}) => ({
   NODE_ENV,
   IS_PROD_ENV: NODE_ENV === envsMap.prod,
   IS_DEV_ENV: NODE_ENV === envsMap.dev,
   IS_TEST_ENV: NODE_ENV === envsMap.test,
   ROLLBAR_TOKEN: getRollbarTokenByEnv(NODE_ENV),
   LOG_LEVEL: getLogLevelByEnv(NODE_ENV),
+  ICAL_API_BASEURL: getIcalApiParamsByEnv(NODE_ENV),
   VK_PARAMS,
 });
+
+export default generateConfig;
