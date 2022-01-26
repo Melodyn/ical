@@ -30,11 +30,11 @@ const getLogLevelByEnv = (env) => {
 const getIcalApiParamsByEnv = (env) => {
   switch (env) {
     case envsMap.dev:
-      return 'debug';
+      return 'http://localhost';
     case envsMap.prod:
-      return 'debug';
+      return 'https://melodyn-ical.herokuapp.com/api/v1';
     default:
-      return 'silent';
+      return 'http://localhost';
   }
 };
 

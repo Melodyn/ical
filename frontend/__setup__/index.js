@@ -1,3 +1,5 @@
+import 'regenerator-runtime/runtime';
+
 window.scrollTo = jest.fn();
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

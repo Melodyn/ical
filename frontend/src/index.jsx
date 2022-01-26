@@ -6,11 +6,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import cloneDeep from 'lodash/cloneDeep.js';
 import getVkBridge from '../libs/getVkBridge.js';
-import paramsParser from '../libs/vk.js';
 import generateConfig from '../libs/generateConfig.js';
 import App from './App.jsx';
 
-const vkParams = paramsParser(new URL(window.location.href));
+const vkParams = Object.fromEntries((new URL(window.location.href)).searchParams);
 const env = process.env.NODE_ENV || 'production';
 const config = generateConfig(env, vkParams);
 // eslint-disable-next-line no-undef

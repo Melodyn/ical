@@ -24,6 +24,7 @@ import upperFirst from 'lodash/upperFirst.js';
 // modules
 import common from '@ical/common';
 import { router } from '../libs/router.js';
+import IcalApiService from '../libs/IcalApiService/IcalApiService';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
@@ -33,12 +34,28 @@ const ViewComponent = ({ appIsLoaded, appLng }) => (appIsLoaded
 
 const App = ({ config, bridge }) => {
   const { resources } = common;
-  const [appIsLoaded, setAppIsLoaded] = useState(false);
+  const [appWasInit, setAppWasInit] = useState(false);
+  const [userWasInit, setUserWasInit] = useState(false);
   const [loggerWasInit, setLoggerWasInit] = useState(false);
   const [rollbarWasInit, setRollbarWasInit] = useState(false);
   const [i18nWasInit, setI18nWasInit] = useState(false);
   const [erudaWasInit, setErudaWasInit] = useState(false);
   const [bridgeWasSubscribed, setBridgeWasSubscribed] = useState(false);
+
+  const [user, setUser] = useState({});
+  const [icalApi, setIcalApi] = useState(null);
+  const sessionStorage = {
+    read: (sessionId) => localStorage.getItem(`ical.config.token.${sessionId}`) || '',
+    save: (sessionId, token, updatedUser) => {
+      localStorage.setItem(`ical.config.token.${sessionId}`, token);
+      setUser(updatedUser);
+    },
+  };
+  if (icalApi === null) {
+    const icalApiService = new IcalApiService(config, sessionStorage);
+    setIcalApi(icalApiService);
+    setUserWasInit(true);
+  }
 
   const [logger, setLogger] = useState(null);
   if (logger === null) {
@@ -59,7 +76,7 @@ const App = ({ config, bridge }) => {
 
   const defaultLng = 'en';
   const whiteListOfLng = Object.keys(resources);
-  const vkLng = userConfig.lng || config.VK_PARAMS.language || defaultLng;
+  const vkLng = userConfig.lng || config.VK_PARAMS.vk_language || defaultLng;
   const appLng = whiteListOfLng.includes(vkLng) ? vkLng : defaultLng;
 
   const [rollbar, setRollbar] = useState(null);
@@ -132,7 +149,7 @@ const App = ({ config, bridge }) => {
     setBridgeWasSubscribed(true);
   }
 
-  const queryPlatform = config.VK_PARAMS.platform || '';
+  const queryPlatform = config.VK_PARAMS.vk_platform || '';
   const isMobile = queryPlatform.includes('mobile');
   const isErudaEnv = config.IS_PROD_ENV && isMobile;
   if (isErudaEnv && !erudaWasInit) {
@@ -158,23 +175,24 @@ const App = ({ config, bridge }) => {
   }
 
   const allServicesWasInit = loggerWasInit && rollbarWasInit
-    && i18nWasInit && bridgeWasSubscribed
+    && i18nWasInit && bridgeWasSubscribed && userWasInit
     && (erudaWasInit || !isErudaEnv);
-  if (allServicesWasInit && !appIsLoaded) {
-    setAppIsLoaded(true);
+  if (allServicesWasInit && !appWasInit) {
+    setAppWasInit(true);
   }
 
-  if (appIsLoaded) {
+  if (appWasInit) {
     logger.debug('loading process', 'App loaded');
     logger.debug('params', {
       lng,
       theme,
       vkLng,
       isMobile,
+      user,
       query: config.VK_PARAMS,
     });
   }
-  if (loggerWasInit && !appIsLoaded) {
+  if (loggerWasInit && !appWasInit) {
     logger.debug('loading process', {
       allServicesWasInit,
       loggerWasInit,
@@ -194,9 +212,11 @@ const App = ({ config, bridge }) => {
             isWebView
             i18n={i18n}
             bridge={bridge}
-            scheme={appIsLoaded ? scheme : defaultScheme}
+            scheme={appWasInit ? scheme : defaultScheme}
             config={config}
             logger={logger}
+            user={user}
+            icalApi={icalApi}
             platform={usePlatform()}
             changeScheme={changeScheme}
           >
@@ -205,7 +225,7 @@ const App = ({ config, bridge }) => {
                 <SplitLayout header={<PanelHeader separator={false} />}>
                   <SplitCol>
                     <ViewComponent
-                      appIsLoaded={appIsLoaded}
+                      appIsLoaded={appWasInit}
                       appLng={i18nWasInit ? i18n.language : appLng}
                     />
                   </SplitCol>

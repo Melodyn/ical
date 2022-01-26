@@ -12,7 +12,8 @@ class IcalApiError extends Error {
 
   constructor(errorObject) {
     super(errorObject.message);
-    this.data = errorObject;
+    this.name = errorObject.name;
+    this.params = errorObject.params;
   }
 }
 

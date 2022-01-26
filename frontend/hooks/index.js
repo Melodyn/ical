@@ -29,3 +29,13 @@ export const useTranslations = () => {
   const t = i18n.t.bind(i18n);
   return [t, i18n];
 };
+
+export const useUser = () => {
+  const { user } = React.useContext(ConfigProviderContext);
+  return user;
+};
+
+export const useIcalApi = () => {
+  const { icalApi } = React.useContext(ConfigProviderContext);
+  return icalApi;
+};
