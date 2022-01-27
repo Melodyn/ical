@@ -1,8 +1,6 @@
 import crypto from 'crypto';
 import _ from 'lodash';
 
-const removePrefix = (text, prefix = 'vk_') => text.split(prefix).filter((x) => x).join('');
-
 const numberify = (value) => {
   const parsed = parseFloat(value);
   return Number.isNaN(parsed) ? value : parsed;
@@ -32,17 +30,17 @@ export const buildSign = (query, secret) => {
     .replace(/=$/, '');
 };
 
-export const createValidator = (secret, appAdminId) => (query = {}) => {
+export const createValidator = (secret, appAdminId, isDevMode = false) => (query = {}) => {
   const vkSign = query.sign;
   if (!vkSign) return validationResult({ error: 'Required parameter "sign" is missing', params: query });
 
-  const queryParamsSign = buildSign(query, secret);
+  const queryParamsSign = isDevMode ? secret : buildSign(query, secret);
   if (vkSign !== queryParamsSign) return validationResult({ error: 'Incorrect sign', params: query });
 
   const userParams = Object.fromEntries(
     Object.entries(query)
       .filter(([key]) => key.startsWith('vk_'))
-      .map(([key, value]) => [removePrefix(key), numberify(value)])
+      .map(([key, value]) => [_.trimStart(key, 'vk_'), numberify(value)])
       .map(([key, value]) => [_.camelCase(key), value]),
   );
 

@@ -42,6 +42,7 @@
     "escape-goat": "^4.0.0",
     "fastify": "^3.25.3",
     "fastify-auth": "^1.1.0",
+    "fastify-cors": "^6.0.2",
     "form-data": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",

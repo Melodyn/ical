@@ -4,7 +4,7 @@ import { AuthError } from '../../utils/errors.cjs';
 export const create = ({ data, app }) => {
   const validationResult = app.services.vk.validateUser(data);
   if (!validationResult.isValid) {
-    throw new AuthError(validationResult.error, validationResult.params);
+    throw new AuthError(validationResult.error, 'vk.sign.invalid', validationResult.params);
   }
 
   return app.services.jwt.encode(validationResult.user).then((token) => ({ token }));

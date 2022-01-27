@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 // fastify
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
+import fastifyCors from 'fastify-cors';
 // libs
 import Rollbar from 'rollbar';
 import typeorm from 'typeorm';
@@ -42,6 +43,13 @@ const initServer = (config) => {
   });
 
   server.register(fastifyAuth);
+  server.register(fastifyCors, {
+    origin: (origin, cb) => {
+      if (config.IS_DEV_ENV || config.IS_TEST_ENV) {
+        cb(null, true);
+      }
+    },
+  });
 
   return server;
 };
