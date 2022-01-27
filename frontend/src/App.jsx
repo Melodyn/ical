@@ -28,12 +28,13 @@ import IcalApiService from '../libs/IcalApiService/IcalApiService';
 import LoadingView from './components/LoadingView.jsx';
 import Main from './components/Main.jsx';
 
-const ViewComponent = ({ appIsLoaded, appLng }) => (appIsLoaded
+const ViewComponent = ({ appIsLoaded, appLng, wasInitErrors }) => (appIsLoaded
   ? (<Main />)
-  : (<LoadingView userLng={appLng} />));
+  : (<LoadingView userLng={appLng} state={wasInitErrors ? 'error' : 'loading'} />));
 
 const App = ({ config, bridge }) => {
   const { resources } = common;
+  const [wasInitErrors, setWasInitErrors] = useState(false);
   const [appWasInit, setAppWasInit] = useState(false);
   const [userWasInit, setUserWasInit] = useState(false);
   const [loggerWasInit, setLoggerWasInit] = useState(false);
@@ -51,11 +52,6 @@ const App = ({ config, bridge }) => {
       setUser(updatedUser);
     },
   };
-  if (icalApi === null) {
-    const icalApiService = new IcalApiService(config, sessionStorage);
-    setIcalApi(icalApiService);
-    setUserWasInit(true);
-  }
 
   const [logger, setLogger] = useState(null);
   if (logger === null) {
@@ -97,9 +93,27 @@ const App = ({ config, bridge }) => {
           resources,
           fallbackLng: defaultLng,
           debug: config.IS_DEV_ENV,
+        })
+        .then(() => {
+          setTranslation(i18nInstance);
+          setI18nWasInit(true);
+        })
+        .catch((err) => {
+          setWasInitErrors(true);
+          throw err;
         });
-      setTranslation(i18nInstance);
-      setI18nWasInit(true);
+    }
+    if (icalApi === null) {
+      const icalApiService = new IcalApiService(config, sessionStorage);
+      setIcalApi(icalApiService);
+      await icalApiService.auth()
+        .then(() => {
+          setUserWasInit(true);
+        })
+        .catch((err) => {
+          setWasInitErrors(true);
+          throw err;
+        });
     }
   }, []);
 
@@ -177,13 +191,14 @@ const App = ({ config, bridge }) => {
   const allServicesWasInit = loggerWasInit && rollbarWasInit
     && i18nWasInit && bridgeWasSubscribed && userWasInit
     && (erudaWasInit || !isErudaEnv);
-  if (allServicesWasInit && !appWasInit) {
+  if (allServicesWasInit && !appWasInit && !wasInitErrors) {
     setAppWasInit(true);
   }
 
-  if (appWasInit) {
-    logger.debug('loading process', 'App loaded');
+  if (appWasInit || wasInitErrors) {
+    logger.debug('loading process', `App ${wasInitErrors ? 'failed' : 'loaded'}`);
     logger.debug('params', {
+      wasInitErrors,
       lng,
       theme,
       vkLng,
@@ -194,6 +209,7 @@ const App = ({ config, bridge }) => {
   }
   if (loggerWasInit && !appWasInit) {
     logger.debug('loading process', {
+      wasInitErrors,
       allServicesWasInit,
       loggerWasInit,
       rollbarWasInit,
@@ -226,6 +242,7 @@ const App = ({ config, bridge }) => {
                   <SplitCol>
                     <ViewComponent
                       appIsLoaded={appWasInit}
+                      wasInitErrors={wasInitErrors}
                       appLng={i18nWasInit ? i18n.language : appLng}
                     />
                   </SplitCol>

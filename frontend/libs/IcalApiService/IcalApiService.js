@@ -64,7 +64,6 @@ class IcalApiService {
             this.api.defaults.headers.common.Authorization = token;
             this.sessionStorage.save(this.sessionId, this.rawToken, this.icalUser);
           } catch (err) {
-            console.log('err', err);
             throw new IcalApiError({
               message: err.message,
               name: 'auth.token.parsing',
