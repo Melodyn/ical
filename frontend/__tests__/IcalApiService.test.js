@@ -1,5 +1,4 @@
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
+import worker from '../__mocks__/server.js';
 import IcalApiService from '../libs/IcalApiService/IcalApiService.js';
 import generateConfig from '../libs/generateConfig.js';
 
@@ -20,25 +19,6 @@ const sessionStorage = {
     session[id] = params;
   },
 };
-
-const worker = setupServer(
-  rest.post('/auth', (req, res, ctx) => {
-    if (!req.body.sign) {
-      return res(
-        ctx.status(401),
-        ctx.json({
-          message: 'lol',
-          name: 'kek',
-          params: req.body,
-        }),
-      );
-    }
-
-    return res(ctx.json({
-      token,
-    }));
-  }),
-);
 
 beforeAll(() => {
   worker.listen();

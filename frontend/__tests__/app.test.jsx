@@ -4,6 +4,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import worker from '../__mocks__/server.js';
 import generateConfig from '../libs/generateConfig.js';
 import getVkBridge from '../libs/getVkBridge.js';
 
@@ -17,15 +18,26 @@ const getItem = {
   nonExistingByTitle: (title) => within(getItem.heading()).queryByText(title),
 };
 
+const vkParams = {
+  sign: 'VK_PROTECTED_KEY',
+  vk_language: 'en',
+  vk_platform: 'desktop_web',
+  vk_user_id: '1',
+};
 const env = process.env.NODE_ENV || 'test';
-const config = generateConfig(env);
+const config = generateConfig(env, vkParams);
 const bridge = getVkBridge(config);
 
 describe('Positive cases', () => {
   beforeEach(async () => {
+    worker.listen();
     await act(async () => {
       await render(<App config={config} bridge={bridge} />);
+      worker.listen();
     });
+  });
+  afterEach(() => {
+    worker.close();
   });
 
   test('Init app', async () => {
