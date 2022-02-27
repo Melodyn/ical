@@ -91,7 +91,12 @@ const setRoutes = async (config, server) => {
             url: `${config.API_PREFIX}${version}${apiUrl}`,
             ...params,
           };
-          const { security, method, url } = methodParams;
+          const {
+            security,
+            method,
+            url,
+            parameters = null,
+          } = methodParams;
 
           if (!_.has(methodActionMap, method)) {
             throw new ICalAppError(`App "${version}" does not contain action matches for HTTP method "${method}"`);
@@ -106,6 +111,7 @@ const setRoutes = async (config, server) => {
           const route = {
             method,
             url,
+            schema: {},
             preValidation(req, res, done) {
               if (security.length === 0) {
                 done();
@@ -122,7 +128,7 @@ const setRoutes = async (config, server) => {
               this.auth(authHandlers, { relation: 'and' })(req, res, done);
             },
             handler(req, res) {
-              const { body: data, user } = req;
+              const { body: data, user, query } = req;
               const app = {
                 services: this.services,
                 db: this.db,
@@ -131,10 +137,40 @@ const setRoutes = async (config, server) => {
               };
 
               return new Promise((resolve) => {
-                resolve(action({ data, user, app }));
+                resolve(action({
+                  data, user, app, query,
+                }));
               }).then((result) => res.code(200).send(result));
             },
           };
+
+          if (parameters !== null) {
+            const placeNameMap = new Map([
+              ['path', 'params'],
+              ['header', 'headers'],
+            ]);
+            parameters.forEach((swaggerSchema) => {
+              const {
+                name,
+                schema,
+                in: swaggerPlaceName,
+                required = false,
+              } = swaggerSchema;
+              const placeName = placeNameMap.has(swaggerPlaceName)
+                ? placeNameMap.get(swaggerPlaceName)
+                : swaggerPlaceName;
+              if (!_.has(route.schema, placeName)) {
+                route.schema[placeName] = {
+                  type: 'object',
+                  properties: {},
+                  required: [],
+                };
+              }
+              const placeSchema = route.schema[placeName];
+              placeSchema.properties[name] = schema;
+              if (required) placeSchema.required.push(name);
+            });
+          }
 
           if (method === 'POST') {
             if (!_.has(params, 'requestBody')) {
@@ -144,9 +180,7 @@ const setRoutes = async (config, server) => {
             const refs = params.requestBody.$ref.split('/');
             const componentName = refs[refs.length - 1];
             const schema = { $ref: `${version}-${componentName}` };
-            route.schema = {
-              body: schema,
-            };
+            route.schema.body = schema;
           }
 
           server.route(route);

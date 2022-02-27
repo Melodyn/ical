@@ -1,0 +1,461 @@
+[
+ {
+  "type": "VTIMEZONE",
+  "params": [],
+  "tzid": "Europe/Moscow",
+  "LIC-LOCATION": "Europe/Moscow",
+  "48439fab-cf54-4ab3-bae7-728c22b8525c": {
+   "type": "STANDARD",
+   "params": [],
+   "tzoffsetfrom": "+0300",
+   "tzoffsetto": "+0300",
+   "tzname": "MSK",
+   "start": "1970-01-01T00:00:00.000Z",
+   "datetype": "date-time",
+   "end": "1970-01-01T00:00:00.000Z"
+  },
+  "end": "2022-02-27T13:49:50.054Z",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-02-25T21:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-02-27T20:59:00.000Z",
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "2kqu4mqddp4u77vho07olq9krq@google.com",
+  "created": "2022-02-26T13:47:07.000Z",
+  "description": "",
+  "lastmodified": "2022-02-26T13:47:07.000Z",
+  "location": "",
+  "sequence": "0",
+  "status": "CONFIRMED",
+  "summary": "Два дня с полуночи до почти полуночи",
+  "transparency": "OPAQUE",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-03-09T21:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-03-09T22:00:00.000Z",
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "59uabm9p4b9t44qgn4f7fesam2@google.com",
+  "created": "2021-01-15T16:23:45.000Z",
+  "description": "",
+  "lastmodified": "2022-02-26T13:02:08.000Z",
+  "location": "",
+  "sequence": "18",
+  "status": "CONFIRMED",
+  "summary": "Одноразовое на день",
+  "transparency": "TRANSPARENT",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-02-27T07:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-03-01T09:00:00.000Z",
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "1tijhaa874c2t26airiolm2b0a@google.com",
+  "created": "2021-01-17T08:10:02.000Z",
+  "description": "С ссылкой https://vk.com/@samelodyn-google-calendar-basics",
+  "lastmodified": "2022-02-26T13:01:54.000Z",
+  "location": "",
+  "sequence": "8",
+  "status": "CONFIRMED",
+  "summary": "Один раз с 27 по 29е",
+  "transparency": "OPAQUE",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-03-10T07:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-03-10T07:30:00.000Z",
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "65dgcomcvuvnrrec687f3l21of@google.com",
+  "created": "2021-04-03T17:48:31.000Z",
+  "description": "Мероприятие без заголовкааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааа",
+  "lastmodified": "2022-02-26T13:00:26.000Z",
+  "location": "",
+  "sequence": "2",
+  "status": "CONFIRMED",
+  "summary": "",
+  "transparency": "OPAQUE",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-02-03T00:00:00.000Z",
+  "datetype": "date",
+  "end": "2022-02-04T00:00:00.000Z",
+  "rrule": {
+   "_cache": {
+    "all": false,
+    "before": [],
+    "after": [],
+    "between": []
+   },
+   "origOptions": {
+    "dtstart": "2022-02-03T00:00:00.000Z",
+    "freq": 2,
+    "wkst": {
+     "weekday": 6
+    },
+    "count": 3,
+    "byweekday": [
+     {
+      "weekday": 3
+     }
+    ]
+   },
+   "options": {
+    "freq": 2,
+    "dtstart": "2022-02-03T00:00:00.000Z",
+    "interval": 1,
+    "wkst": 6,
+    "count": 3,
+    "until": null,
+    "bysetpos": null,
+    "bymonth": null,
+    "bymonthday": [],
+    "bynmonthday": [],
+    "byyearday": null,
+    "byweekno": null,
+    "byweekday": [
+     3
+    ],
+    "bynweekday": null,
+    "byhour": [
+     0
+    ],
+    "byminute": [
+     0
+    ],
+    "bysecond": [
+     0
+    ],
+    "byeaster": null
+   }
+  },
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "68a8d6lkqgi5n241c0n97diknh@google.com",
+  "created": "2021-01-31T16:07:08.000Z",
+  "description": "повторяется 3 раза",
+  "lastmodified": "2022-02-26T13:00:08.000Z",
+  "location": "",
+  "sequence": "7",
+  "status": "CONFIRMED",
+  "summary": "Раз в неделю, по четвергам",
+  "transparency": "TRANSPARENT",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-02-24T00:00:00.000Z",
+  "datetype": "date",
+  "end": "2022-02-25T00:00:00.000Z",
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "53v6h5lnov5cbprcp4gs81rnh8@google.com",
+  "created": "2021-01-15T16:23:10.000Z",
+  "description": "",
+  "lastmodified": "2022-02-26T12:59:33.000Z",
+  "location": "",
+  "sequence": "4",
+  "status": "CONFIRMED",
+  "summary": "Весь день в прошлом, один раз",
+  "transparency": "TRANSPARENT",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-02-21T07:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-02-21T08:00:00.000Z",
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "2qnb5masrqvslbqdkuu0btsdm0@google.com",
+  "created": "2021-01-15T15:06:42.000Z",
+  "description": "",
+  "lastmodified": "2022-02-26T12:59:25.000Z",
+  "location": "",
+  "sequence": "3",
+  "status": "CONFIRMED",
+  "summary": "Одночасовое мероприятие в прошлом",
+  "transparency": "TRANSPARENT",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-02-12T08:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-02-13T09:00:00.000Z",
+  "rrule": {
+   "_cache": {
+    "all": false,
+    "before": [],
+    "after": [],
+    "between": []
+   },
+   "origOptions": {
+    "tzid": "Europe/Moscow",
+    "dtstart": "2022-02-12T08:00:00.000Z",
+    "freq": 2,
+    "wkst": {
+     "weekday": 0
+    },
+    "count": 3,
+    "byweekday": [
+     {
+      "weekday": 5
+     }
+    ]
+   },
+   "options": {
+    "freq": 2,
+    "dtstart": "2022-02-12T08:00:00.000Z",
+    "interval": 1,
+    "wkst": 0,
+    "count": 3,
+    "until": null,
+    "tzid": "Europe/Moscow",
+    "bysetpos": null,
+    "bymonth": null,
+    "bymonthday": [],
+    "bynmonthday": [],
+    "byyearday": null,
+    "byweekno": null,
+    "byweekday": [
+     5
+    ],
+    "bynweekday": null,
+    "byhour": [
+     8
+    ],
+    "byminute": [
+     0
+    ],
+    "bysecond": [
+     0
+    ],
+    "byeaster": null
+   }
+  },
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "6osjadr364q3ab9j6sr66b9kc8smcbb1ckr3ib9j71gm6cb369ijed1hck@google.com",
+  "created": "2021-01-27T08:25:39.000Z",
+  "description": "С субботы по воскресенье, 3 раза",
+  "lastmodified": "2022-02-26T12:59:10.000Z",
+  "location": "",
+  "sequence": "5",
+  "status": "CONFIRMED",
+  "summary": "Периодическое в прошлом",
+  "transparency": "OPAQUE",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-01-05T07:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-01-05T07:30:00.000Z",
+  "rrule": {
+   "_cache": {
+    "all": false,
+    "before": [],
+    "after": [],
+    "between": []
+   },
+   "origOptions": {
+    "tzid": "Europe/Moscow",
+    "dtstart": "2022-01-05T07:00:00.000Z",
+    "freq": 3,
+    "until": "2022-12-31T20:59:59.000Z",
+    "interval": 3
+   },
+   "options": {
+    "freq": 3,
+    "dtstart": "2022-01-05T07:00:00.000Z",
+    "interval": 3,
+    "wkst": 0,
+    "count": null,
+    "until": "2022-12-31T20:59:59.000Z",
+    "tzid": "Europe/Moscow",
+    "bysetpos": null,
+    "bymonth": null,
+    "bymonthday": [],
+    "bynmonthday": [],
+    "byyearday": null,
+    "byweekno": null,
+    "byweekday": null,
+    "bynweekday": null,
+    "byhour": [
+     7
+    ],
+    "byminute": [
+     0
+    ],
+    "bysecond": [
+     0
+    ],
+    "byeaster": null
+   }
+  },
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "4sje4c58u0olrt9mo0a4r5d50v@google.com",
+  "created": "2021-01-01T20:47:05.000Z",
+  "description": "",
+  "lastmodified": "2022-02-26T12:58:44.000Z",
+  "location": "",
+  "sequence": "1",
+  "status": "CONFIRMED",
+  "summary": "Занятость полчаса каждые три дня",
+  "transparency": "OPAQUE",
+  "attach": {
+   "params": {
+    "FILENAME": "Screenshot from 2021-01-05 19-46-29.png",
+    "FMTTYPE": "image/png"
+   },
+   "val": "https://drive.google.com/file/d/151SzTE71zyPFF3upP9LwUx5Ix6VuoXZ0/view?usp=drive_web"
+  },
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-01-04T17:00:00.000Z",
+  "datetype": "date-time",
+  "end": "2022-01-05T02:00:00.000Z",
+  "rrule": {
+   "_cache": {
+    "all": false,
+    "before": [],
+    "after": [],
+    "between": []
+   },
+   "origOptions": {
+    "tzid": "Europe/Moscow",
+    "dtstart": "2022-01-04T17:00:00.000Z",
+    "freq": 2,
+    "wkst": {
+     "weekday": 0
+    },
+    "until": "2022-12-31T20:59:59.000Z",
+    "byweekday": [
+     {
+      "weekday": 1
+     }
+    ]
+   },
+   "options": {
+    "freq": 2,
+    "dtstart": "2022-01-04T17:00:00.000Z",
+    "interval": 1,
+    "wkst": 0,
+    "count": null,
+    "until": "2022-12-31T20:59:59.000Z",
+    "tzid": "Europe/Moscow",
+    "bysetpos": null,
+    "bymonth": null,
+    "bymonthday": [],
+    "bynmonthday": [],
+    "byyearday": null,
+    "byweekno": null,
+    "byweekday": [
+     1
+    ],
+    "bynweekday": null,
+    "byhour": [
+     17
+    ],
+    "byminute": [
+     0
+    ],
+    "bysecond": [
+     0
+    ],
+    "byeaster": null
+   }
+  },
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "14rqpi29rvcv4najhfaf0gcbli@google.com",
+  "created": "2021-01-12T16:28:01.000Z",
+  "description": "Событие начинается в один день, а заканчивается в другой (по Московскому времени).\n\nПовторяется каждую неделю.",
+  "lastmodified": "2022-02-26T12:58:10.000Z",
+  "location": "",
+  "sequence": "2",
+  "status": "CONFIRMED",
+  "summary": "с 20:00 понедельника до 5:00 вторника",
+  "transparency": "OPAQUE",
+  "method": "PUBLISH"
+ },
+ {
+  "type": "VEVENT",
+  "params": [],
+  "start": "2022-01-03T00:00:00.000Z",
+  "datetype": "date",
+  "end": "2022-01-06T00:00:00.000Z",
+  "rrule": {
+   "_cache": {
+    "all": false,
+    "before": [],
+    "after": [],
+    "between": []
+   },
+   "origOptions": {
+    "dtstart": "2022-01-03T00:00:00.000Z",
+    "freq": 3,
+    "wkst": {
+     "weekday": 6
+    },
+    "until": "2022-12-31T00:00:00.000Z",
+    "interval": 9
+   },
+   "options": {
+    "freq": 3,
+    "dtstart": "2022-01-03T00:00:00.000Z",
+    "interval": 9,
+    "wkst": 6,
+    "count": null,
+    "until": "2022-12-31T00:00:00.000Z",
+    "bysetpos": null,
+    "bymonth": null,
+    "bymonthday": [],
+    "bynmonthday": [],
+    "byyearday": null,
+    "byweekno": null,
+    "byweekday": null,
+    "bynweekday": null,
+    "byhour": [
+     0
+    ],
+    "byminute": [
+     0
+    ],
+    "bysecond": [
+     0
+    ],
+    "byeaster": null
+   }
+  },
+  "dtstamp": "2022-02-26T13:47:39.000Z",
+  "uid": "4tml1aafht58lr7kmvd1ndb0q9@google.com",
+  "created": "2021-01-01T20:45:57.000Z",
+  "description": "свободен",
+  "lastmodified": "2022-02-26T12:57:22.000Z",
+  "location": "",
+  "sequence": "2",
+  "status": "CONFIRMED",
+  "summary": "3 дня, раз в 9 дней",
+  "transparency": "TRANSPARENT",
+  "method": "PUBLISH"
+ }
+]

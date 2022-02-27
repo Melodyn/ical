@@ -39,7 +39,11 @@ export default (event, referenceMS = DateTime.now().toMillis()) => {
   const filledRrules = Object.fromEntries(
     Object // кейс: правила, которые могли бы быть установлены, но не установлены
       .entries(event.rrule.options) // будут пустым массивом / null / undefined,
-      .filter(([, value]) => { // поэтому выбираются только заполненные поля
+      .filter(([key, value]) => { // поэтому выбираются только заполненные поля
+        if (key === 'tzid') {
+          // свойство tzid вызывает warning в библиотеке rrule: https://github.com/jakubroztocil/rrule/issues/427#issuecomment-1053497305
+          return false;
+        }
         if (_.isArray(value) && _.isEmpty(value)) return false;
         return !_.isNil(value);
       })
@@ -50,8 +54,9 @@ export default (event, referenceMS = DateTime.now().toMillis()) => {
   );
 
   const rule = new RRule(filledRrules);
-  const startBeforeNow = rule.before(new Date(referenceMS), true);
-  const startAfterNow = rule.after(new Date(referenceMS), true);
+  const referenceDate = new Date(referenceMS);
+  const startBeforeNow = rule.before(referenceDate, true);
+  const startAfterNow = rule.after(referenceDate, true);
 
   const isMaybeActiveEvent = (startBeforeNow !== null);
   const isUpcomingEvent = (startAfterNow !== null);

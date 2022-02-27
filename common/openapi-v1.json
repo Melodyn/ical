@@ -23,7 +23,7 @@
       "url": "https://petstore.swagger.io/v2"
     },
     {
-      "url": "https://melodyn-ical.herokuapp.com/api/{version}",
+      "url": "http://0.0.0.0:5000/api/{version}",
       "description": "App backend",
       "variables": {
         "version": {
@@ -95,6 +95,24 @@
         "tags": [
           "calendar"
         ],
+        "summary": "",
+        "description": "",
+        "parameters": [
+          {
+            "name": "periodDays",
+            "in": "query",
+            "description": "Период, на который получить мероприятия с сегодняшнего дня (по умолчанию - 30 дней)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "maximum": 365,
+              "minimum": 0,
+              "default": 30,
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Объект с данными",
@@ -132,6 +150,8 @@
         "tags": [
           "calendar"
         ],
+        "summary": "",
+        "description": "",
         "requestBody": {
           "$ref": "#/components/requestBodies/calendar"
         },
@@ -295,6 +315,22 @@
               "$ref": "#/components/schemas/200"
             }
           }
+        }
+      }
+    },
+    "parameters": {
+      "periodDays": {
+        "name": "periodDays",
+        "in": "query",
+        "description": "Период, на который получить мероприятия с сегодняшнего дня (по умолчанию - 30 дней)",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "schema": {
+          "maximum": 365,
+          "minimum": 0,
+          "default": 30,
+          "type": "integer"
         }
       }
     },

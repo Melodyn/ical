@@ -6,7 +6,7 @@ const { DateTime } = luxon;
 
 const uniqProcessor = eventHumanify;
 
-const fullProcessor = (event, fromDate, nextDays = 0) => {
+const fullProcessor = (event, fromDate, periodDays = 0) => {
   const nowDT = fromDate instanceof DateTime
     ? fromDate
     : DateTime.fromMillis(fromDate);
@@ -22,19 +22,19 @@ const fullProcessor = (event, fromDate, nextDays = 0) => {
       events = events.concat(processedEvent);
     }
     day += 1;
-  } while (day < (nextDays + 1));
+  } while (day < (periodDays + 1));
 
   return events;
 };
 
-export default (events, { uniq = true, nextDays = 0, fromDate = Date.now() }) => {
-  const onlyUniq = (uniq && nextDays === 0);
+export default (events, { uniq = true, periodDays = 0, fromDate = Date.now() }) => {
+  const onlyUniq = (uniq && periodDays === 0);
 
   const eventProcessor = onlyUniq ? uniqProcessor : fullProcessor;
 
   const processedEvents = events
     .filter(({ type }) => type === 'VEVENT')
-    .flatMap((event) => eventProcessor(event, fromDate, nextDays))
+    .flatMap((event) => eventProcessor(event, fromDate, periodDays))
     .filter(({ isFinished }) => !isFinished);
 
   return onlyUniq

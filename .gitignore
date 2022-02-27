@@ -1,5 +1,6 @@
 .idea
 .vercel
+gen
 */node_modules
 */*.env
 */utils/vkWidget.js
